@@ -34,31 +34,31 @@ El esfuerzo se estima en puntos de historia (serie de Fibonacci) con planning po
 
 | ID | Historia | Épica | Prioridad | Pts | Talla | Sprint | Responsables | Estado |
 |---|---|---|---|---|---|---|---|---|
-| HU-01 | Página de inicio y propuesta de valor | EP2 | Must | 3 | M | S1 | SM | 🟡 En progreso |
-| HU-02 | Registro con datos de facturación | EP1 | Must | 5 | L | S1 | SG, SM | 🟡 En progreso |
-| HU-03 | Inicio y cierre de sesión | EP1 | Must | 3 | M | S1 | SG | 🟡 En progreso |
-| HU-04 | Acceso al panel con rol administrador | EP1 | Must | 2 | S | S1 | SG | 🟡 En progreso |
-| HU-05 | Crear ficha de respuesta | EP3 | Must | 5 | L | S1 | JFG, MM | 🟡 En progreso |
-| HU-06 | Editar y despublicar fichas | EP3 | Must | 3 | M | S1 | JFG | 🟡 En progreso |
-| HU-07 | Gestionar categorías temáticas | EP3 | Should | 2 | S | S1 | JFG | 🟡 En progreso |
-| HU-08 | Explorar catálogo por categoría | EP2 | Must | 3 | M | S1 | MM | 🟡 En progreso |
-| HU-09 | Buscar respuestas por palabra clave | EP2 | Must | 5 | L | S1 | MM, SM | 🟡 En progreso |
-| HU-10 | Ver detalle de ficha con vista previa | EP2 | Must | 3 | M | S1 | SM, MM | 🟡 En progreso |
-| HU-11 | Solicitar compra con instrucciones de transferencia | EP4 | Must | 5 | L | S2 | SG, MM | ⚪ Por hacer |
-| HU-12 | Cargar comprobante de pago | EP4 | Must | 3 | M | S2 | SG | ⚪ Por hacer |
-| HU-13 | Verificar o rechazar pagos | EP4 | Must | 5 | L | S2 | JFG, SM | ⚪ Por hacer |
-| HU-14 | Mi biblioteca de fichas | EP4 | Must | 3 | M | S2 | MM | ⚪ Por hacer |
-| HU-15 | Enviar consulta nueva estructurada | EP5 | Must | 5 | L | S2 | SM, MM | ⚪ Por hacer |
-| HU-16 | Bandeja de consultas con estados | EP5 | Must | 5 | L | S2 | JFG | ⚪ Por hacer |
-| HU-17 | Seguimiento de mis consultas | EP5 | Should | 3 | M | S2 | SM | ⚪ Por hacer |
-| HU-18 | Notificaciones por correo | EP5 | Should | 3 | M | S2 | SG | ⚪ Por hacer |
-| HU-19 | Exportar datos de facturación para Siigo | EP6 | Must | 3 | M | S3 | JFG | ⚪ Por hacer |
-| HU-20 | Convertir una respuesta en ficha | EP7 | Must | 3 | M | S3 | MM | ⚪ Por hacer |
-| HU-21 | Panel de indicadores | EP7 | Should | 5 | L | S3 | MM, JFG | ⚪ Por hacer |
-| HU-22 | Recuperar contraseña | EP1 | Should | 3 | M | S3 | SG | ⚪ Por hacer |
-| HU-23 | Editar mi perfil y datos de facturación | EP1 | Should | 2 | S | S3 | SM | ⚪ Por hacer |
-| HU-24 | Página de tarifas y alcance del servicio | EP5 | Should | 2 | S | S3 | SM | ⚪ Por hacer |
-| HU-25 | Política de tratamiento de datos y términos | EP1 | Must | 2 | S | S3 | SG | ⚪ Por hacer |
+| HU-01 | Página de inicio y propuesta de valor | EP2 | Must | 3 | M | S1 | SM | SM, JFG |
+| HU-02 | Registro con datos de facturación | EP1 | Must | 5 | L | S1 | SG, SM | SG, SM |
+| HU-03 | Inicio y cierre de sesión | EP1 | Must | 3 | M | S1 | SG | SG, MM |
+| HU-04 | Acceso al panel con rol administrador | EP1 | Must | 2 | S | S1 | SG | SG, JFG |
+| HU-05 | Crear ficha de respuesta | EP3 | Must | 5 | L | S1 | JFG, MM | JFG, MM |
+| HU-06 | Editar y despublicar fichas | EP3 | Must | 3 | M | S1 | JFG | JFG, SM |
+| HU-07 | Gestionar categorías temáticas | EP3 | Should | 2 | S | S1 | JFG | JFG, MM |
+| HU-08 | Explorar catálogo por categoría | EP2 | Must | 3 | M | S1 | MM | MM, SM |
+| HU-09 | Buscar respuestas por palabra clave | EP2 | Must | 5 | L | S1 | MM, SM | MM, SM |
+| HU-10 | Ver detalle de ficha con vista previa | EP2 | Must | 3 | M | S1 | SM, MM | SM, MM |
+| HU-11 | Solicitar compra con instrucciones de transferencia | EP4 | Must | 5 | L | S2 | SG, MM | SG, MM |
+| HU-12 | Cargar comprobante de pago | EP4 | Must | 3 | M | S2 | SG | SG, SM |
+| HU-13 | Verificar o rechazar pagos | EP4 | Must | 5 | L | S2 | JFG, SM | JFG, SM |
+| HU-14 | Mi biblioteca de fichas | EP4 | Must | 3 | M | S2 | MM | MM, SG |
+| HU-15 | Enviar consulta nueva estructurada | EP5 | Must | 5 | L | S2 | SM, MM | SM, MM |
+| HU-16 | Bandeja de consultas con estados | EP5 | Must | 5 | L | S2 | JFG | JFG, MM |
+| HU-17 | Seguimiento de mis consultas | EP5 | Should | 3 | M | S2 | SM | SM, JFG |
+| HU-18 | Notificaciones por correo | EP5 | Should | 3 | M | S2 | SG | SG, JFG |
+| HU-19 | Exportar datos de facturación para Siigo | EP6 | Must | 3 | M | S3 | JFG | JFG, SG |
+| HU-20 | Convertir una respuesta en ficha | EP7 | Must | 3 | M | S3 | MM | MM, JFG |
+| HU-21 | Panel de indicadores | EP7 | Should | 5 | L | S3 | MM, JFG | MM, JFG |
+| HU-22 | Recuperar contraseña | EP1 | Should | 3 | M | S3 | SG | SG, SM |
+| HU-23 | Editar mi perfil y datos de facturación | EP1 | Should | 2 | S | S3 | SM | SM, SG |
+| HU-24 | Página de tarifas y alcance del servicio | EP5 | Should | 2 | S | S3 | SM | SM, JFG |
+| HU-25 | Política de tratamiento de datos y términos | EP1 | Must | 2 | S | S3 | SG | SG, JFG |
 | HU-26 | Suscripción mensual o anual | EP8 | Could | 8 | XL | Post | — | 📋 Backlog |
 | HU-27 | Pago en línea con pasarela (PSE / tarjeta) | EP8 | Could | 8 | XL | Post | — | 📋 Backlog |
 | HU-28 | Factura electrónica automática vía API de Siigo | EP8 | Could | 8 | XL | Post | — | 📋 Backlog |
@@ -76,16 +76,16 @@ El esfuerzo se estima en puntos de historia (serie de Fibonacci) con planning po
 | Sprint 2 | 26 oct – 8 nov | El cliente paga por transferencia, recibe acceso y envía consultas nuevas por un canal trazable. | 32 | HU-11 a HU-18 |
 | Sprint 3 | 9 – 22 nov | MVP listo para piloto: exportación a Siigo, indicadores, ajustes legales y pruebas con usuarios. | 20 | HU-19 a HU-25 |
 
-### Carga por integrante en el Sprint 1 (responsable principal / apoyo)
+### Carga por integrante en el Sprint 1
 
-| Integrante | Historias | Puntos como responsable principal |
-|---|---|---|
-| SG | HU-02, HU-03, HU-04 | 10 |
-| JFG | HU-05, HU-06, HU-07 | 10 |
-| MM | HU-08, HU-09 | 8 |
-| SM | HU-01, HU-10 | 6 |
+| Integrante | Principal en | Apoya en | Puntos como principal |
+|---|---|---|---|
+| SG | HU-02, HU-03, HU-04 | HU-12 (S2) | 10 |
+| JFG | HU-05, HU-06, HU-07 | HU-01, HU-04 | 10 |
+| MM | HU-08, HU-09 | HU-03, HU-05, HU-07, HU-10 | 8 |
+| SM | HU-01, HU-10 | HU-02, HU-06, HU-08, HU-09 | 6 |
 
-El **primer** responsable de cada historia es quien responde por ella; el resto apoya. SM, con menos carga propia, apoya en HU-02, HU-05 (formulario), HU-09 y HU-10 por ser trabajo de interfaz.
+Cada historia la trabajan **dos integrantes juntos** (sin dividirla en partes): el primero responde por ella y el segundo la co-desarrolla y revisa el pull request.
 
 ## Definición de terminado
 
@@ -109,7 +109,7 @@ Una historia está terminada cuando:
 
 | Épica | Prioridad | Puntos | Talla | Responsables | Estado | Mockup |
 |---|---|---|---|---|---|---|
-| EP2 | Must | 3 | **M** | SM | 🟡 En progreso | Figura 2 |
+| EP2 | Must | 3 | **M** | SM (principal), JFG | 🟡 En progreso | Figura 2 |
 
 **Criterios de aceptación**
 - **CA1.** Dado que ingreso al dominio, cuando carga la página, entonces veo el nombre del servicio, una frase de propuesta de valor y el buscador sin necesidad de desplazarme.
@@ -141,7 +141,7 @@ Una historia está terminada cuando:
 
 | Épica | Prioridad | Puntos | Talla | Responsables | Estado | Mockup |
 |---|---|---|---|---|---|---|
-| EP1 | Must | 3 | **M** | SG | 🟡 En progreso | Figura 6 |
+| EP1 | Must | 3 | **M** | SG (principal), MM | 🟡 En progreso | Figura 6 |
 
 **Criterios de aceptación**
 - **CA1.** Dado que ingreso correo y contraseña válidos, cuando presiono «Ingresar», entonces accedo y veo mi nombre en el encabezado.
@@ -157,7 +157,7 @@ Una historia está terminada cuando:
 
 | Épica | Prioridad | Puntos | Talla | Responsables | Estado | Mockup |
 |---|---|---|---|---|---|---|
-| EP1 | Must | 2 | **S** | SG | 🟡 En progreso | Figura 7 |
+| EP1 | Must | 2 | **S** | SG (principal), JFG | 🟡 En progreso | Figura 7 |
 
 **Criterios de aceptación**
 - **CA1.** Dado que inicio sesión con una cuenta de los grupos «administrador» o «director» de Cognito, entonces veo el enlace «Panel» en el encabezado; con el grupo «cliente» no aparece.
@@ -187,7 +187,7 @@ Una historia está terminada cuando:
 
 | Épica | Prioridad | Puntos | Talla | Responsables | Estado | Mockup |
 |---|---|---|---|---|---|---|
-| EP3 | Must | 3 | **M** | JFG | 🟡 En progreso | Figura 7 |
+| EP3 | Must | 3 | **M** | JFG (principal), SM | 🟡 En progreso | Figura 7 |
 
 **Criterios de aceptación**
 - **CA1.** El panel lista las fichas con título, categoría, estado, precio y fecha de actualización, con filtro por estado y búsqueda por título.
@@ -201,7 +201,7 @@ Una historia está terminada cuando:
 
 | Épica | Prioridad | Puntos | Talla | Responsables | Estado | Mockup |
 |---|---|---|---|---|---|---|
-| EP3 | Should | 2 | **S** | JFG | 🟡 En progreso | Figuras 7 y 8 |
+| EP3 | Should | 2 | **S** | JFG (principal), MM | 🟡 En progreso | Figuras 7 y 8 |
 
 **Criterios de aceptación**
 - **CA1.** Puedo crear, renombrar, ordenar y desactivar categorías desde el panel.
@@ -215,7 +215,7 @@ Una historia está terminada cuando:
 
 | Épica | Prioridad | Puntos | Talla | Responsables | Estado | Mockup |
 |---|---|---|---|---|---|---|
-| EP2 | Must | 3 | **M** | MM | 🟡 En progreso | Figura 3 |
+| EP2 | Must | 3 | **M** | MM (principal), SM | 🟡 En progreso | Figura 3 |
 
 **Criterios de aceptación**
 - **CA1.** El catálogo muestra solo fichas publicadas, en tarjetas con título, resumen, categoría, etiquetas, precio y fecha «Vigente a».
@@ -278,7 +278,7 @@ Una historia está terminada cuando:
 
 > **Como** cliente registrado, **quiero** solicitar la compra de una ficha y recibir los datos bancarios con una referencia única, **para** pagar por transferencia como acostumbro, sin pasarelas en las que no confío.
 
-**EP4 · Must · 5 pts · Talla L · Responsables: SG, MM · ⚪ Por hacer**
+**EP4 · Must · 5 pts · Talla L · Responsables: SG (principal), MM · ⚪ Por hacer**
 
 - Se genera una referencia única por compra (p. ej. `RPN-000123`).
 - Se muestran banco, tipo y número de cuenta, titular, valor y referencia.
@@ -288,7 +288,7 @@ Una historia está terminada cuando:
 
 > **Como** cliente registrado, **quiero** adjuntar el comprobante de mi transferencia en la plataforma, **para** no tener que enviarlo por WhatsApp y que quede asociado a mi compra.
 
-**EP4 · Must · 3 pts · Talla M · Responsable: SG · ⚪ Por hacer**
+**EP4 · Must · 3 pts · Talla M · Responsables: SG (principal), SM · ⚪ Por hacer**
 
 - Acepta JPG, PNG o PDF de máximo 5 MB, controlado por la política de la URL prefirmada.
 - El archivo se sube directo al bucket S3 privado con una URL válida 5 minutos; solo el cliente y los administradores pueden descargarlo.
@@ -298,7 +298,7 @@ Una historia está terminada cuando:
 
 > **Como** directora administrativa, **quiero** ver en una sola bandeja los pagos pendientes con su comprobante y aprobarlos o rechazarlos, **para** habilitar el acceso sin buscar capturas en conversaciones.
 
-**EP4 · Must · 5 pts · Talla L · Responsables: JFG, SM · ⚪ Por hacer**
+**EP4 · Must · 5 pts · Talla L · Responsables: JFG (principal), SM · ⚪ Por hacer**
 
 - La bandeja lista compras «En verificación» con cliente, ficha, valor, referencia y comprobante.
 - Aprobar habilita el acceso de inmediato; rechazar exige un motivo que ve el cliente.
@@ -308,7 +308,7 @@ Una historia está terminada cuando:
 
 > **Como** cliente registrado, **quiero** ver en mi cuenta todas las fichas que he adquirido, **para** volver a consultarlas cuando las necesite.
 
-**EP4 · Must · 3 pts · Talla M · Responsable: MM · ⚪ Por hacer**
+**EP4 · Must · 3 pts · Talla M · Responsables: MM (principal), SG · ⚪ Por hacer**
 
 - Lista las fichas con acceso aprobado y su fecha de compra.
 - Muestra el estado de las compras pendientes.
@@ -318,7 +318,7 @@ Una historia está terminada cuando:
 
 > **Como** cliente registrado, **quiero** enviar una consulta que no encontré en el catálogo mediante un formulario guiado, **para** recibir una respuesta sin depender de un chat personal.
 
-**EP5 · Must · 5 pts · Talla L · Responsables: SM, MM · ⚪ Por hacer**
+**EP5 · Must · 5 pts · Talla L · Responsables: SM (principal), MM · ⚪ Por hacer**
 
 - Mientras escribo el asunto, se sugieren fichas existentes relacionadas.
 - Campos: categoría, asunto, descripción y adjunto opcional (máx. 5 MB).
@@ -328,7 +328,7 @@ Una historia está terminada cuando:
 
 > **Como** director técnico, **quiero** gestionar las consultas recibidas con estados y clasificarlas como consulta rápida o asesoría, **para** priorizar mi tiempo y no perder ninguna solicitud.
 
-**EP5 · Must · 5 pts · Talla L · Responsable: JFG · ⚪ Por hacer**
+**EP5 · Must · 5 pts · Talla L · Responsables: JFG (principal), MM · ⚪ Por hacer**
 
 - Estados: Recibida, En análisis, Respondida, Escalada a asesoría, Cerrada.
 - Clasificación obligatoria: Consulta rápida o Asesoría.
@@ -338,7 +338,7 @@ Una historia está terminada cuando:
 
 > **Como** cliente registrado, **quiero** ver el estado y la respuesta de mis consultas en mi cuenta, **para** saber cuándo tendré respuesta sin preguntar por WhatsApp.
 
-**EP5 · Should · 3 pts · Talla M · Responsable: SM · ⚪ Por hacer**
+**EP5 · Should · 3 pts · Talla M · Responsables: SM (principal), JFG · ⚪ Por hacer**
 
 - El cliente ve sus consultas con radicado, estado y fecha.
 - La respuesta se muestra dentro de la plataforma.
@@ -348,7 +348,7 @@ Una historia está terminada cuando:
 
 > **Como** cliente registrado, **quiero** recibir un correo cuando mi pago sea verificado o mi consulta sea respondida, **para** enterarme sin tener que entrar a revisar.
 
-**EP5 · Should · 3 pts · Talla M · Responsable: SG · ⚪ Por hacer**
+**EP5 · Should · 3 pts · Talla M · Responsables: SG (principal), JFG · ⚪ Por hacer**
 
 - Se envía correo (Amazon SES) al verificar o rechazar un pago y al responder una consulta.
 - El correo no incluye el contenido de la respuesta, solo un enlace a la plataforma.
@@ -364,43 +364,43 @@ Una historia está terminada cuando:
 
 > **Como** directora administrativa, **quiero** descargar en Excel los datos fiscales de las compras verificadas en un periodo, **para** facturar en Siigo sin volver a digitar los datos de cada cliente.
 
-**EP6 · Must · 3 pts · Talla M · Responsable: JFG · ⚪ Por hacer** — Riesgo: validar con la directora el formato exacto de importación de terceros y ventas antes del sprint.
+**EP6 · Must · 3 pts · Talla M · Responsables: JFG (principal), SG · ⚪ Por hacer** — Riesgo: validar con la directora el formato exacto de importación de terceros y ventas antes del sprint.
 
 ## HU-20 · Convertir una respuesta en ficha
 
 > **Como** director técnico, **quiero** convertir la respuesta de una consulta en una ficha nueva, anonimizando los datos del cliente, **para** que cada consulta respondida alimente el repositorio.
 
-**EP7 · Must · 3 pts · Talla M · Responsable: MM · ⚪ Por hacer**
+**EP7 · Must · 3 pts · Talla M · Responsables: MM (principal), JFG · ⚪ Por hacer**
 
 ## HU-21 · Panel de indicadores
 
 > **Como** directora administrativa, **quiero** ver indicadores de consultas por semana, tiempo de respuesta, temas, búsquedas sin resultado y ventas, **para** medir los objetivos del proyecto y decidir qué contenido crear.
 
-**EP7 · Should · 5 pts · Talla L · Responsables: MM, JFG · ⚪ Por hacer**
+**EP7 · Should · 5 pts · Talla L · Responsables: MM (principal), JFG · ⚪ Por hacer**
 
 ## HU-22 · Recuperar contraseña
 
 > **Como** cliente registrado, **quiero** restablecer mi contraseña mediante un enlace a mi correo, **para** recuperar el acceso sin pedir ayuda a la empresa.
 
-**EP1 · Should · 3 pts · Talla M · Responsable: SG · ⚪ Por hacer**
+**EP1 · Should · 3 pts · Talla M · Responsables: SG (principal), SM · ⚪ Por hacer**
 
 ## HU-23 · Editar mi perfil y datos de facturación
 
 > **Como** cliente registrado, **quiero** actualizar mi dirección, celular y datos de facturación, **para** que mis facturas salgan con la información correcta.
 
-**EP1 · Should · 2 pts · Talla S · Responsable: SM · ⚪ Por hacer**
+**EP1 · Should · 2 pts · Talla S · Responsables: SM (principal), SG · ⚪ Por hacer**
 
 ## HU-24 · Página de tarifas y alcance del servicio
 
 > **Como** visitante, **quiero** conocer qué cubre una consulta rápida, qué es una asesoría y cuánto cuesta cada una, **para** saber qué esperar antes de pagar.
 
-**EP5 · Should · 2 pts · Talla S · Responsable: SM · ⚪ Por hacer**
+**EP5 · Should · 2 pts · Talla S · Responsables: SM (principal), JFG · ⚪ Por hacer**
 
 ## HU-25 · Política de tratamiento de datos y términos
 
 > **Como** visitante, **quiero** leer la política de tratamiento de datos y los términos de uso, **para** saber cómo se protege la información que entrego.
 
-**EP1 · Must · 2 pts · Talla S · Responsable: SG · ⚪ Por hacer** — Requiere revisión de un abogado antes del despliegue público (Ley 1581 de 2012).
+**EP1 · Must · 2 pts · Talla S · Responsables: SG (principal), JFG · ⚪ Por hacer** — Requiere revisión de un abogado antes del despliegue público (Ley 1581 de 2012).
 
 ---
 
