@@ -34,31 +34,31 @@ El esfuerzo se estima en puntos de historia (serie de Fibonacci) con planning po
 
 | ID | Historia | Épica | Prioridad | Pts | Talla | Sprint | Responsables | Estado |
 |---|---|---|---|---|---|---|---|---|
-| HU-01 | Página de inicio y propuesta de valor | EP2 | Must | 3 | M | S1 | SM | SM, JFG |
-| HU-02 | Registro con datos de facturación | EP1 | Must | 5 | L | S1 | SG, SM | SG, SM |
-| HU-03 | Inicio y cierre de sesión | EP1 | Must | 3 | M | S1 | SG | SG, MM |
-| HU-04 | Acceso al panel con rol administrador | EP1 | Must | 2 | S | S1 | SG | SG, JFG |
-| HU-05 | Crear ficha de respuesta | EP3 | Must | 5 | L | S1 | JFG, MM | JFG, MM |
-| HU-06 | Editar y despublicar fichas | EP3 | Must | 3 | M | S1 | JFG | JFG, SM |
-| HU-07 | Gestionar categorías temáticas | EP3 | Should | 2 | S | S1 | JFG | JFG, MM |
-| HU-08 | Explorar catálogo por categoría | EP2 | Must | 3 | M | S1 | MM | MM, SM |
-| HU-09 | Buscar respuestas por palabra clave | EP2 | Must | 5 | L | S1 | MM, SM | MM, SM |
-| HU-10 | Ver detalle de ficha con vista previa | EP2 | Must | 3 | M | S1 | SM, MM | SM, MM |
-| HU-11 | Solicitar compra con instrucciones de transferencia | EP4 | Must | 5 | L | S2 | SG, MM | SG, MM |
-| HU-12 | Cargar comprobante de pago | EP4 | Must | 3 | M | S2 | SG | SG, SM |
-| HU-13 | Verificar o rechazar pagos | EP4 | Must | 5 | L | S2 | JFG, SM | JFG, SM |
-| HU-14 | Mi biblioteca de fichas | EP4 | Must | 3 | M | S2 | MM | MM, SG |
-| HU-15 | Enviar consulta nueva estructurada | EP5 | Must | 5 | L | S2 | SM, MM | SM, MM |
-| HU-16 | Bandeja de consultas con estados | EP5 | Must | 5 | L | S2 | JFG | JFG, MM |
-| HU-17 | Seguimiento de mis consultas | EP5 | Should | 3 | M | S2 | SM | SM, JFG |
-| HU-18 | Notificaciones por correo | EP5 | Should | 3 | M | S2 | SG | SG, JFG |
-| HU-19 | Exportar datos de facturación para Siigo | EP6 | Must | 3 | M | S3 | JFG | JFG, SG |
-| HU-20 | Convertir una respuesta en ficha | EP7 | Must | 3 | M | S3 | MM | MM, JFG |
-| HU-21 | Panel de indicadores | EP7 | Should | 5 | L | S3 | MM, JFG | MM, JFG |
-| HU-22 | Recuperar contraseña | EP1 | Should | 3 | M | S3 | SG | SG, SM |
-| HU-23 | Editar mi perfil y datos de facturación | EP1 | Should | 2 | S | S3 | SM | SM, SG |
-| HU-24 | Página de tarifas y alcance del servicio | EP5 | Should | 2 | S | S3 | SM | SM, JFG |
-| HU-25 | Política de tratamiento de datos y términos | EP1 | Must | 2 | S | S3 | SG | SG, JFG |
+| HU-01 | Página de inicio y propuesta de valor | EP2 | Must | 3 | M | S1 | SM, JFG | 🟡 En progreso |
+| HU-02 | Registro con datos de facturación | EP1 | Must | 5 | L | S1 | SG, SM | 🟡 En progreso |
+| HU-03 | Inicio y cierre de sesión | EP1 | Must | 3 | M | S1 | SG, MM | 🟡 En progreso |
+| HU-04 | Acceso al panel con rol administrador | EP1 | Must | 2 | S | S1 | SG, JFG | 🟡 En progreso |
+| HU-05 | Crear ficha de respuesta | EP3 | Must | 5 | L | S1 | JFG, MM | 🟡 En progreso |
+| HU-06 | Editar y despublicar fichas | EP3 | Must | 3 | M | S1 | JFG, SM | 🟡 En progreso |
+| HU-07 | Gestionar categorías temáticas | EP3 | Should | 2 | S | S1 | JFG, MM | 🟡 En progreso |
+| HU-08 | Explorar catálogo por categoría | EP2 | Must | 3 | M | S1 | MM, SM | 🟡 En progreso |
+| HU-09 | Buscar respuestas por palabra clave | EP2 | Must | 5 | L | S1 | MM, SM | 🟡 En progreso |
+| HU-10 | Ver detalle de ficha con vista previa | EP2 | Must | 3 | M | S1 | SM, MM | 🟡 En progreso |
+| HU-11 | Solicitar compra con instrucciones de transferencia | EP4 | Must | 5 | L | S2 | SG, MM | ⚪ Por hacer |
+| HU-12 | Cargar comprobante de pago | EP4 | Must | 3 | M | S2 | SG, SM | ⚪ Por hacer |
+| HU-13 | Verificar o rechazar pagos | EP4 | Must | 5 | L | S2 | JFG, SM | ⚪ Por hacer |
+| HU-14 | Mi biblioteca de fichas | EP4 | Must | 3 | M | S2 | MM, SG | ⚪ Por hacer |
+| HU-15 | Enviar consulta nueva estructurada | EP5 | Must | 5 | L | S2 | SM, MM | ⚪ Por hacer |
+| HU-16 | Bandeja de consultas con estados | EP5 | Must | 5 | L | S2 | JFG, MM | ⚪ Por hacer |
+| HU-17 | Seguimiento de mis consultas | EP5 | Should | 3 | M | S2 | SM, JFG | ⚪ Por hacer |
+| HU-18 | Notificaciones por correo | EP5 | Should | 3 | M | S2 | SG, JFG | ⚪ Por hacer |
+| HU-19 | Exportar datos de facturación para Siigo | EP6 | Must | 3 | M | S3 | JFG, SG | ⚪ Por hacer |
+| HU-20 | Convertir una respuesta en ficha | EP7 | Must | 3 | M | S3 | MM, JFG | ⚪ Por hacer |
+| HU-21 | Panel de indicadores | EP7 | Should | 5 | L | S3 | MM, JFG | ⚪ Por hacer |
+| HU-22 | Recuperar contraseña | EP1 | Should | 3 | M | S3 | SG, SM | ⚪ Por hacer |
+| HU-23 | Editar mi perfil y datos de facturación | EP1 | Should | 2 | S | S3 | SM, SG | ⚪ Por hacer |
+| HU-24 | Página de tarifas y alcance del servicio | EP5 | Should | 2 | S | S3 | SM, JFG | ⚪ Por hacer |
+| HU-25 | Política de tratamiento de datos y términos | EP1 | Must | 2 | S | S3 | SG, JFG | ⚪ Por hacer |
 | HU-26 | Suscripción mensual o anual | EP8 | Could | 8 | XL | Post | — | 📋 Backlog |
 | HU-27 | Pago en línea con pasarela (PSE / tarjeta) | EP8 | Could | 8 | XL | Post | — | 📋 Backlog |
 | HU-28 | Factura electrónica automática vía API de Siigo | EP8 | Could | 8 | XL | Post | — | 📋 Backlog |
