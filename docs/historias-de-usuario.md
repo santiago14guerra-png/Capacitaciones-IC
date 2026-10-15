@@ -80,7 +80,7 @@ El esfuerzo se estima en puntos de historia (serie de Fibonacci) con planning po
 
 | Integrante | Principal en | Apoya en | Puntos como principal |
 |---|---|---|---|
-| SG | HU-02, HU-03, HU-04 | HU-12 (S2) | 10 |
+| SG | HU-02, HU-03, HU-04 | — | 10 |
 | JFG | HU-05, HU-06, HU-07 | HU-01, HU-04 | 10 |
 | MM | HU-08, HU-09 | HU-03, HU-05, HU-07, HU-10 | 8 |
 | SM | HU-01, HU-10 | HU-02, HU-06, HU-08, HU-09 | 6 |
