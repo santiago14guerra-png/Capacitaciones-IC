@@ -260,9 +260,9 @@ Una historia está terminada cuando:
 
 | ID | Tarea | Sprint | Responsable | Estado |
 |---|---|---|---|---|
-| T-01 | Crear repositorio GitHub (monorepo `web` / `api` / `infra`) y tablero de Jira | Sprint 0 | SG | ⚪ Por confirmar |
-| T-02 | Crear la cuenta AWS a nombre de la empresa: plan pago con créditos, MFA en la raíz, IAM Identity Center para el equipo y alertas de AWS Budgets | Sprint 0 | SG | ⚪ Por confirmar |
-| T-03 | Diseñar mockups y validarlos con la directora (Acta 002) | Sprint 0 | SM | ⚪ Por confirmar |
+| T-01 | Crear repositorio GitHub (monorepo `web` / `api` / `infra`) y tablero de Jira | Sprint 0 | SG | ✅ Hecho |
+| T-02 | Crear la cuenta AWS a nombre de la empresa: plan pago con créditos, MFA en la raíz, IAM Identity Center para el equipo y alertas de AWS Budgets | Sprint 0 | SG | ✅ Hecho |
+| T-03 | Diseñar mockups y validarlos con la directora (Acta 002) | Sprint 0 | SM | ✅ Hecho |
 | T-04 | Diseñar el modelo de datos de DynamoDB (tabla única y patrones de acceso) | Sprint 1 | MM | 🟡 En progreso |
 | T-05 | Infraestructura base con AWS CDK en ambiente `dev`: CloudFront, S3, Cognito, API Gateway, Lambda y DynamoDB | Sprint 1 | SG, MM | 🟡 En progreso |
 | T-06 | Pipeline de GitHub Actions con OIDC: pruebas en cada pull request y despliegue automático a `dev` | Sprint 1 | JFG | 🟡 En progreso |
