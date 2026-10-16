@@ -206,7 +206,7 @@ Una historia está terminada cuando:
 **Criterios de aceptación**
 - **CA1.** Puedo crear, renombrar, ordenar y desactivar categorías desde el panel.
 - **CA2.** Dado que intento desactivar una categoría con fichas publicadas, entonces el sistema me informa cuántas fichas tiene y me pide reasignarlas antes de continuar.
-- **CA3.** El sistema se entrega con la carga inicial de categorías acordada con la directora (propuesta: Arrendamientos, Pensionados, Asalariados e independientes, Sucesiones y herencias, Patrimonio y bienes, Declaración de renta, Obligaciones con la DIAN).
+- **CA3.** El sistema se entrega con la carga inicial de categorías que se valide con la directora (propuesta del equipo: Arrendamientos, Pensionados, Asalariados e independientes, Sucesiones y herencias, Patrimonio y bienes, Declaración de renta, Obligaciones con la DIAN).
 - **CA4.** El orden definido en el panel es el mismo en que aparecen las categorías en la página de inicio y en el catálogo.
 
 ## HU-08 · Explorar catálogo por categoría
@@ -260,13 +260,13 @@ Una historia está terminada cuando:
 
 | ID | Tarea | Sprint | Responsable | Estado |
 |---|---|---|---|---|
-| T-01 | Crear repositorio GitHub (monorepo `web` / `api` / `infra`) y tablero de Jira | Sprint 0 | SG | ✅ Hecho |
+| T-01 | Crear repositorio GitHub (monorepo `web` / `api` / `infra`) y tablero de GitHub | Sprint 0 | SG | ✅ Hecho |
 | T-02 | Crear la cuenta AWS a nombre de la empresa: plan pago con créditos, MFA en la raíz, IAM Identity Center para el equipo y alertas de AWS Budgets | Sprint 0 | SG | ✅ Hecho |
-| T-03 | Diseñar mockups y validarlos con la directora (Acta 002) | Sprint 0 | SM | ✅ Hecho |
+| T-03 | Diseñar los mockups iniciales (imágenes estáticas); su validación queda para la sesión de cocreación acordada en el Acta 002 | Sprint 0 | SM | ✅ Hecho |
 | T-04 | Diseñar el modelo de datos de DynamoDB (tabla única y patrones de acceso) | Sprint 1 | MM | 🟡 En progreso |
 | T-05 | Infraestructura base con AWS CDK en ambiente `dev`: CloudFront, S3, Cognito, API Gateway, Lambda y DynamoDB | Sprint 1 | SG, MM | 🟡 En progreso |
 | T-06 | Pipeline de GitHub Actions con OIDC: pruebas en cada pull request y despliegue automático a `dev` | Sprint 1 | JFG | 🟡 En progreso |
-| T-07 | Cargar 15–20 fichas reales entregadas por la empresa | Sprint 1 | JFG, SM | 🟡 En progreso |
+| T-07 | Cargar las fichas reales que entregue la empresa (meta propuesta: 15–20) | Sprint 1 | JFG, SM | 🟡 En progreso |
 
 ---
 
