@@ -1,5 +1,6 @@
 import type { ConfigPublicaDto } from '@ic/shared';
 import { Hono } from 'hono';
+import { buscarFichas } from '../../../application/busqueda.js';
 import { catalogo } from '../../../application/catalogo.js';
 import type { Contexto } from '../../../application/contexto.js';
 import type { Entorno } from '../app.js';
@@ -12,6 +13,13 @@ export const rutasCatalogo = (ctx: Contexto) =>
         whatsapp: ctx.negocio.contactoWhatsapp,
         tarifas: ctx.negocio.tarifas,
       }),
+    )
+    .get('/buscar', async (c) =>
+      c.json(
+        await buscarFichas(ctx, c.req.query('q') ?? '', {
+          registrar: c.req.query('sugerencia') !== '1',
+        }),
+      ),
     )
     .get('/fichas', async (c) =>
       c.json(

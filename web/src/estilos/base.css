@@ -565,3 +565,13 @@ th {
 .paginacion {
   justify-content: center;
 }
+
+/* ---------- Búsqueda (HU-09) ---------- */
+.buscador input {
+  flex: 1;
+}
+.buscador.grande input,
+.buscador.grande .boton {
+  min-height: 58px;
+  font-size: 1.05rem;
+}

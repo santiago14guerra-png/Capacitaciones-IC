@@ -1,5 +1,6 @@
 import type {
   DirectorioUsuarios,
+  RepoBusquedas,
   RepoCategorias,
   RepoFichas,
   RepoPerfiles,
@@ -13,5 +14,6 @@ export interface Contexto extends Sistema {
   perfiles: RepoPerfiles;
   categorias: RepoCategorias;
   fichas: RepoFichas;
+  busquedas: RepoBusquedas;
   negocio: ConfigNegocio;
 }
