@@ -6,6 +6,7 @@ import { crearAlmacenLocal } from '../src/adapters/local/almacen-local.js';
 import { iniciarEmulador } from '../src/adapters/local/emulador.js';
 import { directorioDev, firmarDev, verificadorDev } from '../src/adapters/local/token-dev.js';
 import type { Contexto } from '../src/application/contexto.js';
+import type { Correo } from '../src/domain/correos.js';
 import { componer } from '../src/bootstrap/componer.js';
 
 export const token = (sub: string, ...grupos: Grupo[]) =>
@@ -32,6 +33,8 @@ export class RelojPrueba {
 
 export interface Entorno {
   ctx: Contexto;
+  /** Correos que se habrían enviado (HU-18). */
+  correos: Correo[];
   /** Petición cruda a la app (p. ej. subir un archivo con FormData). */
   crudo(ruta: string, init?: RequestInit): Promise<Response>;
   reloj: RelojPrueba;
@@ -52,11 +55,14 @@ export function prepararEntorno(): Entorno {
     const { tabla, cerrar } = await iniciarEmulador();
     e.reloj = new RelojPrueba();
     const almacen = crearAlmacenLocal();
+    e.correos = [];
     e.ctx = componer({
       tabla,
       directorio: directorioDev,
       reloj: e.reloj,
       archivos: almacen.almacen,
+      sitioUrl: 'https://sitio.prueba',
+      notificador: { enviar: async (c) => void e.correos.push(c) },
     });
     e.cerrar = cerrar;
     e.app = crearApp({ ...e.ctx, verificador: verificadorDev }, (a) => {

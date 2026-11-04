@@ -15,7 +15,14 @@ import { componer } from './componer.js';
 const puerto = Number(process.env.PUERTO ?? 3001);
 const { tabla } = await iniciarEmulador();
 const almacen = crearAlmacenLocal();
-const ctx = componer({ tabla, directorio: directorioDev, archivos: almacen.almacen });
+const ctx = componer({
+  tabla,
+  directorio: directorioDev,
+  archivos: almacen.almacen,
+  notificador: {
+    enviar: async (c) => console.log(`[correo-dev] Para ${c.para}: ${c.asunto}\n${c.texto}`),
+  },
+});
 await sembrarCategorias(ctx);
 
 const app = crearApp({ ...ctx, verificador: verificadorDev }, (a) => {

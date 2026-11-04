@@ -1,5 +1,6 @@
 import { handle } from 'hono/aws-lambda';
 import { crearAlmacenS3 } from '../adapters/aws/almacen-s3.js';
+import { crearNotificadorSes, notificadorRegistro } from '../adapters/aws/notificador-ses.js';
 import { crearDirectorioCognito } from '../adapters/aws/directorio-cognito.js';
 import { crearVerificadorCognito } from '../adapters/aws/verificador-cognito.js';
 import { Tabla } from '../adapters/dynamodb/tabla.js';
@@ -20,6 +21,10 @@ const ctx = componer({
   directorio: crearDirectorioCognito(userPoolId),
   archivos: crearAlmacenS3(requerida('BUCKET_ARCHIVOS')),
   negocio: configNegocio(process.env),
+  sitioUrl: requerida('SITIO_URL'),
+  notificador: process.env.CORREO_REMITENTE
+    ? crearNotificadorSes(process.env.CORREO_REMITENTE)
+    : notificadorRegistro,
 });
 
 const app = crearApp({
