@@ -73,6 +73,7 @@ export type DatosFicha = z.infer<typeof esquemaFicha>;
 
 export const esquemaCategoria = z.object({ nombre: texto(80) });
 export const esquemaOrdenCategorias = z.object({ ids: z.array(z.string()).min(1) });
+export const esquemaReasignarCategoria = z.object({ destinoId: texto(64) });
 
 export const esquemaArchivo = z.object({
   nombre: texto(200),

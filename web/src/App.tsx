@@ -12,6 +12,7 @@ import Terminos from './paginas/legal/Terminos';
 import NoEncontrada from './paginas/NoEncontrada';
 import DisenoPanel from './paginas/panel/DisenoPanel';
 import InicioPanel from './paginas/panel/InicioPanel';
+import CategoriasPanel from './paginas/panel/Categorias';
 import Registro from './paginas/Registro';
 
 export const rutas = [
@@ -43,7 +44,10 @@ export const rutas = [
       {
         path: 'panel',
         element: <DisenoPanel />,
-        children: [{ index: true, element: <InicioPanel /> }],
+        children: [
+          { index: true, element: <InicioPanel /> },
+          { path: 'categorias', element: <CategoriasPanel /> },
+        ],
       },
       { path: '*', element: <NoEncontrada /> },
     ],

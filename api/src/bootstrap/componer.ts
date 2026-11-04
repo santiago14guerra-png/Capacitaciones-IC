@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import type { Contexto } from '../application/contexto.js';
 import type { DirectorioUsuarios, Reloj } from '../application/puertos.js';
+import { RepoCategoriasDynamo } from '../adapters/dynamodb/repo-categorias.js';
+import { RepoFichasDynamo } from '../adapters/dynamodb/repo-fichas.js';
 import { RepoPerfilesDynamo } from '../adapters/dynamodb/repo-perfiles.js';
 import type { Tabla } from '../adapters/dynamodb/tabla.js';
 
@@ -21,5 +23,7 @@ export function componer({
     directorio,
     ids: { nuevo: () => randomUUID() },
     perfiles: new RepoPerfilesDynamo(tabla),
+    categorias: new RepoCategoriasDynamo(tabla),
+    fichas: new RepoFichasDynamo(tabla),
   };
 }
