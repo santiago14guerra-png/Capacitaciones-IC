@@ -79,3 +79,40 @@ describe('HU-16 · bandeja de consultas', () => {
     );
   });
 });
+
+describe('HU-20 · convertir una respuesta en ficha', () => {
+  it('crea el borrador y abre la ficha para revisarla', async () => {
+    const respondida = {
+      ...consulta,
+      estado: 'RESPONDIDA',
+      clasificacion: 'CONSULTA_RAPIDA',
+      respuestaHtml: '<p>R</p>',
+      atrasada: false,
+    };
+    simularApi({
+      'GET /sesion': SESION_ADMIN,
+      'GET /admin/consultas/c1': respondida,
+      'POST /admin/consultas/c1/ficha': { id: 'nueva' },
+    });
+    const { enrutador } = renderizar('/panel/consultas/c1', { conSesion: true });
+    fireEvent.click(await screen.findByRole('button', { name: 'Convertir en ficha' }));
+    await waitFor(() => expect(enrutador.state.location.pathname).toBe('/panel/fichas/nueva'));
+  });
+
+  it('si ya se convirtió, enlaza la ficha en vez de ofrecer otra', async () => {
+    simularApi({
+      'GET /sesion': SESION_ADMIN,
+      'GET /admin/consultas/c1': {
+        ...consulta,
+        estado: 'RESPONDIDA',
+        respuestaHtml: '<p>R</p>',
+        fichaId: 'f9',
+      },
+    });
+    renderizar('/panel/consultas/c1', { conSesion: true });
+    expect((await screen.findByRole('link', { name: 'Abrir la ficha' })).getAttribute('href')).toBe(
+      '/panel/fichas/f9',
+    );
+    expect(screen.queryByRole('button', { name: 'Convertir en ficha' })).toBeNull();
+  });
+});

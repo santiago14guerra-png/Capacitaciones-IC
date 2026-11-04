@@ -6,8 +6,8 @@ import {
   type ConsultaAdminDto,
   type EstadoConsulta as Estado,
 } from '@ic/shared';
-import { useState, type FormEvent, type ReactNode } from 'react';
-import { Link, useParams } from 'react-router';
+import { useState, type FormEvent } from 'react';
+import { Link, useNavigate, useParams } from 'react-router';
 import { AvisoError, Campo } from '../../componentes/Campo';
 import { EditorTexto } from '../../componentes/EditorTexto';
 import { EstadoConsulta } from '../../componentes/EstadoConsulta';
@@ -17,8 +17,51 @@ import { Cargando } from '../../lib/sesion';
 import { abrirArchivo } from '../../lib/subida';
 import { useCarga } from '../../lib/useCarga';
 
-/** Espacio para acciones extra (HU-20: convertir la respuesta en ficha). */
-export const ACCIONES_CONSULTA: ((c: ConsultaAdminDto) => ReactNode)[] = [];
+/** HU-20: convierte la respuesta en una ficha borrador anonimizada para revisar. */
+function ConvertirEnFicha({ consulta }: { consulta: ConsultaAdminDto }) {
+  const navegar = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  if (consulta.fichaId) {
+    return (
+      <p className="aviso exito">
+        Esta respuesta ya se convirtió en ficha.{' '}
+        <Link to={`/panel/fichas/${consulta.fichaId}`}>Abrir la ficha</Link>
+      </p>
+    );
+  }
+  if (
+    !consulta.respuestaHtml ||
+    (consulta.estado !== 'RESPONDIDA' && consulta.estado !== 'CERRADA')
+  )
+    return null;
+  return (
+    <div className="tarjeta pila">
+      <h2>Reutilizar la respuesta</h2>
+      <p>
+        Cree una ficha <strong>borrador</strong> con esta pregunta y respuesta. Se quitan nombre,
+        documento, correo, celular y dirección del cliente; revísela, complete resumen y precio, y
+        publíquela.
+      </p>
+      <AvisoError mensaje={error} />
+      <button
+        className="boton secundario"
+        type="button"
+        onClick={async () => {
+          try {
+            const f = await api<{ id: string }>(`/admin/consultas/${consulta.id}/ficha`, {
+              cuerpo: {},
+            });
+            navegar(`/panel/fichas/${f.id}`);
+          } catch (e) {
+            setError(e instanceof Error ? e.message : 'No se pudo convertir');
+          }
+        }}
+      >
+        Convertir en ficha
+      </button>
+    </div>
+  );
+}
 
 function Formulario({
   consulta,
@@ -176,9 +219,7 @@ export default function GestionConsulta() {
         )}
       </dl>
       <Formulario key={datos.estado + datos.respondidaEn} consulta={datos} alGuardar={setDatos} />
-      {ACCIONES_CONSULTA.map((a, i) => (
-        <div key={i}>{a(datos)}</div>
-      ))}
+      <ConvertirEnFicha consulta={datos} />
     </section>
   );
 }

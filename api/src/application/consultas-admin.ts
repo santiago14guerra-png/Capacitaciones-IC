@@ -6,12 +6,17 @@ import {
   textoDeHtml,
   type ConsultaAdminDto,
 } from '@ic/shared';
+import type { FichaAdminDto } from '@ic/shared';
 import type { Actor } from '../domain/actor.js';
+import { anonimizar } from '../domain/anonimizar.js';
+import type { Ficha } from '../domain/ficha.js';
 import { erroresGestion, estaAtrasada, type Consulta } from '../domain/consulta.js';
 import { conflicto, noEncontrado, validacion } from '../domain/errores.js';
 import { sanearHtml } from '../domain/html.js';
 import { correoConsultaRespondida } from '../domain/correos.js';
 import { avisar } from './avisos.js';
+import { invalidarCatalogo } from './catalogo.js';
+import { aFichaAdmin } from './fichas-admin.js';
 import { aConsultaDto } from './consultas.js';
 import type { Contexto } from './contexto.js';
 
@@ -116,4 +121,56 @@ export async function gestionarConsulta(
     );
   }
   return { consulta: await aConsultaAdmin(ctx, nueva), previa, nueva };
+}
+
+/**
+ * HU-20: convierte la respuesta de una consulta en una ficha BORRADOR, anonimizando los
+ * datos del cliente. Nunca se publica sola: el director la revisa, completa resumen y
+ * precio y la publica desde el panel. Una consulta genera una sola ficha.
+ */
+export async function convertirEnFicha(
+  ctx: Contexto,
+  actor: Actor,
+  id: string,
+): Promise<FichaAdminDto> {
+  const c = await exigir(ctx, id);
+  if (c.fichaId) throw conflicto('Esta consulta ya se convirtió en ficha');
+  if (
+    !c.respuestaHtml ||
+    !textoDeHtml(c.respuestaHtml) ||
+    (c.estado !== 'RESPONDIDA' && c.estado !== 'CERRADA')
+  ) {
+    throw conflicto('Solo se convierten consultas respondidas');
+  }
+  const perfil = (await ctx.perfiles.obtener(c.sub)) ?? {
+    correo: c.clienteCorreo,
+    nombres: c.clienteNombre,
+  };
+  const limpio = (t: string) => anonimizar(t, perfil);
+  const categoria = await ctx.categorias.obtener(c.categoriaId);
+  const ahora = ctx.reloj.ahora().toISOString();
+  const ficha: Ficha = {
+    id: ctx.ids.nuevo(),
+    titulo: limpio(c.asunto).slice(0, LIMITES.tituloMax),
+    pregunta: limpio(c.descripcion),
+    resumen: '',
+    respuestaHtml: sanearHtml(limpio(c.respuestaHtml)),
+    categoriaId: categoria?.activa ? categoria.id : '',
+    etiquetas: [],
+    normas: [],
+    precio: null,
+    estado: 'BORRADOR',
+    publicadaAlgunaVez: false,
+    autor: actor.sub,
+    creadaEn: ahora,
+    actualizadaEn: ahora,
+    origenConsultaId: c.id,
+  };
+  // Primero se marca la consulta (condicional): si otra persona ya la convirtió, no se duplica.
+  if (!(await ctx.consultas.reemplazar({ ...c, fichaId: ficha.id, actualizadaEn: ahora }, c))) {
+    throw conflicto('La consulta cambió. Recárguela e intente de nuevo.');
+  }
+  await ctx.fichas.guardar(ficha);
+  invalidarCatalogo(ctx);
+  return aFichaAdmin(ficha);
 }
