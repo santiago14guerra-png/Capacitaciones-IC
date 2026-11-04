@@ -1,4 +1,9 @@
-import { esquemaGuardarPerfil, VERSION_POLITICA_DATOS, type PerfilDto } from '@ic/shared';
+import {
+  esquemaGuardarPerfil,
+  esquemaPerfil,
+  VERSION_POLITICA_DATOS,
+  type PerfilDto,
+} from '@ic/shared';
 import { exigirSesion, type Actor } from '../domain/actor.js';
 import type { Contexto } from './contexto.js';
 
@@ -13,8 +18,11 @@ export async function guardarPerfil(
   cuerpo: unknown,
 ): Promise<PerfilDto> {
   const actor = exigirSesion(a);
-  const { autorizaDatos: _, ...datos } = esquemaGuardarPerfil.parse(cuerpo);
   const previo = await ctx.perfiles.obtener(actor.sub);
+  // HU-23: al editar, la autorización ya consta; solo se exige al crear el perfil (HU-02 CA4).
+  const datos = previo
+    ? esquemaPerfil.parse(cuerpo)
+    : (({ autorizaDatos: _, ...d }) => d)(esquemaGuardarPerfil.parse(cuerpo));
   const ahora = ctx.reloj.ahora().toISOString();
   const perfil: PerfilDto = {
     ...datos,
