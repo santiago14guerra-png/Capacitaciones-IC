@@ -1,6 +1,13 @@
 import { normalizar, palabras, raiz } from '@ic/shared';
 import type { FichaMeta } from './ficha.js';
 
+/** Registro de una búsqueda (HU-09 CA5), sin datos de quien busca. */
+export interface Busqueda {
+  termino: string;
+  fecha: string;
+  resultados: number;
+}
+
 type Campo = 'titulo' | 'etiquetas' | 'resumen' | 'pregunta';
 /** HU-09 CA1: campos en los que se busca y cuánto pesa cada uno. */
 const PESOS: Record<Campo, number> = { titulo: 5, etiquetas: 4, resumen: 2, pregunta: 1 };

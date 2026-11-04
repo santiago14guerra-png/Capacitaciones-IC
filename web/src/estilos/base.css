@@ -696,3 +696,49 @@ th {
 tr.fila-alerta td {
   background: var(--c-error-fondo);
 }
+
+/* ---------- Indicadores (HU-21) ---------- */
+.indicadores {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+.indicador-valor {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--c-primario);
+  margin: 0.2rem 0;
+  font-variant-numeric: tabular-nums;
+}
+.barras {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.barras li {
+  display: grid;
+  grid-template-columns: minmax(0, 11rem) 1fr auto;
+  gap: 0.6rem;
+  align-items: center;
+  font-size: 0.9rem;
+}
+.barras-pista {
+  background: #eef1f5;
+  border-radius: 4px;
+  height: 14px;
+  overflow: hidden;
+}
+.barras-barra {
+  display: block;
+  height: 100%;
+  background: var(--c-primario);
+  border-radius: 4px;
+}
+@media (max-width: 480px) {
+  .barras li {
+    grid-template-columns: 1fr auto;
+  }
+  .barras-etiqueta {
+    grid-column: 1 / -1;
+  }
+}
