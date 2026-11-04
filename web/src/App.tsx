@@ -13,6 +13,7 @@ import NoEncontrada from './paginas/NoEncontrada';
 import DisenoPanel from './paginas/panel/DisenoPanel';
 import InicioPanel from './paginas/panel/InicioPanel';
 import CategoriasPanel from './paginas/panel/Categorias';
+import NuevaFicha from './paginas/panel/NuevaFicha';
 import Registro from './paginas/Registro';
 
 export const rutas = [
@@ -47,6 +48,7 @@ export const rutas = [
         children: [
           { index: true, element: <InicioPanel /> },
           { path: 'categorias', element: <CategoriasPanel /> },
+          { path: 'fichas/nueva', element: <NuevaFicha /> },
         ],
       },
       { path: '*', element: <NoEncontrada /> },

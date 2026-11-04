@@ -59,6 +59,8 @@ export interface FichaAdminDto {
   autor: string;
   creadaEn: string;
   actualizadaEn: string;
+  vigenteA?: string;
+  origenConsultaId?: string;
 }
 
 export interface Pagina<T> {
