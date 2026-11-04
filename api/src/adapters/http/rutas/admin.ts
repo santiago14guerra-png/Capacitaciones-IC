@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import type { Contexto } from '../../../application/contexto.js';
 import type { Entorno } from '../app.js';
+import { exportarSiigo } from '../../../application/exportacion-siigo.js';
 import { soloPersonal } from '../admin.js';
 import { rutasCategoriasAdmin } from './categorias.js';
 import { rutasConsultasAdmin } from './consultas-admin.js';
@@ -16,5 +17,12 @@ export function rutasAdmin(ctx: Contexto) {
   admin.route('/fichas', rutasFichasAdmin(ctx));
   admin.route('/pagos', rutasPagosAdmin(ctx));
   admin.route('/consultas', rutasConsultasAdmin(ctx));
+  admin.get('/exportaciones/siigo', async (c) => {
+    const { nombre, contenido } = await exportarSiigo(ctx, c.req.query());
+    return c.body(contenido as Uint8Array<ArrayBuffer>, 200, {
+      'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'content-disposition': `attachment; filename="${nombre}"`,
+    });
+  });
   return admin;
 }
