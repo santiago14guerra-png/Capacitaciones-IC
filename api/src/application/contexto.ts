@@ -1,4 +1,5 @@
 import type {
+  Almacen,
   Contadores,
   RepoCompras,
   DirectorioUsuarios,
@@ -19,5 +20,6 @@ export interface Contexto extends Sistema {
   busquedas: RepoBusquedas;
   compras: RepoCompras;
   contadores: Contadores;
+  archivos: Almacen;
   negocio: ConfigNegocio;
 }

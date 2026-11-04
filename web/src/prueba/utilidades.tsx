@@ -16,7 +16,12 @@ export function simularApi(rutasApi: RutasFalsas) {
     const url = new URL(String(entrada), 'http://localhost');
     const metodo = init?.method ?? 'GET';
     const ruta = url.pathname.replace(/^\/api/, '');
-    const cuerpo = init?.body ? JSON.parse(String(init.body)) : undefined;
+    const cuerpo =
+      init?.body instanceof FormData
+        ? Object.fromEntries(init.body.entries())
+        : init?.body
+          ? JSON.parse(String(init.body))
+          : undefined;
     llamadas.push({ metodo, ruta, cuerpo, url });
     const r = rutasApi[`${metodo} ${ruta}`];
     if (r === undefined) {

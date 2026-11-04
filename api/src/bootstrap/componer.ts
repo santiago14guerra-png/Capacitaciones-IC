@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { Contexto } from '../application/contexto.js';
-import type { DirectorioUsuarios, Reloj } from '../application/puertos.js';
+import type { Almacen, DirectorioUsuarios, Reloj } from '../application/puertos.js';
 import { RepoBusquedasDynamo } from '../adapters/dynamodb/repo-busquedas.js';
 import { ContadoresDynamo, RepoComprasDynamo } from '../adapters/dynamodb/repo-compras.js';
 import { RepoCategoriasDynamo } from '../adapters/dynamodb/repo-categorias.js';
@@ -12,6 +12,7 @@ import { configNegocio, type ConfigNegocio } from '../domain/negocio.js';
 export interface Piezas {
   tabla: Tabla;
   directorio: DirectorioUsuarios;
+  archivos: Almacen;
   reloj?: Reloj;
   negocio?: ConfigNegocio;
 }
@@ -20,6 +21,7 @@ export interface Piezas {
 export function componer({
   tabla,
   directorio,
+  archivos,
   reloj = { ahora: () => new Date() },
   negocio = configNegocio(),
 }: Piezas): Contexto {
@@ -34,6 +36,7 @@ export function componer({
     busquedas: new RepoBusquedasDynamo(tabla, ids.nuevo),
     compras: new RepoComprasDynamo(tabla),
     contadores: new ContadoresDynamo(tabla),
+    archivos,
     negocio,
   };
 }
