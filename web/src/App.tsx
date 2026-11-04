@@ -9,6 +9,7 @@ import NuevaConsulta from './paginas/consultas/NuevaConsulta';
 import MisConsultas from './paginas/consultas/MisConsultas';
 import MiConsulta from './paginas/consultas/MiConsulta';
 import MiCuenta from './paginas/cuenta/MiCuenta';
+import EditarPerfil from './paginas/cuenta/EditarPerfil';
 import ConfirmarCuenta from './paginas/ConfirmarCuenta';
 import Buscar from './paginas/Buscar';
 import Catalogo from './paginas/Catalogo';
@@ -83,6 +84,14 @@ export const rutas = [
         element: (
           <RequiereSesion>
             <MiConsulta />
+          </RequiereSesion>
+        ),
+      },
+      {
+        path: 'cuenta/perfil',
+        element: (
+          <RequiereSesion>
+            <EditarPerfil />
           </RequiereSesion>
         ),
       },
