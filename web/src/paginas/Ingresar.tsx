@@ -46,6 +46,11 @@ export default function Ingresar() {
   return (
     <section className="formulario">
       <h1>Ingresar</h1>
+      {params.get('restablecida') && !error && (
+        <p className="aviso exito" role="status">
+          Su contraseña se cambió. Ingrese con la nueva.
+        </p>
+      )}
       {error && (
         <div className="aviso error" role="alert">
           <p>{error.mensaje}</p>

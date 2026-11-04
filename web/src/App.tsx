@@ -29,6 +29,7 @@ import ExportarSiigo from './paginas/panel/ExportarSiigo';
 import Indicadores from './paginas/panel/Indicadores';
 import ConsultasPanel from './paginas/panel/Consultas';
 import GestionConsulta from './paginas/panel/GestionConsulta';
+import Recuperar from './paginas/Recuperar';
 import Registro from './paginas/Registro';
 
 export const rutas = [
@@ -41,6 +42,7 @@ export const rutas = [
       { path: 'fichas/:id', element: <DetalleFicha /> },
       { path: 'ingresar', element: <Ingresar /> },
       { path: 'registro', element: <Registro /> },
+      { path: 'recuperar', element: <Recuperar /> },
       { path: 'registro/confirmar', element: <ConfirmarCuenta /> },
       { path: 'privacidad', element: <PoliticaDatos /> },
       { path: 'terminos', element: <Terminos /> },
