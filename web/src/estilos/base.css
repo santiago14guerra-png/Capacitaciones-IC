@@ -158,22 +158,42 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem 1rem;
-  min-height: 68px;
+  min-height: 80px;
 }
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--c-campo);
+  text-decoration: none;
+}
+.logo-marca {
+  display: block;
+  height: 56px;
+  width: auto;
+  flex: none;
+}
+.logo-texto {
   font-family: var(--fuente-titulos);
   font-weight: 600;
-  font-size: 1.12rem;
-  color: var(--c-texto);
-  text-decoration: none;
+  font-size: 0.95rem;
   line-height: 1.15;
+  color: var(--c-texto);
 }
-.logo small {
+.pie-marca {
   display: block;
-  font-family: var(--fuente);
-  font-weight: 500;
-  font-size: 0.8rem;
-  color: var(--c-texto-suave);
+  height: 64px;
+  width: auto;
+  color: var(--c-campo-texto);
+  margin-bottom: 0.75rem;
+}
+@media (max-width: 480px) {
+  .logo-marca {
+    height: 44px;
+  }
+  .logo-texto {
+    font-size: 0.85rem;
+  }
 }
 .nav {
   display: flex;
