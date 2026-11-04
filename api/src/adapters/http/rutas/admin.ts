@@ -3,6 +3,7 @@ import type { Contexto } from '../../../application/contexto.js';
 import type { Entorno } from '../app.js';
 import { soloPersonal } from '../admin.js';
 import { rutasCategoriasAdmin } from './categorias.js';
+import { rutasConsultasAdmin } from './consultas-admin.js';
 import { rutasFichasAdmin } from './fichas-admin.js';
 import { rutasPagosAdmin } from './pagos-admin.js';
 
@@ -14,5 +15,6 @@ export function rutasAdmin(ctx: Contexto) {
   admin.route('/categorias', rutasCategoriasAdmin(ctx));
   admin.route('/fichas', rutasFichasAdmin(ctx));
   admin.route('/pagos', rutasPagosAdmin(ctx));
+  admin.route('/consultas', rutasConsultasAdmin(ctx));
   return admin;
 }

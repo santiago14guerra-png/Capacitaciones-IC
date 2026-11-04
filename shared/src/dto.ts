@@ -168,6 +168,8 @@ export interface ConsultaAdminDto extends ConsultaDto {
   clienteNombre: string;
   clienteCorreo: string;
   atrasada: boolean;
+  /** Ficha creada a partir de esta consulta (HU-20). */
+  fichaId?: string;
 }
 
 export interface IndicadoresDto {

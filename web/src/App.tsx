@@ -23,6 +23,8 @@ import NuevaFicha from './paginas/panel/NuevaFicha';
 import FichasPanel from './paginas/panel/Fichas';
 import EditarFicha from './paginas/panel/EditarFicha';
 import Pagos from './paginas/panel/Pagos';
+import ConsultasPanel from './paginas/panel/Consultas';
+import GestionConsulta from './paginas/panel/GestionConsulta';
 import Registro from './paginas/Registro';
 
 export const rutas = [
@@ -88,6 +90,8 @@ export const rutas = [
           { path: 'fichas/nueva', element: <NuevaFicha /> },
           { path: 'fichas/:id', element: <EditarFicha /> },
           { path: 'pagos', element: <Pagos /> },
+          { path: 'consultas', element: <ConsultasPanel /> },
+          { path: 'consultas/:id', element: <GestionConsulta /> },
         ],
       },
       { path: '*', element: <NoEncontrada /> },
