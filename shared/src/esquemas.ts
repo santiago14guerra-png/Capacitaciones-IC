@@ -71,6 +71,34 @@ export const esquemaFicha = z.object({
 });
 export type DatosFicha = z.infer<typeof esquemaFicha>;
 
+/** Texto visible de un HTML, para saber si el editor quedó vacío. */
+export const textoDeHtml = (html: string) =>
+  html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;|&#160;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/** HU-05 CA2: para publicar son obligatorios título, pregunta, resumen, respuesta, categoría y precio. */
+export function erroresPublicacion(d: DatosFicha): Record<string, string> {
+  const e: Record<string, string> = {};
+  if (!d.titulo) e.titulo = requerido;
+  if (!d.pregunta) e.pregunta = requerido;
+  if (!d.resumen) e.resumen = requerido;
+  if (!textoDeHtml(d.respuestaHtml)) e.respuestaHtml = requerido;
+  if (!d.categoriaId) e.categoriaId = 'Elija una categoría';
+  if (d.precio === null) e.precio = 'Indique el precio (0 si es gratuita)';
+  return e;
+}
+
+/** Un borrador puede guardarse incompleto; una ficha publicada no. */
+export const esquemaGuardarFicha = esquemaFicha.superRefine((d, ctx) => {
+  if (!d.publicar) return;
+  for (const [campo, message] of Object.entries(erroresPublicacion(d))) {
+    ctx.addIssue({ code: 'custom', path: [campo], message });
+  }
+});
+
 export const esquemaCategoria = z.object({ nombre: texto(80) });
 export const esquemaOrdenCategorias = z.object({ ids: z.array(z.string()).min(1) });
 export const esquemaReasignarCategoria = z.object({ destinoId: texto(64) });
