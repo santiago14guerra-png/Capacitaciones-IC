@@ -58,9 +58,10 @@ export function VistaFicha({
         </p>
       )}
       <section aria-label="Respuesta">{respuesta}</section>
-      <p className="aviso info pequeno">
-        {AVISO_ASESORIA}. {aviso}
-      </p>
+      <div className="aviso info pequeno">
+        <p style={{ margin: 0 }}>{AVISO_ASESORIA}.</p>
+        {aviso}
+      </div>
     </article>
   );
 }

@@ -7,6 +7,7 @@ import MiCuenta from './paginas/cuenta/MiCuenta';
 import ConfirmarCuenta from './paginas/ConfirmarCuenta';
 import Buscar from './paginas/Buscar';
 import Catalogo from './paginas/Catalogo';
+import DetalleFicha from './paginas/DetalleFicha';
 import Ingresar from './paginas/Ingresar';
 import Inicio from './paginas/Inicio';
 import PoliticaDatos from './paginas/legal/PoliticaDatos';
@@ -27,6 +28,7 @@ export const rutas = [
       { index: true, element: <Inicio /> },
       { path: 'catalogo', element: <Catalogo /> },
       { path: 'buscar', element: <Buscar /> },
+      { path: 'fichas/:id', element: <DetalleFicha /> },
       { path: 'ingresar', element: <Ingresar /> },
       { path: 'registro', element: <Registro /> },
       { path: 'registro/confirmar', element: <ConfirmarCuenta /> },

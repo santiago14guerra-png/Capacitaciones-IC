@@ -3,6 +3,7 @@ import { Hono } from 'hono';
 import { buscarFichas } from '../../../application/busqueda.js';
 import { catalogo } from '../../../application/catalogo.js';
 import type { Contexto } from '../../../application/contexto.js';
+import { detalleFicha } from '../../../application/detalle-ficha.js';
 import type { Entorno } from '../app.js';
 
 export const rutasCatalogo = (ctx: Contexto) =>
@@ -20,6 +21,9 @@ export const rutasCatalogo = (ctx: Contexto) =>
           registrar: c.req.query('sugerencia') !== '1',
         }),
       ),
+    )
+    .get('/fichas/:id', async (c) =>
+      c.json(await detalleFicha(ctx, c.var.actor, c.req.param('id'))),
     )
     .get('/fichas', async (c) =>
       c.json(
