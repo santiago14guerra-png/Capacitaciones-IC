@@ -30,6 +30,8 @@ export interface PlataformaProps extends StackProps {
   correoRemitente?: string;
   /** Dominio o correo verificado en SES para Cognito. Sin él, Cognito usa su remitente por defecto. */
   dominioSes?: string;
+  /** Contacto, tarifas y datos bancarios (cdk.json → negocio). Vacíos = [PENDIENTE]. */
+  negocio?: Record<string, string>;
 }
 
 /**
@@ -229,6 +231,9 @@ export class PlataformaStack extends Stack {
         SITIO_URL: urlSitio,
         CORREO_REMITENTE: props.correoRemitente ?? '',
         NODE_OPTIONS: '--enable-source-maps',
+        ...Object.fromEntries(
+          Object.entries(props.negocio ?? {}).filter(([k, v]) => /^[A-Z_]+$/.test(k) && v),
+        ),
       },
     });
     tabla.grantReadWriteData(api);

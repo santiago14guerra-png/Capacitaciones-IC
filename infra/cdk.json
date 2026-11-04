@@ -6,7 +6,20 @@
     "ramaDespliegue": "develop",
     "correoRemitente": "",
     "dominioSes": "",
+    "negocio": {
+      "_nota": "Datos que entrega la empresa. Vacíos se muestran como [PENDIENTE]. No inventar.",
+      "CONTACTO_CORREO": "",
+      "CONTACTO_WHATSAPP": "",
+      "TARIFA_CONSULTA_RAPIDA": "",
+      "TARIFA_ASESORIA": "",
+      "BANCO_NOMBRE": "",
+      "BANCO_TIPO_CUENTA": "",
+      "BANCO_NUMERO_CUENTA": "",
+      "BANCO_TITULAR": ""
+    },
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
-    "@aws-cdk/core:target-partitions": ["aws"]
+    "@aws-cdk/core:target-partitions": [
+      "aws"
+    ]
   }
 }

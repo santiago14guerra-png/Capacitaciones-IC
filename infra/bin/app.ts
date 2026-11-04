@@ -12,6 +12,7 @@ new PlataformaStack(app, 'IcDev', {
   conWeb: ctx('conWeb') === 'true',
   correoRemitente: ctx('correoRemitente'),
   dominioSes: ctx('dominioSes'),
+  negocio: app.node.tryGetContext('negocio') as Record<string, string> | undefined,
   description: 'Capacitaciones IC · Respuestas para Personas Naturales · ambiente dev',
 });
 

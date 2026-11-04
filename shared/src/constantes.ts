@@ -73,3 +73,7 @@ export const AVISO_ASESORIA =
  * Cambiarla cuando el abogado apruebe el texto definitivo.
  */
 export const VERSION_POLITICA_DATOS = '0.1-borrador';
+
+/** Un dato que la empresa aún no ha entregado. Nunca se inventa: se muestra así. */
+export const pendiente = (que: string) => `[PENDIENTE: ${que}]`;
+export const esPendiente = (valor: string) => valor.startsWith('[PENDIENTE');

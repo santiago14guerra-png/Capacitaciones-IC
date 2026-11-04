@@ -29,7 +29,6 @@ export interface FichaResumenDto {
   etiquetas: string[];
   precio: number;
   vigenteA: string;
-  fragmentos?: { titulo?: string; resumen?: string };
 }
 
 export interface FichaDetalleDto extends FichaResumenDto {
@@ -172,8 +171,10 @@ export interface IndicadoresDto {
   cobroPct: number | null;
 }
 
+/** Datos de contacto y tarifas. Mientras la empresa no los entregue, llegan como [PENDIENTE: …]. */
 export interface ConfigPublicaDto {
   correo: string;
+  /** Número internacional sin signos (57300…) o marcador pendiente. */
   whatsapp: string;
   tarifas: { consultaRapida: string; asesoria: string };
 }

@@ -524,3 +524,44 @@ th {
   color: var(--c-texto-suave);
   text-align: right;
 }
+
+/* ---------- Catálogo (HU-08) ---------- */
+.catalogo-cuerpo {
+  display: grid;
+  gap: 1.5rem;
+}
+.catalogo-filtros {
+  background: var(--c-superficie);
+  border: 1px solid var(--c-borde);
+  border-radius: var(--radio);
+  padding: 1rem;
+  align-self: start;
+}
+@media (min-width: 900px) {
+  .catalogo-cuerpo {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+}
+.tarjeta-ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.tarjeta-ficha h3 {
+  margin: 0.25rem 0 0;
+}
+.tarjeta-ficha h3 a {
+  text-decoration: none;
+}
+.tarjeta-ficha h3 a:hover {
+  text-decoration: underline;
+}
+.tarjeta-ficha p {
+  margin: 0;
+}
+.tarjeta-precio {
+  color: var(--c-acento);
+}
+.paginacion {
+  justify-content: center;
+}

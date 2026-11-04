@@ -6,6 +6,7 @@ import type { VerificadorToken } from '../../application/puertos.js';
 import type { Actor } from '../../domain/actor.js';
 import { ErrorDominio } from '../../domain/errores.js';
 import { rutasAdmin } from './rutas/admin.js';
+import { rutasCatalogo } from './rutas/catalogo.js';
 import { rutasCategorias } from './rutas/categorias.js';
 import { rutasPerfil } from './rutas/perfil.js';
 import { rutasSesion } from './rutas/sesion.js';
@@ -33,6 +34,7 @@ export function crearApp(deps: Dependencias, extras?: (app: Hono<Entorno>) => vo
   app.route('/', rutasSesion(deps));
   app.route('/', rutasPerfil(deps));
   app.route('/', rutasCategorias(deps));
+  app.route('/', rutasCatalogo(deps));
   app.route('/admin', rutasAdmin(deps));
   extras?.(app);
 

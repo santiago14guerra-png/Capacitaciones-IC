@@ -11,6 +11,7 @@ import type { Actor } from '../domain/actor.js';
 import { conflicto, noEncontrado, validacion } from '../domain/errores.js';
 import type { Ficha } from '../domain/ficha.js';
 import { sanearHtml } from '../domain/html.js';
+import { invalidarCatalogo } from './catalogo.js';
 import type { Contexto } from './contexto.js';
 
 const unicos = (xs: string[]) => {
@@ -59,6 +60,7 @@ export async function crearFicha(
     vigenteA: publicar ? ahora : undefined,
   };
   await ctx.fichas.guardar(ficha);
+  invalidarCatalogo(ctx);
   return aFichaAdmin(ficha);
 }
 
@@ -128,6 +130,7 @@ export async function editarFicha(
     vigenteA: publicar ? ahora : previa.vigenteA,
   };
   await ctx.fichas.guardar(ficha);
+  invalidarCatalogo(ctx);
   return aFichaAdmin(ficha);
 }
 
@@ -141,6 +144,7 @@ export async function despublicarFicha(ctx: Contexto, id: string): Promise<Ficha
     actualizadaEn: ctx.reloj.ahora().toISOString(),
   };
   await ctx.fichas.guardarMeta(nueva);
+  invalidarCatalogo(ctx);
   return aFichaAdmin(nueva);
 }
 
@@ -153,4 +157,5 @@ export async function eliminarFicha(ctx: Contexto, id: string) {
     );
   }
   await ctx.fichas.borrar(id);
+  invalidarCatalogo(ctx);
 }
