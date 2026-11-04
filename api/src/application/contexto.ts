@@ -1,4 +1,6 @@
 import type {
+  Contadores,
+  RepoCompras,
   DirectorioUsuarios,
   RepoBusquedas,
   RepoCategorias,
@@ -15,5 +17,7 @@ export interface Contexto extends Sistema {
   categorias: RepoCategorias;
   fichas: RepoFichas;
   busquedas: RepoBusquedas;
+  compras: RepoCompras;
+  contadores: Contadores;
   negocio: ConfigNegocio;
 }

@@ -24,3 +24,14 @@ export function fichaDePrueba(cambios: Partial<Ficha> = {}): Ficha {
     ...cambios,
   };
 }
+
+export const DATOS_PERFIL = {
+  nombres: 'Ana María',
+  apellidos: 'Ruiz Gómez',
+  tipoDocumento: 'CC',
+  numeroDocumento: '43123456',
+  celular: '3001234567',
+  direccion: 'Calle 10 # 20-30',
+  ciudad: 'Medellín',
+  autorizaDatos: true,
+};

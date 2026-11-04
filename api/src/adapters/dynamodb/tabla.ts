@@ -30,9 +30,20 @@ export class Tabla {
     return (r.Item as T) ?? null;
   }
 
-  async poner(item: Item, condicion?: string): Promise<void> {
+  async poner(
+    item: Item,
+    condicion?: string,
+    valores?: Item,
+    nombres?: Record<string, string>,
+  ): Promise<void> {
     await this.doc.send(
-      new PutCommand({ TableName: this.nombre, Item: item, ConditionExpression: condicion }),
+      new PutCommand({
+        TableName: this.nombre,
+        Item: item,
+        ConditionExpression: condicion,
+        ExpressionAttributeValues: valores,
+        ExpressionAttributeNames: nombres,
+      }),
     );
   }
 

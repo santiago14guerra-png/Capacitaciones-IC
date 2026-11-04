@@ -1,6 +1,7 @@
 import { LIMITES, type FichaDetalleDto } from '@ic/shared';
 import { puedeVerFicha, tieneAcceso } from '../domain/acceso.js';
 import type { Actor } from '../domain/actor.js';
+import { idCompra } from '../domain/compra.js';
 import { noEncontrado } from '../domain/errores.js';
 import { aResumen, fichasPublicadas, masRecientes, nombresCategorias } from './catalogo.js';
 import type { Contexto } from './contexto.js';
@@ -14,8 +15,11 @@ export async function detalleFicha(
   actor: Actor | null,
   id: string,
 ): Promise<FichaDetalleDto> {
-  const meta = await ctx.fichas.obtenerMeta(id);
-  const compraAprobada = false; // HU-11 a HU-14: compra por par usuario/ficha.
+  const [meta, compra] = await Promise.all([
+    ctx.fichas.obtenerMeta(id),
+    actor ? ctx.compras.obtener(actor.sub, id) : Promise.resolve(null),
+  ]);
+  const compraAprobada = compra?.estado === 'APROBADA';
   if (!meta || !puedeVerFicha(actor, meta, compraAprobada))
     throw noEncontrado('La respuesta no existe o ya no está disponible');
   const acceso = tieneAcceso(actor, meta, compraAprobada);
@@ -36,6 +40,9 @@ export async function detalleFicha(
     estado: meta.estado,
     tieneAcceso: acceso,
     ...(acceso && completa ? { respuestaHtml: completa.respuestaHtml } : {}),
+    ...(compra
+      ? { compra: { id: idCompra(compra), estado: compra.estado, referencia: compra.referencia } }
+      : {}),
     enRevision: meta.estado !== 'PUBLICADA',
     relacionadas,
   };

@@ -106,3 +106,16 @@ describe('T-06 rol OIDC', () => {
     });
   });
 });
+
+describe('reescritura del sitio', () => {
+  it('envía rutas con puntos a index.html y deja pasar los archivos', () => {
+    const f = Object.values(t.findResources('AWS::CloudFront::Function'))[0]!;
+    const codigo: string = f.Properties.FunctionCode;
+    const handler = new Function(`${codigo}; return handler;`)();
+    const uri = (u: string) => handler({ request: { uri: u } }).uri;
+    expect(uri('/compras/abc-123.def-456')).toBe('/index.html');
+    expect(uri('/fichas/x')).toBe('/index.html');
+    expect(uri('/assets/index-abc.js')).toBe('/assets/index-abc.js');
+    expect(uri('/config.json')).toBe('/config.json');
+  });
+});

@@ -2,7 +2,8 @@ import type { Actor } from '../domain/actor.js';
 import type { Categoria } from '../domain/categoria.js';
 import type { Ficha, FichaMeta } from '../domain/ficha.js';
 import type { Perfil } from '../domain/perfil.js';
-import type { EstadoFicha } from '@ic/shared';
+import type { EstadoCompra, EstadoFicha } from '@ic/shared';
+import type { Compra } from '../domain/compra.js';
 
 /** Verifica un token y devuelve el actor; null si es inválido o venció. */
 export interface VerificadorToken {
@@ -58,4 +59,21 @@ export interface RepoBusquedas {
   registrar(b: Busqueda): Promise<void>;
   /** `mes` en formato aaaa-mm. */
   listarMes(mes: string): Promise<Busqueda[]>;
+}
+
+export interface RepoCompras {
+  obtener(sub: string, fichaId: string): Promise<Compra | null>;
+  /** Crea si no existe o si la anterior fue rechazada; false si otra petición ganó. */
+  crear(compra: Compra): Promise<boolean>;
+  /** Reemplaza solo si nadie la cambió desde `previa` (escritura condicional). */
+  reemplazar(nueva: Compra, previa: Compra): Promise<boolean>;
+  listarDeUsuario(sub: string): Promise<Compra[]>;
+  listarPorEstado(estado: EstadoCompra, desde?: string, hasta?: string): Promise<Compra[]>;
+  /** Todas las compras creadas en el periodo (índice gsi2). */
+  listarCreadasEntre(desde: string, hasta: string): Promise<Compra[]>;
+}
+
+/** Números consecutivos atómicos (UpdateItem ADD). */
+export interface Contadores {
+  siguiente(nombre: 'COMPRA' | 'CONSULTA'): Promise<number>;
 }
