@@ -16,11 +16,6 @@ const categorias = [
   { id: 'a', nombre: 'Arrendamientos', orden: 0, activa: true },
   { id: 'p', nombre: 'Pensionados', orden: 1, activa: true },
 ];
-const config = {
-  correo: '[PENDIENTE: correo institucional]',
-  whatsapp: '573001234567',
-  tarifas: {},
-};
 
 describe('HU-08 · catálogo', () => {
   it('CA1 y CA5: sin sesión muestra tarjetas con título, categoría, etiquetas, precio y vigencia', async () => {
@@ -54,21 +49,16 @@ describe('HU-08 · catálogo', () => {
     await waitFor(() => expect(llamadas.at(-1)!.url.searchParams.get('pagina')).toBe('2'));
   });
 
-  it('CA4: sin resultados muestra un mensaje y el contacto de la empresa', async () => {
+  it('CA4: sin resultados muestra un mensaje y la opción «Enviar mi consulta» (Sprint 2)', async () => {
     simularApi({
       'GET /categorias': categorias,
       'GET /fichas': { elementos: [], pagina: 1, totalPaginas: 1, total: 0 },
-      'GET /config': config,
     });
     renderizar('/catalogo?categoria=p');
     const vacio = (await screen.findByRole('heading', { name: /No encontramos respuestas/ }))
       .parentElement!;
-    await waitFor(() =>
-      expect(within(vacio).getByRole('link', { name: 'Escribirnos por WhatsApp' })).toBeTruthy(),
-    );
     expect(
-      within(vacio).getByRole('link', { name: 'Escribirnos por WhatsApp' }).getAttribute('href'),
-    ).toBe('https://wa.me/573001234567');
-    expect(vacio.textContent).toContain('[PENDIENTE: correo institucional]');
+      within(vacio).getByRole('link', { name: 'Enviar mi consulta' }).getAttribute('href'),
+    ).toBe('/consultas/nueva');
   });
 });

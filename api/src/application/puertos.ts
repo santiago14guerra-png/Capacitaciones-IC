@@ -4,6 +4,7 @@ import type { Ficha, FichaMeta } from '../domain/ficha.js';
 import type { Perfil } from '../domain/perfil.js';
 import type { EstadoCompra, EstadoFicha, SubidaDto, TipoArchivo } from '@ic/shared';
 import type { Compra } from '../domain/compra.js';
+import type { Consulta } from '../domain/consulta.js';
 
 /** Verifica un token y devuelve el actor; null si es inválido o venció. */
 export interface VerificadorToken {
@@ -84,4 +85,13 @@ export interface Almacen {
   firmarSubida(llave: string, tipo: TipoArchivo, maxBytes: number): Promise<SubidaDto>;
   info(llave: string): Promise<{ tamano: number; tipo: string } | null>;
   firmarDescarga(llave: string): Promise<string>;
+}
+
+export interface RepoConsultas {
+  guardar(c: Consulta): Promise<void>;
+  obtener(id: string): Promise<Consulta | null>;
+  /** Reemplaza solo si nadie la cambió desde `previa`. */
+  reemplazar(nueva: Consulta, previa: Consulta): Promise<boolean>;
+  listarTodas(): Promise<Consulta[]>;
+  listarDeUsuario(sub: string): Promise<Consulta[]>;
 }

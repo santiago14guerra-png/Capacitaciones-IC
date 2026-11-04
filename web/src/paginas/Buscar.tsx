@@ -2,7 +2,6 @@ import { LIMITES, type ResultadoBusquedaDto } from '@ic/shared';
 import { Link, useSearchParams } from 'react-router';
 import { Buscador } from '../componentes/Buscador';
 import { AvisoError } from '../componentes/Campo';
-import { Contacto } from '../componentes/Contacto';
 import { Resaltado } from '../componentes/Resaltado';
 import { TarjetaFicha } from '../componentes/TarjetaFicha';
 import { api } from '../lib/api';
@@ -40,9 +39,11 @@ export default function Buscar() {
               <p>
                 Pruebe con otras palabras o revise el{' '}
                 <Link to="/catalogo">catálogo por categorías</Link>. Si no encuentra su caso,
-                escríbanos:
+                envíenos su consulta.
               </p>
-              <Contacto />
+              <Link className="boton" to="/consultas/nueva">
+                Enviar mi consulta
+              </Link>
             </div>
           )}
           <div className="rejilla">
