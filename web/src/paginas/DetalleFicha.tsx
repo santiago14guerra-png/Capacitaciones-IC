@@ -2,7 +2,6 @@ import type { CompraDto, FichaDetalleDto } from '@ic/shared';
 import { useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { AvisoError } from '../componentes/Campo';
-import { Contacto } from '../componentes/Contacto';
 import { EstadoCompra } from '../componentes/EstadoCompra';
 import { HtmlSeguro } from '../componentes/HtmlSeguro';
 import { TarjetaFicha } from '../componentes/TarjetaFicha';
@@ -134,9 +133,8 @@ export default function DetalleFicha() {
         aviso={
           <div>
             <p style={{ margin: '0.4rem 0 0' }}>
-              ¿Necesita una asesoría personalizada? Escríbanos:
+              ¿Su caso es distinto? <Link to="/consultas/nueva">Solicite una asesoría</Link>.
             </p>
-            <Contacto />
           </div>
         }
       />

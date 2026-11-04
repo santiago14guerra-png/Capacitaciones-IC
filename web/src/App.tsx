@@ -5,6 +5,7 @@ import { ProveedorSesion, RequiereSesion } from './lib/sesion';
 import DetalleCompra from './paginas/compras/DetalleCompra';
 import Biblioteca from './paginas/cuenta/Biblioteca';
 import CompletarPerfil from './paginas/cuenta/CompletarPerfil';
+import NuevaConsulta from './paginas/consultas/NuevaConsulta';
 import MiCuenta from './paginas/cuenta/MiCuenta';
 import ConfirmarCuenta from './paginas/ConfirmarCuenta';
 import Buscar from './paginas/Buscar';
@@ -50,6 +51,14 @@ export const rutas = [
         element: (
           <RequiereSesion>
             <DetalleCompra />
+          </RequiereSesion>
+        ),
+      },
+      {
+        path: 'consultas/nueva',
+        element: (
+          <RequiereSesion>
+            <NuevaConsulta />
           </RequiereSesion>
         ),
       },

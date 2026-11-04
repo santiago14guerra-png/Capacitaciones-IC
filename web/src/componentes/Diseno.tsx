@@ -52,6 +52,7 @@ export function Diseno() {
           </Link>
           <nav className="nav" aria-label="Principal">
             <NavLink to="/catalogo">Catálogo</NavLink>
+            <NavLink to="/consultas/nueva">Consultar</NavLink>
             <MenuUsuario />
           </nav>
         </div>

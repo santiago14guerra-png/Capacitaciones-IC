@@ -1,7 +1,6 @@
 import type { CategoriaDto, FichaResumenDto, Pagina } from '@ic/shared';
-import { useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { AvisoError } from '../componentes/Campo';
-import { Contacto } from '../componentes/Contacto';
 import { Paginacion } from '../componentes/Paginacion';
 import { TarjetaFicha } from '../componentes/TarjetaFicha';
 import { api } from '../lib/api';
@@ -84,8 +83,10 @@ export default function Catalogo() {
           {fichas.datos?.total === 0 && (
             <div className="tarjeta pila" role="status">
               <h2>No encontramos respuestas con estos filtros</h2>
-              <p>Pruebe con otras categorías o escríbanos y le ayudamos:</p>
-              <Contacto />
+              <p>Pruebe con otras categorías o envíenos su caso y un director le responde.</p>
+              <Link className="boton" to="/consultas/nueva">
+                Enviar mi consulta
+              </Link>
             </div>
           )}
           <div className="rejilla">

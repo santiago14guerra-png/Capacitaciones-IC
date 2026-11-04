@@ -1,4 +1,5 @@
 import type {
+  RepoConsultas,
   Almacen,
   Contadores,
   RepoCompras,
@@ -19,6 +20,7 @@ export interface Contexto extends Sistema {
   fichas: RepoFichas;
   busquedas: RepoBusquedas;
   compras: RepoCompras;
+  consultas: RepoConsultas;
   contadores: Contadores;
   archivos: Almacen;
   negocio: ConfigNegocio;
