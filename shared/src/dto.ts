@@ -137,6 +137,9 @@ export interface CompraDto {
 export interface CompraAdminDto extends CompraDto {
   clienteNombre: string;
   clienteCorreo: string;
+  comprobanteSubidoEn?: string;
+  decididaPor?: string;
+  decididaEn?: string;
 }
 
 export interface SubidaDto {

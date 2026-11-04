@@ -20,6 +20,7 @@ import CategoriasPanel from './paginas/panel/Categorias';
 import NuevaFicha from './paginas/panel/NuevaFicha';
 import FichasPanel from './paginas/panel/Fichas';
 import EditarFicha from './paginas/panel/EditarFicha';
+import Pagos from './paginas/panel/Pagos';
 import Registro from './paginas/Registro';
 
 export const rutas = [
@@ -68,6 +69,7 @@ export const rutas = [
           { path: 'fichas', element: <FichasPanel /> },
           { path: 'fichas/nueva', element: <NuevaFicha /> },
           { path: 'fichas/:id', element: <EditarFicha /> },
+          { path: 'pagos', element: <Pagos /> },
         ],
       },
       { path: '*', element: <NoEncontrada /> },
