@@ -28,3 +28,15 @@ chore(T-06): agregar pipeline de despliegue a dev
 ```bash
 npm run check
 ```
+
+## Integración continua (T-06)
+
+| Flujo | Cuándo | Qué hace |
+| --- | --- | --- |
+| `ci.yml` | Cada pull request a `develop` o `main` | `npm run check` y `cdk synth` |
+| `desplegar-dev.yml` | Cada push a `develop` | Lo mismo y, si pasa, `cdk deploy IcDev` con el sitio |
+
+El despliegue usa OIDC: GitHub pide credenciales temporales al rol `ic-github-despliegue`, que solo
+acepta la rama `develop` de este repositorio. La configuración inicial está en
+[infra/README.md](infra/README.md). Se recomienda proteger `develop` y `main` exigiendo que `CI`
+pase antes de integrar.
