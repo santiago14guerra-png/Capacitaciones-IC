@@ -114,3 +114,31 @@ export async function urlAdjunto(ctx: Contexto, a: Actor | null, id: string) {
   if (!c.adjuntoLlave) throw noEncontrado('La consulta no tiene adjunto');
   return { url: await ctx.archivos.firmarDescarga(c.adjuntoLlave) };
 }
+
+/**
+ * HU-17: lo que ve el cliente. La respuesta solo cuando la consulta está respondida o
+ * cerrada, y las condiciones solo si se escaló: nunca un borrador del director.
+ */
+async function aConsultaCliente(ctx: Contexto, c: Consulta): Promise<ConsultaDto> {
+  const dto = await aConsultaDto(ctx, c);
+  const abierta = c.estado === 'RECIBIDA' || c.estado === 'EN_ANALISIS';
+  return {
+    ...dto,
+    respuestaHtml: abierta ? undefined : dto.respuestaHtml,
+    condicionesAsesoria: abierta ? undefined : dto.condicionesAsesoria,
+  };
+}
+
+export async function misConsultas(ctx: Contexto, a: Actor | null): Promise<ConsultaDto[]> {
+  const actor = exigirSesion(a);
+  const lista = await ctx.consultas.listarDeUsuario(actor.sub);
+  const dtos = await Promise.all(lista.map((c) => aConsultaCliente(ctx, c)));
+  return dtos.sort((x, y) => y.recibidaEn.localeCompare(x.recibidaEn));
+}
+
+export async function miConsulta(ctx: Contexto, a: Actor | null, id: string): Promise<ConsultaDto> {
+  const actor = exigirSesion(a);
+  const c = await ctx.consultas.obtener(id);
+  if (!c || c.sub !== actor.sub) throw noEncontrado('La consulta no existe');
+  return aConsultaCliente(ctx, c);
+}

@@ -6,6 +6,8 @@ import DetalleCompra from './paginas/compras/DetalleCompra';
 import Biblioteca from './paginas/cuenta/Biblioteca';
 import CompletarPerfil from './paginas/cuenta/CompletarPerfil';
 import NuevaConsulta from './paginas/consultas/NuevaConsulta';
+import MisConsultas from './paginas/consultas/MisConsultas';
+import MiConsulta from './paginas/consultas/MiConsulta';
 import MiCuenta from './paginas/cuenta/MiCuenta';
 import ConfirmarCuenta from './paginas/ConfirmarCuenta';
 import Buscar from './paginas/Buscar';
@@ -61,6 +63,22 @@ export const rutas = [
         element: (
           <RequiereSesion>
             <NuevaConsulta />
+          </RequiereSesion>
+        ),
+      },
+      {
+        path: 'cuenta/consultas',
+        element: (
+          <RequiereSesion>
+            <MisConsultas />
+          </RequiereSesion>
+        ),
+      },
+      {
+        path: 'cuenta/consultas/:id',
+        element: (
+          <RequiereSesion>
+            <MiConsulta />
           </RequiereSesion>
         ),
       },
