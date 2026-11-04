@@ -116,3 +116,23 @@ describe('HU-20 · convertir una respuesta en ficha', () => {
     expect(screen.queryByRole('button', { name: 'Convertir en ficha' })).toBeNull();
   });
 });
+
+describe('HU-16 · confirmación al guardar', () => {
+  it('muestra «Cambios guardados.» aunque cambie el estado', async () => {
+    simularApi({
+      'GET /sesion': SESION_ADMIN,
+      'GET /admin/consultas/c1': consulta,
+      'PUT /admin/consultas/c1': {
+        ...consulta,
+        estado: 'EN_ANALISIS',
+        clasificacion: 'ASESORIA',
+        atrasada: false,
+      },
+    });
+    renderizar('/panel/consultas/c1', { conSesion: true });
+    fireEvent.click(await screen.findByLabelText('Asesoría'));
+    fireEvent.change(screen.getByLabelText('Estado'), { target: { value: 'EN_ANALISIS' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+    expect(await screen.findByText('Cambios guardados.')).toBeTruthy();
+  });
+});

@@ -218,7 +218,7 @@ export default function GestionConsulta() {
           </div>
         )}
       </dl>
-      <Formulario key={datos.estado + datos.respondidaEn} consulta={datos} alGuardar={setDatos} />
+      <Formulario key={datos.id} consulta={datos} alGuardar={setDatos} />
       <ConvertirEnFicha consulta={datos} />
     </section>
   );

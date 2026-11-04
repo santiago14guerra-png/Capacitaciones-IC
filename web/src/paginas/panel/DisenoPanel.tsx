@@ -3,10 +3,31 @@ import { RequierePersonal } from '../../lib/sesion';
 
 /** Secciones del panel. Cada historia agrega la suya. */
 export const SECCIONES_PANEL: { ruta: string; nombre: string; descripcion: string }[] = [
+  { ruta: 'pagos', nombre: 'Pagos', descripcion: 'Verificar comprobantes y habilitar el acceso.' },
+  {
+    ruta: 'consultas',
+    nombre: 'Consultas',
+    descripcion: 'Clasificar, responder o escalar las consultas.',
+  },
+  {
+    ruta: 'fichas',
+    nombre: 'Fichas',
+    descripcion: 'Crear, editar, publicar y despublicar respuestas.',
+  },
   {
     ruta: 'categorias',
     nombre: 'Categorías',
     descripcion: 'Crear, ordenar y desactivar categorías.',
+  },
+  {
+    ruta: 'indicadores',
+    nombre: 'Indicadores',
+    descripcion: 'Consultas, tiempos, temas, búsquedas sin resultado y ventas.',
+  },
+  {
+    ruta: 'siigo',
+    nombre: 'Exportar a Siigo',
+    descripcion: 'Excel con los datos fiscales de las compras verificadas.',
   },
 ];
 
