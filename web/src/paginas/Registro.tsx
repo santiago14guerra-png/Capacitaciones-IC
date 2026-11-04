@@ -12,6 +12,8 @@ import { api } from '../lib/api';
 import { ErrorAuth, MENSAJES_AUTH } from '../lib/autenticacion/tipos';
 import { useFormulario } from '../lib/formulario';
 import { rutaSegura, useSesion } from '../lib/sesion';
+import { useAccion } from '../lib/accion';
+import { BotonAccion } from '../componentes/BotonAccion';
 
 interface DatosRegistro extends DatosFacturacion {
   correo: string;
@@ -35,15 +37,13 @@ export default function Registro() {
   const [paso, setPaso] = useState<'datos' | 'codigo'>('datos');
   const [codigo, setCodigo] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);
   const correoExiste = f.errores.correo === MENSAJES_AUTH.CORREO_EXISTE;
 
-  const enviarDatos = async (e: FormEvent) => {
+  const [enviarDatos, creando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     const d = f.validar(esquemaRegistro);
     if (!d) return;
-    setEnviando(true);
     try {
       await autenticador.transporte.registrar(d.correo.trim().toLowerCase(), d.contrasena);
       setPaso('codigo');
@@ -53,15 +53,12 @@ export default function Registro() {
       else if (c === 'CONTRASENA_DEBIL')
         f.setErrores({ contrasena: MENSAJES_AUTH.CONTRASENA_DEBIL });
       else setError(MENSAJES_AUTH[c]);
-    } finally {
-      setEnviando(false);
     }
-  };
+  });
 
-  const confirmar = async (e: FormEvent) => {
+  const [confirmar, activando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    setEnviando(true);
     const { correo, contrasena, confirmacion: _c, autorizaDatos, ...facturacion } = f.valores;
     const normal = correo.trim().toLowerCase();
     try {
@@ -73,10 +70,9 @@ export default function Registro() {
       navegar(volver, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : MENSAJES_AUTH.DESCONOCIDO);
-    } finally {
-      setEnviando(false);
     }
-  };
+  });
+  const enviando = creando || activando;
 
   if (paso === 'codigo') {
     return (
@@ -98,18 +94,23 @@ export default function Registro() {
             />
           </Campo>
           <div className="fila">
-            <button className="boton" type="submit" disabled={enviando || !codigo.trim()}>
+            <button
+              className="boton"
+              type="submit"
+              disabled={enviando || !codigo.trim()}
+              aria-busy={enviando}
+            >
               {enviando ? 'Activando…' : 'Activar cuenta'}
             </button>
-            <button
-              type="button"
+            <BotonAccion
+              ocupadoTexto="Enviando…"
               className="enlace-boton"
-              onClick={() =>
+              alPulsar={() =>
                 autenticador.transporte.reenviarCodigo(f.valores.correo.trim().toLowerCase())
               }
             >
               Enviar otro código
-            </button>
+            </BotonAccion>
           </div>
         </form>
       </section>
@@ -169,7 +170,12 @@ export default function Registro() {
           alCambiar={(v) => f.poner('autorizaDatos', v)}
           error={f.errores.autorizaDatos}
         />
-        <button className="boton" type="submit" disabled={!f.valores.autorizaDatos || enviando}>
+        <button
+          className="boton"
+          type="submit"
+          disabled={!f.valores.autorizaDatos || enviando}
+          aria-busy={enviando}
+        >
           {enviando ? 'Creando…' : 'Crear cuenta'}
         </button>
       </form>

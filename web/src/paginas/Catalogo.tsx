@@ -1,10 +1,10 @@
 import type { CategoriaDto, FichaResumenDto, Pagina } from '@ic/shared';
 import { Link, useSearchParams } from 'react-router';
 import { AvisoError } from '../componentes/Campo';
+import { Esqueletos } from '../componentes/Esqueletos';
 import { Paginacion } from '../componentes/Paginacion';
 import { TarjetaFicha } from '../componentes/TarjetaFicha';
 import { api } from '../lib/api';
-import { Cargando } from '../lib/sesion';
 import { useCarga } from '../lib/useCarga';
 
 /** HU-08: catálogo público con filtro por categorías, orden y paginación. */
@@ -79,7 +79,7 @@ export default function Catalogo() {
             </label>
           </div>
           <AvisoError mensaje={fichas.error?.message} />
-          {fichas.cargando && !fichas.datos && <Cargando />}
+          {fichas.cargando && !fichas.datos && <Esqueletos />}
           {fichas.datos?.total === 0 && (
             <div className="tarjeta pila" role="status">
               <h2>No encontramos respuestas con estos filtros</h2>

@@ -11,6 +11,7 @@ import { CasillaAutorizacion } from '../../componentes/CasillaAutorizacion';
 import { api } from '../../lib/api';
 import { useFormulario } from '../../lib/formulario';
 import { rutaSegura, useSesion } from '../../lib/sesion';
+import { useAccion } from '../../lib/accion';
 
 /** Si la cuenta se activó pero los datos de facturación no alcanzaron a guardarse. */
 export default function CompletarPerfil() {
@@ -23,7 +24,7 @@ export default function CompletarPerfil() {
   });
   const [error, setError] = useState<string | null>(null);
 
-  const enviar = async (e: FormEvent) => {
+  const [enviar, guardando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     const d = f.validar(esquemaGuardarPerfil);
     if (!d) return;
@@ -34,7 +35,7 @@ export default function CompletarPerfil() {
     } catch (err) {
       if (!f.errorApi(err)) setError(err instanceof Error ? err.message : 'Ocurrió un error');
     }
-  };
+  });
 
   return (
     <section className="formulario">
@@ -48,8 +49,13 @@ export default function CompletarPerfil() {
           alCambiar={(v) => f.poner('autorizaDatos', v)}
           error={f.errores.autorizaDatos}
         />
-        <button className="boton" type="submit" disabled={!f.valores.autorizaDatos}>
-          Guardar
+        <button
+          className="boton"
+          type="submit"
+          disabled={!f.valores.autorizaDatos || guardando}
+          aria-busy={guardando}
+        >
+          {guardando ? 'Guardando…' : 'Guardar'}
         </button>
       </form>
     </section>

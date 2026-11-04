@@ -7,6 +7,7 @@ import { api } from '../../lib/api';
 import { formatoFechaHora } from '../../lib/formato';
 import { Cargando } from '../../lib/sesion';
 import { useCarga } from '../../lib/useCarga';
+import { useAccion } from '../../lib/accion';
 
 /** HU-06: editar, despublicar o eliminar (solo borradores nunca publicados). */
 export default function EditarFicha() {
@@ -28,19 +29,20 @@ export default function EditarFicha() {
   const [aviso, setAviso] = useState<{ tipo: 'exito' | 'error'; texto: string } | null>(null);
   const [confirmarBorrado, setConfirmarBorrado] = useState(false);
 
+  // Un solo bloqueo para despublicar y eliminar: un doble clic no repite la acción.
+  const [ejecutar, ocupado] = useAccion(async (f: () => Promise<void>) => {
+    try {
+      await f();
+    } catch (e) {
+      setAviso({ tipo: 'error', texto: e instanceof Error ? e.message : 'Ocurrió un error' });
+    }
+  });
   if (!datos) return error ? <AvisoError mensaje={error.message} /> : <Cargando />;
   const { ficha, categorias } = datos;
   const actualizar = (f: FichaAdminDto, texto: string) => {
     setDatos({ ficha: f, categorias });
     setAviso({ tipo: 'exito', texto });
     window.scrollTo(0, 0);
-  };
-  const ejecutar = async (f: () => Promise<void>) => {
-    try {
-      await f();
-    } catch (e) {
-      setAviso({ tipo: 'error', texto: e instanceof Error ? e.message : 'Ocurrió un error' });
-    }
   };
 
   return (
@@ -74,6 +76,8 @@ export default function EditarFicha() {
               <button
                 type="button"
                 className="boton secundario"
+                disabled={ocupado}
+                aria-busy={ocupado}
                 onClick={() =>
                   ejecutar(async () =>
                     actualizar(
@@ -107,6 +111,8 @@ export default function EditarFicha() {
             <button
               type="button"
               className="boton peligro"
+              disabled={ocupado}
+              aria-busy={ocupado}
               onClick={() =>
                 ejecutar(async () => {
                   await api(`/admin/fichas/${ficha.id}`, { metodo: 'DELETE' });

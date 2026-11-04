@@ -7,6 +7,7 @@ import { api } from '../../lib/api';
 import { formatoFecha } from '../../lib/formato';
 import { useFormulario } from '../../lib/formulario';
 import { useSesion } from '../../lib/sesion';
+import { useAccion } from '../../lib/accion';
 
 /** HU-23: actualizar dirección, celular y datos de facturación. */
 export default function EditarPerfil() {
@@ -22,14 +23,12 @@ export default function EditarPerfil() {
     ciudad: p.ciudad,
   });
   const [aviso, setAviso] = useState<{ tipo: string; texto: string } | null>(null);
-  const [enviando, setEnviando] = useState(false);
 
-  const enviar = async (e: FormEvent) => {
+  const [enviar, enviando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     setAviso(null);
     const d = f.validar(esquemaPerfil);
     if (!d) return;
-    setEnviando(true);
     try {
       await api<PerfilDto>('/perfil', { metodo: 'PUT', cuerpo: d });
       await recargar();
@@ -40,10 +39,8 @@ export default function EditarPerfil() {
     } catch (err) {
       if (!f.errorApi(err))
         setAviso({ tipo: 'error', texto: err instanceof Error ? err.message : 'Ocurrió un error' });
-    } finally {
-      setEnviando(false);
     }
-  };
+  });
 
   return (
     <section className="formulario">
@@ -65,7 +62,7 @@ export default function EditarPerfil() {
           <span>{p.correo}</span>
           <span className="ayuda">Es su usuario para ingresar. Para cambiarlo, escríbanos.</span>
         </div>
-        <button className="boton" type="submit" disabled={enviando}>
+        <button className="boton" type="submit" disabled={enviando} aria-busy={enviando}>
           {enviando ? 'Guardando…' : 'Guardar cambios'}
         </button>
       </form>

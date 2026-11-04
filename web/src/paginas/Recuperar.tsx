@@ -4,6 +4,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router';
 import { AvisoError, Campo } from '../componentes/Campo';
 import { ErrorAuth, MENSAJES_AUTH } from '../lib/autenticacion/tipos';
 import { useSesion } from '../lib/sesion';
+import { useAccion } from '../lib/accion';
 
 /**
  * HU-22: restablecer la contraseña con el enlace (o el código) que llega al correo.
@@ -20,14 +21,12 @@ export default function Recuperar() {
   const [paso, setPaso] = useState<'correo' | 'nueva'>(params.get('codigo') ? 'nueva' : 'correo');
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);
   const normal = correo.trim().toLowerCase();
 
-  const pedir = async (e: FormEvent) => {
+  const [pedir, pidiendo] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     if (!/^\S+@\S+\.\S+$/.test(normal)) return setErrores({ correo: 'Escriba un correo válido' });
-    setEnviando(true);
     try {
       await autenticador.transporte.olvido(normal);
       setPaso('nueva');
@@ -35,12 +34,10 @@ export default function Recuperar() {
       setError(err instanceof ErrorAuth && err.codigo === 'LIMITE' ? err.message : null);
       // Por seguridad se avanza igual: no se revela si el correo existe.
       if (!(err instanceof ErrorAuth && err.codigo === 'LIMITE')) setPaso('nueva');
-    } finally {
-      setEnviando(false);
     }
-  };
+  });
 
-  const restablecer = async (e: FormEvent) => {
+  const [restablecer, guardando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     const r = esquemaContrasena.safeParse(clave);
@@ -50,16 +47,14 @@ export default function Recuperar() {
     if (clave !== confirmacion) errs.confirmacion = 'Las contraseñas no coinciden';
     setErrores(errs);
     if (Object.keys(errs).length) return;
-    setEnviando(true);
     try {
       await autenticador.transporte.restablecer(normal, codigo.trim(), clave);
       navegar(`/ingresar?correo=${encodeURIComponent(normal)}&restablecida=1`, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : MENSAJES_AUTH.DESCONOCIDO);
-    } finally {
-      setEnviando(false);
     }
-  };
+  });
+  const enviando = pidiendo || guardando;
 
   return (
     <section className="formulario">
@@ -80,7 +75,7 @@ export default function Recuperar() {
               onChange={(e) => setCorreo(e.target.value)}
             />
           </Campo>
-          <button className="boton" type="submit" disabled={enviando}>
+          <button className="boton" type="submit" disabled={enviando} aria-busy={enviando}>
             {enviando ? 'Enviando…' : 'Enviar enlace'}
           </button>
         </form>
@@ -137,7 +132,7 @@ export default function Recuperar() {
             />
           </Campo>
           <div className="fila">
-            <button className="boton" type="submit" disabled={enviando}>
+            <button className="boton" type="submit" disabled={enviando} aria-busy={enviando}>
               {enviando ? 'Guardando…' : 'Guardar contraseña'}
             </button>
             <button type="button" className="enlace-boton" onClick={() => setPaso('correo')}>

@@ -10,25 +10,23 @@ import { formatoFechaHora, formatoPrecio } from '../../lib/formato';
 import { Cargando } from '../../lib/sesion';
 import { abrirArchivo, subirArchivo } from '../../lib/subida';
 import { useCarga } from '../../lib/useCarga';
+import { useAccion } from '../../lib/accion';
+import { BotonAccion } from '../../componentes/BotonAccion';
 
 /** HU-12: adjuntar el comprobante; la compra pasa a «En verificación». */
 function CargaComprobante({ compra, alSubir }: { compra: CompraDto; alSubir(c: CompraDto): void }) {
   const [archivo, setArchivo] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);
-  const enviar = async () => {
+  const [enviar, enviando] = useAccion(async () => {
     if (!archivo) return;
     setError(null);
-    setEnviando(true);
     try {
       const llave = await subirArchivo(`/compras/${compra.id}/comprobante/subida`, archivo);
       alSubir(await api<CompraDto>(`/compras/${compra.id}/comprobante`, { cuerpo: { llave } }));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No se pudo subir el comprobante');
-    } finally {
-      setEnviando(false);
     }
-  };
+  });
   return (
     <div className="tarjeta pila">
       <h2>{compra.tieneComprobante ? 'Cambiar el comprobante' : 'Adjuntar el comprobante'}</h2>
@@ -38,7 +36,13 @@ function CargaComprobante({ compra, alSubir }: { compra: CompraDto; alSubir(c: C
         etiqueta="Comprobante de la transferencia"
         alElegir={setArchivo}
       />
-      <button className="boton" type="button" disabled={!archivo || enviando} onClick={enviar}>
+      <button
+        className="boton"
+        type="button"
+        disabled={!archivo || enviando}
+        aria-busy={enviando}
+        onClick={enviar}
+      >
         {enviando ? 'Subiendo…' : 'Enviar comprobante'}
       </button>
     </div>
@@ -72,13 +76,13 @@ export default function DetalleCompra() {
       )}
       {compra.tieneComprobante && (
         <p>
-          <button
+          <BotonAccion
+            ocupadoTexto="Abriendo…"
             className="enlace-boton"
-            type="button"
-            onClick={() => abrirArchivo(`/compras/${compra.id}/comprobante`)}
+            alPulsar={() => abrirArchivo(`/compras/${compra.id}/comprobante`)}
           >
             Ver el comprobante enviado
-          </button>
+          </BotonAccion>
         </p>
       )}
       {compra.estado === 'APROBADA' && (

@@ -1,9 +1,27 @@
 import { LIMITES, type CategoriaDto, type FichaResumenDto, type Pagina } from '@ic/shared';
 import { Link } from 'react-router';
 import { Buscador } from '../componentes/Buscador';
+import { Esqueletos } from '../componentes/Esqueletos';
+import { MonogramaIC } from '../componentes/Logo';
 import { TarjetaFicha } from '../componentes/TarjetaFicha';
 import { api } from '../lib/api';
 import { useCarga } from '../lib/useCarga';
+
+const CONFIANZA = [
+  { titulo: 'Desde 2003', texto: 'Asesoría contable y tributaria, primero como IC Contables.' },
+  {
+    titulo: 'Escritas por los directores',
+    texto: 'Cada respuesta la redacta la dirección de la firma.',
+  },
+  {
+    titulo: 'Fechadas y con su norma',
+    texto: 'Cada ficha indica hasta cuándo está vigente y en qué se apoya.',
+  },
+  {
+    titulo: 'Pago por transferencia',
+    texto: 'Sin pasarelas: adjunta el comprobante y le damos acceso.',
+  },
+];
 
 const PASOS = [
   { titulo: 'Busque su caso', texto: 'Escriba su duda con sus palabras o explore las categorías.' },
@@ -29,6 +47,7 @@ export default function Inicio() {
     <div className="inicio">
       {/* CA1: nombre, propuesta de valor y buscador sin desplazarse. */}
       <section className="heroe">
+        <MonogramaIC className="heroe-monograma" />
         <h1>Respuestas para Personas Naturales</h1>
         <p className="heroe-frase">
           Respuestas claras a sus dudas tributarias, escritas por los directores de Capacitaciones
@@ -37,11 +56,21 @@ export default function Inicio() {
         <Buscador grande />
       </section>
 
+      {/* Hechos de la firma tomados de la Entrega 2; nada inventado. */}
+      <ul className="confianza" aria-label="Por qué confiar en estas respuestas">
+        {CONFIANZA.map((c) => (
+          <li key={c.titulo} className="revelar">
+            <strong>{c.titulo}</strong>
+            <p>{c.texto}</p>
+          </li>
+        ))}
+      </ul>
+
       <section aria-labelledby="como-funciona" className="seccion">
         <h2 id="como-funciona">Cómo funciona</h2>
         <ol className="pasos">
           {PASOS.map((p) => (
-            <li key={p.titulo} className="tarjeta">
+            <li key={p.titulo} className="tarjeta revelar">
               <h3>{p.titulo}</h3>
               <p>{p.texto}</p>
             </li>
@@ -67,6 +96,7 @@ export default function Inicio() {
         </section>
       )}
 
+      {recientes.cargando && !recientes.datos && <Esqueletos cantidad={3} />}
       {!!recientes.datos?.elementos.length && (
         <section aria-labelledby="recientes" className="seccion">
           <div className="fila entre">

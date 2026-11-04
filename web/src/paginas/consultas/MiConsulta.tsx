@@ -8,6 +8,7 @@ import { formatoFechaHora } from '../../lib/formato';
 import { Cargando } from '../../lib/sesion';
 import { abrirArchivo } from '../../lib/subida';
 import { useCarga } from '../../lib/useCarga';
+import { BotonAccion } from '../../componentes/BotonAccion';
 
 /** HU-17: estado y respuesta de una consulta dentro de la plataforma. */
 export default function MiConsulta() {
@@ -33,13 +34,13 @@ export default function MiConsulta() {
         <h2 className="ficha-subtitulo">Su consulta</h2>
         <p style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{c.descripcion}</p>
         {c.tieneAdjunto && (
-          <button
+          <BotonAccion
+            ocupadoTexto="Abriendo…"
             className="enlace-boton"
-            type="button"
-            onClick={() => abrirArchivo(`/consultas/${c.id}/adjunto`)}
+            alPulsar={() => abrirArchivo(`/consultas/${c.id}/adjunto`)}
           >
             Ver adjunto
-          </button>
+          </BotonAccion>
         )}
       </div>
       {(c.estado === 'RECIBIDA' || c.estado === 'EN_ANALISIS') && (

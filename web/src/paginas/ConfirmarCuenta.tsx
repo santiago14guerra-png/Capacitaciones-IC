@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { AvisoError, Campo } from '../componentes/Campo';
 import { MENSAJES_AUTH } from '../lib/autenticacion/tipos';
 import { rutaSegura, useSesion } from '../lib/sesion';
+import { useAccion } from '../lib/accion';
+import { BotonAccion } from '../componentes/BotonAccion';
 
 /** Para quien se registró pero no alcanzó a escribir el código. */
 export default function ConfirmarCuenta() {
@@ -14,7 +16,7 @@ export default function ConfirmarCuenta() {
   const [error, setError] = useState<string | null>(null);
   const volver = rutaSegura(params.get('volver'));
 
-  const enviar = async (e: FormEvent) => {
+  const [enviar, activando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     try {
       await autenticador.transporte.confirmar(correo.trim().toLowerCase(), codigo.trim());
@@ -27,7 +29,7 @@ export default function ConfirmarCuenta() {
     } catch (err) {
       setError(err instanceof Error ? err.message : MENSAJES_AUTH.DESCONOCIDO);
     }
-  };
+  });
 
   return (
     <section className="formulario">
@@ -52,16 +54,16 @@ export default function ConfirmarCuenta() {
           />
         </Campo>
         <div className="fila">
-          <button className="boton" type="submit">
-            Activar cuenta
+          <button className="boton" type="submit" disabled={activando} aria-busy={activando}>
+            {activando ? 'Activando…' : 'Activar cuenta'}
           </button>
-          <button
-            type="button"
+          <BotonAccion
+            ocupadoTexto="Enviando…"
             className="enlace-boton"
-            onClick={() => autenticador.transporte.reenviarCodigo(correo.trim().toLowerCase())}
+            alPulsar={() => autenticador.transporte.reenviarCodigo(correo.trim().toLowerCase())}
           >
             Enviar otro código
-          </button>
+          </BotonAccion>
         </div>
       </form>
     </section>
