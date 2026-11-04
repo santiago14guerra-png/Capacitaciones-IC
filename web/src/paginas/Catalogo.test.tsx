@@ -61,7 +61,8 @@ describe('HU-08 · catálogo', () => {
       'GET /config': config,
     });
     renderizar('/catalogo?categoria=p');
-    const vacio = (await screen.findByRole('heading', { name: /No encontramos respuestas/ })).parentElement!;
+    const vacio = (await screen.findByRole('heading', { name: /No encontramos respuestas/ }))
+      .parentElement!;
     await waitFor(() =>
       expect(screen.getByRole('link', { name: 'Escribirnos por WhatsApp' })).toBeTruthy(),
     );

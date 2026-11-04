@@ -31,6 +31,14 @@ export interface FichaResumenDto {
   vigenteA: string;
 }
 
+export interface ResultadoBusquedaDto {
+  consulta: string;
+  /** Términos normalizados para resaltar en el navegador (HU-09 CA3). */
+  terminos: string[];
+  elementos: FichaResumenDto[];
+  total: number;
+}
+
 export interface FichaDetalleDto extends FichaResumenDto {
   pregunta: string;
   normas: string[];

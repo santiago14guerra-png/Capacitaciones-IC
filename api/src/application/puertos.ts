@@ -47,3 +47,15 @@ export interface RepoFichas {
   guardarMeta(meta: FichaMeta): Promise<void>;
   borrar(id: string): Promise<void>;
 }
+
+export interface Busqueda {
+  termino: string;
+  fecha: string;
+  resultados: number;
+}
+
+export interface RepoBusquedas {
+  registrar(b: Busqueda): Promise<void>;
+  /** `mes` en formato aaaa-mm. */
+  listarMes(mes: string): Promise<Busqueda[]>;
+}

@@ -5,6 +5,7 @@ import { ProveedorSesion, RequiereSesion } from './lib/sesion';
 import CompletarPerfil from './paginas/cuenta/CompletarPerfil';
 import MiCuenta from './paginas/cuenta/MiCuenta';
 import ConfirmarCuenta from './paginas/ConfirmarCuenta';
+import Buscar from './paginas/Buscar';
 import Catalogo from './paginas/Catalogo';
 import Ingresar from './paginas/Ingresar';
 import Inicio from './paginas/Inicio';
@@ -25,6 +26,7 @@ export const rutas = [
     children: [
       { index: true, element: <Inicio /> },
       { path: 'catalogo', element: <Catalogo /> },
+      { path: 'buscar', element: <Buscar /> },
       { path: 'ingresar', element: <Ingresar /> },
       { path: 'registro', element: <Registro /> },
       { path: 'registro/confirmar', element: <ConfirmarCuenta /> },
