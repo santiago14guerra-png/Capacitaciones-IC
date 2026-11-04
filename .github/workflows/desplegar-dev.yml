@@ -1,0 +1,60 @@
+name: Desplegar a dev
+
+# T-06: cada push a develop se prueba y se despliega al ambiente dev de AWS.
+# Credenciales temporales por OIDC: no hay llaves de AWS guardadas en GitHub.
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desplegar-dev
+  cancel-in-progress: false
+
+jobs:
+  verificar:
+    uses: ./.github/workflows/ci.yml
+
+  sin-configurar:
+    name: Despliegue pendiente de configurar
+    needs: verificar
+    if: ${{ vars.AWS_ROLE_ARN == '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "::warning::No se desplegó. Falta la variable AWS_ROLE_ARN (ver infra/README.md)."
+
+  desplegar:
+    name: Desplegar IcDev
+    needs: verificar
+    if: ${{ vars.AWS_ROLE_ARN != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Sin `environment:` a propósito: cambiaría el `sub` del token OIDC y el rol no lo aceptaría.
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Construir el sitio
+        run: npm run build --workspace web
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          role-session-name: github-${{ github.run_id }}
+      - name: Desplegar con CDK
+        working-directory: infra
+        run: npx cdk deploy IcDev --require-approval never -c conWeb=true --outputs-file salidas.json
+      - name: Publicar URL
+        working-directory: infra
+        run: |
+          sitio=$(node -p "require('./salidas.json').IcDev.SitioUrl")
+          echo "### Desplegado en dev: $sitio" >> "$GITHUB_STEP_SUMMARY"
