@@ -65,6 +65,11 @@ export function Diseno() {
             <strong>Capacitaciones IC</strong>
             <p className="pequeno">Respuestas tributarias para personas naturales.</p>
           </div>
+          <nav aria-label="Legal" className="pequeno">
+            <Link to="/privacidad">Política de tratamiento de datos</Link>
+            <br />
+            <Link to="/terminos">Términos y condiciones</Link>
+          </nav>
         </div>
       </footer>
       <ScrollRestoration />

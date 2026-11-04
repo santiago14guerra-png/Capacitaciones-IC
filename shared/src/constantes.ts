@@ -1,4 +1,8 @@
-export const GRUPOS = { cliente: 'cliente', administrador: 'administrador', director: 'director' } as const;
+export const GRUPOS = {
+  cliente: 'cliente',
+  administrador: 'administrador',
+  director: 'director',
+} as const;
 export type Grupo = (typeof GRUPOS)[keyof typeof GRUPOS];
 
 export const TIPOS_DOCUMENTO = ['CC', 'CE', 'NIT', 'PASAPORTE'] as const;
@@ -7,7 +11,12 @@ export type TipoDocumento = (typeof TIPOS_DOCUMENTO)[number];
 export const ESTADOS_FICHA = ['BORRADOR', 'PUBLICADA', 'DESPUBLICADA'] as const;
 export type EstadoFicha = (typeof ESTADOS_FICHA)[number];
 
-export const ESTADOS_COMPRA = ['PENDIENTE_PAGO', 'EN_VERIFICACION', 'APROBADA', 'RECHAZADA'] as const;
+export const ESTADOS_COMPRA = [
+  'PENDIENTE_PAGO',
+  'EN_VERIFICACION',
+  'APROBADA',
+  'RECHAZADA',
+] as const;
 export type EstadoCompra = (typeof ESTADOS_COMPRA)[number];
 
 export const ESTADOS_CONSULTA = [
@@ -53,3 +62,9 @@ export type TipoArchivo = (typeof TIPOS_ARCHIVO)[number];
 
 export const AVISO_ASESORIA =
   'Información de carácter general que no reemplaza una asesoría personalizada';
+
+/**
+ * HU-25: versión de la política que acepta el cliente al registrarse (HU-02 CA4).
+ * Cambiarla cuando el abogado apruebe el texto definitivo.
+ */
+export const VERSION_POLITICA_DATOS = '0.1-borrador';

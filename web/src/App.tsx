@@ -5,6 +5,8 @@ import { ProveedorSesion, RequiereSesion } from './lib/sesion';
 import MiCuenta from './paginas/cuenta/MiCuenta';
 import Ingresar from './paginas/Ingresar';
 import Inicio from './paginas/Inicio';
+import PoliticaDatos from './paginas/legal/PoliticaDatos';
+import Terminos from './paginas/legal/Terminos';
 import NoEncontrada from './paginas/NoEncontrada';
 
 export const rutas = [
@@ -13,6 +15,8 @@ export const rutas = [
     children: [
       { index: true, element: <Inicio /> },
       { path: 'ingresar', element: <Ingresar /> },
+      { path: 'privacidad', element: <PoliticaDatos /> },
+      { path: 'terminos', element: <Terminos /> },
       {
         path: 'cuenta',
         element: (
