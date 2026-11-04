@@ -7,7 +7,7 @@
   "engines": { "node": ">=22" },
   "workspaces": ["shared", "api", "web", "infra"],
   "scripts": {
-    "dev": "npm run dev --workspace api & npm run dev --workspace web & wait",
+    "dev": "node scripts/dev.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
