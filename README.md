@@ -3,6 +3,7 @@
 Plataforma web (AWS serverless) para publicar, buscar y vender respuestas tributarias para personas naturales.
 
 - [Historias de usuario, tallas, responsables y estado por sprint](docs/historias-de-usuario.md)
+- [Estado del MVP y datos pendientes de la empresa](docs/estado-mvp.md)
 
 ## Estructura
 
@@ -23,3 +24,6 @@ npm ci
 npm run dev        # API en :3001 y sitio en http://localhost:5173
 npm run check      # lint, tipos, pruebas y build
 ```
+
+Cuentas locales (clave `Clave1234`): `administrador@ic.local`, `director@ic.local`, `cliente@ic.local`.
+El código de verificación en local siempre es `123456`; los correos se imprimen en la consola de la API.
