@@ -1,4 +1,40 @@
-import { Link, NavLink, Outlet, ScrollRestoration } from 'react-router';
+import { Link, NavLink, Outlet, ScrollRestoration, useNavigate } from 'react-router';
+import { useSesion } from '../lib/sesion';
+
+function MenuUsuario() {
+  const { sesion, cargando, salir } = useSesion();
+  const navegar = useNavigate();
+  if (cargando) return null;
+  if (!sesion) {
+    return (
+      <>
+        <NavLink to="/ingresar">Ingresar</NavLink>
+        <Link className="boton pequeno" to="/registro">
+          Crear cuenta
+        </Link>
+      </>
+    );
+  }
+  const nombre = sesion.perfil?.nombres ?? sesion.correo;
+  return (
+    <>
+      <NavLink to="/cuenta" title="Mi cuenta">
+        <span aria-hidden="true">👤 </span>
+        {nombre}
+      </NavLink>
+      <button
+        type="button"
+        className="enlace-boton"
+        onClick={async () => {
+          await salir();
+          navegar('/', { replace: true });
+        }}
+      >
+        Cerrar sesión
+      </button>
+    </>
+  );
+}
 
 export function Diseno() {
   return (
@@ -14,6 +50,7 @@ export function Diseno() {
           </Link>
           <nav className="nav" aria-label="Principal">
             <NavLink to="/catalogo">Catálogo</NavLink>
+            <MenuUsuario />
           </nav>
         </div>
       </header>

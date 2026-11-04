@@ -7,9 +7,13 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     rules: {
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'no-console': 'off',
     },
+  },
+  {
+    files: ['**/test/**/*.ts', '**/prueba/**/*.{ts,tsx}', '**/*.test.ts', '**/*.test.tsx'],
+    rules: { '@typescript-eslint/no-explicit-any': 'off' },
   },
   {
     // Regla de arquitectura: el dominio no conoce adaptadores ni aplicación.
@@ -17,7 +21,15 @@ export default tseslint.config(
     rules: {
       'no-restricted-imports': [
         'error',
-        { patterns: ['**/adapters/**', '**/application/**', '**/bootstrap/**', '@aws-sdk/*', 'hono*'] },
+        {
+          patterns: [
+            '**/adapters/**',
+            '**/application/**',
+            '**/bootstrap/**',
+            '@aws-sdk/*',
+            'hono*',
+          ],
+        },
       ],
     },
   },

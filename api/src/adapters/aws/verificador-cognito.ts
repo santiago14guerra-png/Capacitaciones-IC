@@ -10,7 +10,7 @@ export function crearVerificadorCognito(userPoolId: string, clientId: string): V
       try {
         const p = await jwt.verify(token);
         const grupos = (p['cognito:groups'] ?? []).filter((g) => validos.has(g)) as Grupo[];
-        return { sub: p.sub, correo: String(p.username), grupos };
+        return { sub: p.sub, usuario: String(p.username), grupos };
       } catch {
         return null;
       }
