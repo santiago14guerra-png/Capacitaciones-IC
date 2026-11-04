@@ -1,6 +1,9 @@
 import { handle } from 'hono/aws-lambda';
+import { crearDirectorioCognito } from '../adapters/aws/directorio-cognito.js';
 import { crearVerificadorCognito } from '../adapters/aws/verificador-cognito.js';
+import { Tabla } from '../adapters/dynamodb/tabla.js';
 import { crearApp } from '../adapters/http/app.js';
+import { componer } from './componer.js';
 
 /** Composición para AWS. Nunca importa adaptadores locales (token sin firma, emulador). */
 const requerida = (nombre: string) => {
@@ -9,8 +12,15 @@ const requerida = (nombre: string) => {
   return valor;
 };
 
+const userPoolId = requerida('USER_POOL_ID');
+const ctx = componer({
+  tabla: new Tabla(requerida('TABLA')),
+  directorio: crearDirectorioCognito(userPoolId),
+});
+
 const app = crearApp({
-  verificador: crearVerificadorCognito(requerida('USER_POOL_ID'), requerida('CLIENT_ID')),
+  ...ctx,
+  verificador: crearVerificadorCognito(userPoolId, requerida('CLIENT_ID')),
 });
 
 export const handler = handle(app);

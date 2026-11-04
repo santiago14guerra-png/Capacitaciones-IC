@@ -1,9 +1,5 @@
 export type CodigoError =
-  | 'NO_AUTENTICADO'
-  | 'PROHIBIDO'
-  | 'NO_ENCONTRADO'
-  | 'CONFLICTO'
-  | 'VALIDACION';
+  'NO_AUTENTICADO' | 'PROHIBIDO' | 'NO_ENCONTRADO' | 'CONFLICTO' | 'VALIDACION';
 
 const ESTADOS: Record<CodigoError, number> = {
   NO_AUTENTICADO: 401,

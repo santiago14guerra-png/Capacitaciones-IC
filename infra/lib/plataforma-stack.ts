@@ -239,6 +239,12 @@ export class PlataformaStack extends Stack {
         resources: [`arn:aws:ses:${this.region}:${this.account}:identity/*`],
       }),
     );
+    api.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['cognito-idp:AdminGetUser'],
+        resources: [usuarios.userPoolArn],
+      }),
+    );
     mensajes.addEnvironment('SITIO_URL', urlSitio);
 
     const httpApi = new HttpApi(this, 'HttpApi', {

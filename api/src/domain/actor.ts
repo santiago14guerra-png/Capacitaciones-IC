@@ -4,7 +4,8 @@ import { ErrorDominio, prohibido } from './errores.js';
 /** Usuario autenticado. Los grupos vienen del token ya verificado. */
 export interface Actor {
   sub: string;
-  correo: string;
+  /** Nombre de usuario en Cognito (un UUID). El correo se obtiene con DirectorioUsuarios. */
+  usuario: string;
   grupos: Grupo[];
 }
 

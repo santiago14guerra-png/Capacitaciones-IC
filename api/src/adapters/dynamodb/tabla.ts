@@ -69,7 +69,11 @@ export class Tabla {
     return items;
   }
 
-  consultarIndice<T>(indice: 'gsi1' | 'gsi2', pk: string, extra?: Omit<QueryCommandInput, 'TableName'>) {
+  consultarIndice<T>(
+    indice: 'gsi1' | 'gsi2',
+    pk: string,
+    extra?: Omit<QueryCommandInput, 'TableName'>,
+  ) {
     return this.consultar<T>({
       IndexName: indice,
       KeyConditionExpression: '#p = :p',
