@@ -3,6 +3,7 @@ import type { Categoria } from '../domain/categoria.js';
 import type { Ficha, FichaMeta } from '../domain/ficha.js';
 import type { Perfil } from '../domain/perfil.js';
 import type { EstadoCompra, EstadoFicha, SubidaDto, TipoArchivo } from '@ic/shared';
+import type { Busqueda } from '../domain/busqueda.js';
 import type { Compra } from '../domain/compra.js';
 import type { Consulta } from '../domain/consulta.js';
 import type { Correo } from '../domain/correos.js';
@@ -51,11 +52,7 @@ export interface RepoFichas {
   borrar(id: string): Promise<void>;
 }
 
-export interface Busqueda {
-  termino: string;
-  fecha: string;
-  resultados: number;
-}
+export type { Busqueda } from '../domain/busqueda.js';
 
 export interface RepoBusquedas {
   registrar(b: Busqueda): Promise<void>;

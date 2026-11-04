@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import type { Contexto } from '../../../application/contexto.js';
 import type { Entorno } from '../app.js';
 import { exportarSiigo } from '../../../application/exportacion-siigo.js';
+import { indicadores } from '../../../application/indicadores.js';
 import { soloPersonal } from '../admin.js';
 import { rutasCategoriasAdmin } from './categorias.js';
 import { rutasConsultasAdmin } from './consultas-admin.js';
@@ -24,5 +25,6 @@ export function rutasAdmin(ctx: Contexto) {
       'content-disposition': `attachment; filename="${nombre}"`,
     });
   });
+  admin.get('/indicadores', async (c) => c.json(await indicadores(ctx, c.req.query())));
   return admin;
 }
