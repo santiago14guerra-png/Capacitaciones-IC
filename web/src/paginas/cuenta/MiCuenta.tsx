@@ -8,6 +8,16 @@ export const SECCIONES_CUENTA: { ruta: string; nombre: string; descripcion: stri
     nombre: 'Mi biblioteca',
     descripcion: 'Las respuestas que compró y sus pagos en curso.',
   },
+  {
+    ruta: '/cuenta/consultas',
+    nombre: 'Mis consultas',
+    descripcion: 'El estado y la respuesta de sus consultas.',
+  },
+  {
+    ruta: '/cuenta/perfil',
+    nombre: 'Mi perfil',
+    descripcion: 'Dirección, celular y datos de facturación.',
+  },
 ];
 
 export default function MiCuenta() {
