@@ -3,6 +3,7 @@
  *
  *   npm run sembrar --workspace api -- <nombre-de-la-tabla>
  */
+import { crearAlmacenS3 } from '../src/adapters/aws/almacen-s3.js';
 import { Tabla } from '../src/adapters/dynamodb/tabla.js';
 import { sembrarCategorias } from '../src/application/categorias.js';
 import { componer } from '../src/bootstrap/componer.js';
@@ -15,6 +16,7 @@ if (!nombre) {
 const ctx = componer({
   tabla: new Tabla(nombre),
   directorio: { correo: () => Promise.reject(new Error('No se usa')) },
+  archivos: crearAlmacenS3('sin-uso'),
 });
 const n = await sembrarCategorias(ctx);
 console.log(n ? `Se crearon ${n} categorías.` : 'Ya había categorías; no se cambió nada.');

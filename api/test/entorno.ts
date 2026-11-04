@@ -2,6 +2,7 @@ import { GRUPOS, type Grupo } from '@ic/shared';
 import { afterAll, beforeAll } from 'vitest';
 import { crearApp } from '../src/adapters/http/app.js';
 import { crearAutenticacionDev } from '../src/adapters/local/autenticacion-dev.js';
+import { crearAlmacenLocal } from '../src/adapters/local/almacen-local.js';
 import { iniciarEmulador } from '../src/adapters/local/emulador.js';
 import { directorioDev, firmarDev, verificadorDev } from '../src/adapters/local/token-dev.js';
 import type { Contexto } from '../src/application/contexto.js';
@@ -31,6 +32,8 @@ export class RelojPrueba {
 
 export interface Entorno {
   ctx: Contexto;
+  /** Petición cruda a la app (p. ej. subir un archivo con FormData). */
+  crudo(ruta: string, init?: RequestInit): Promise<Response>;
   reloj: RelojPrueba;
   pedir(
     ruta: string,
@@ -48,11 +51,18 @@ export function prepararEntorno(): Entorno {
   beforeAll(async () => {
     const { tabla, cerrar } = await iniciarEmulador();
     e.reloj = new RelojPrueba();
-    e.ctx = componer({ tabla, directorio: directorioDev, reloj: e.reloj });
+    const almacen = crearAlmacenLocal();
+    e.ctx = componer({
+      tabla,
+      directorio: directorioDev,
+      reloj: e.reloj,
+      archivos: almacen.almacen,
+    });
     e.cerrar = cerrar;
-    e.app = crearApp({ ...e.ctx, verificador: verificadorDev }, (a) =>
-      a.route('/dev/auth', crearAutenticacionDev()),
-    );
+    e.app = crearApp({ ...e.ctx, verificador: verificadorDev }, (a) => {
+      a.route('/dev/auth', crearAutenticacionDev());
+      a.route('/dev/archivos', almacen.rutas);
+    });
   });
   afterAll(() => e.cerrar?.());
   e.pedir = (ruta, o = {}) =>
@@ -63,6 +73,7 @@ export function prepararEntorno(): Entorno {
         body: o.cuerpo === undefined ? undefined : JSON.stringify(o.cuerpo),
       }),
     );
+  e.crudo = (ruta, init) => Promise.resolve(e.app!.request(ruta, init));
   e.json = async (ruta, o) => {
     const r = await e.pedir(ruta, o);
     return { estado: r.status, datos: await r.json().catch(() => null) };

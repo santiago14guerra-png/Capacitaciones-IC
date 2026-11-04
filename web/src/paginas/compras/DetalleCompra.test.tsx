@@ -91,3 +91,58 @@ describe('HU-11 · solicitar compra', () => {
     expect(screen.getByText('En verificación')).toBeTruthy();
   });
 });
+
+describe('HU-12 · cargar comprobante', () => {
+  it('CA1: rechaza en el navegador tipos y tamaños no permitidos', async () => {
+    simularApi({ 'GET /sesion': SESION_CLIENTE, 'GET /compras/ana.f1': compra });
+    renderizar('/compras/ana.f1', { conSesion: true });
+    const input = await screen.findByLabelText('Comprobante de la transferencia');
+    fireEvent.change(input, {
+      target: { files: [new File(['x'], 'a.gif', { type: 'image/gif' })] },
+    });
+    expect((await screen.findByRole('alert')).textContent).toContain('JPG, PNG o PDF');
+    const grande = new File([new Uint8Array(5 * 1024 * 1024 + 1)], 'a.pdf', {
+      type: 'application/pdf',
+    });
+    fireEvent.change(input, { target: { files: [grande] } });
+    expect((await screen.findByRole('alert')).textContent).toContain('supera 5 MB');
+    expect(
+      (screen.getByRole('button', { name: 'Enviar comprobante' }) as HTMLButtonElement).disabled,
+    ).toBe(true);
+  });
+
+  it('CA2 y CA3: sube directo con la URL firmada, confirma y muestra «En verificación»', async () => {
+    const llamadas = simularApi({
+      'GET /sesion': SESION_CLIENTE,
+      'GET /compras/ana.f1': compra,
+      'POST /compras/ana.f1/comprobante/subida': {
+        url: '/api/dev/archivos',
+        llave: 'comprobantes/ana/f1/x.pdf',
+        campos: { key: 'k' },
+      },
+      'POST /dev/archivos': () => new Response(null, { status: 204 }),
+      'POST /compras/ana.f1/comprobante': {
+        ...compra,
+        estado: 'EN_VERIFICACION',
+        tieneComprobante: true,
+      },
+    });
+    renderizar('/compras/ana.f1', { conSesion: true });
+    fireEvent.change(await screen.findByLabelText('Comprobante de la transferencia'), {
+      target: { files: [new File(['%PDF'], 'c.pdf', { type: 'application/pdf' })] },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar comprobante' }));
+    expect(await screen.findByText(/Recibimos su comprobante/)).toBeTruthy();
+    expect(llamadas.find((l) => l.ruta === '/compras/ana.f1/comprobante/subida')!.cuerpo).toEqual({
+      nombre: 'c.pdf',
+      tipo: 'application/pdf',
+      tamano: 4,
+    });
+    expect(
+      llamadas.find((l) => l.ruta === '/compras/ana.f1/comprobante' && l.metodo === 'POST')!.cuerpo,
+    ).toEqual({
+      llave: 'comprobantes/ana/f1/x.pdf',
+    });
+    expect(screen.getAllByText('En verificación').length).toBeGreaterThan(0);
+  });
+});

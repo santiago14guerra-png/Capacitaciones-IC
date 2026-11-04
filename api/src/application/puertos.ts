@@ -2,7 +2,7 @@ import type { Actor } from '../domain/actor.js';
 import type { Categoria } from '../domain/categoria.js';
 import type { Ficha, FichaMeta } from '../domain/ficha.js';
 import type { Perfil } from '../domain/perfil.js';
-import type { EstadoCompra, EstadoFicha } from '@ic/shared';
+import type { EstadoCompra, EstadoFicha, SubidaDto, TipoArchivo } from '@ic/shared';
 import type { Compra } from '../domain/compra.js';
 
 /** Verifica un token y devuelve el actor; null si es inválido o venció. */
@@ -76,4 +76,12 @@ export interface RepoCompras {
 /** Números consecutivos atómicos (UpdateItem ADD). */
 export interface Contadores {
   siguiente(nombre: 'COMPRA' | 'CONSULTA'): Promise<number>;
+}
+
+/** Archivos privados (comprobantes y adjuntos). Las URL vencen a los 5 minutos. */
+export interface Almacen {
+  /** URL para subir directo desde el navegador, limitada a `maxBytes` y al tipo indicado. */
+  firmarSubida(llave: string, tipo: TipoArchivo, maxBytes: number): Promise<SubidaDto>;
+  info(llave: string): Promise<{ tamano: number; tipo: string } | null>;
+  firmarDescarga(llave: string): Promise<string>;
 }

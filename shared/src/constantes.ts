@@ -64,6 +64,11 @@ export const LIMITES = {
 
 export const TIPOS_ARCHIVO = ['image/jpeg', 'image/png', 'application/pdf'] as const;
 export type TipoArchivo = (typeof TIPOS_ARCHIVO)[number];
+export const EXTENSIONES: Record<TipoArchivo, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'application/pdf': 'pdf',
+};
 
 export const AVISO_ASESORIA =
   'Información de carácter general que no reemplaza una asesoría personalizada';
