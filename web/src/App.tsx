@@ -3,6 +3,7 @@ import { Diseno } from './componentes/Diseno';
 import type { Autenticador } from './lib/autenticacion/autenticador';
 import { ProveedorSesion, RequiereSesion } from './lib/sesion';
 import DetalleCompra from './paginas/compras/DetalleCompra';
+import Biblioteca from './paginas/cuenta/Biblioteca';
 import CompletarPerfil from './paginas/cuenta/CompletarPerfil';
 import MiCuenta from './paginas/cuenta/MiCuenta';
 import ConfirmarCuenta from './paginas/ConfirmarCuenta';
@@ -49,6 +50,14 @@ export const rutas = [
         element: (
           <RequiereSesion>
             <DetalleCompra />
+          </RequiereSesion>
+        ),
+      },
+      {
+        path: 'cuenta/biblioteca',
+        element: (
+          <RequiereSesion>
+            <Biblioteca />
           </RequiereSesion>
         ),
       },
