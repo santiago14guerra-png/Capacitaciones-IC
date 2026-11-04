@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet, ScrollRestoration, useNavigate } from 'react-router';
 import { useSesion } from '../lib/sesion';
 import { Contacto } from './Contacto';
+import { Logo } from './Logo';
 
 function MenuUsuario() {
   const { sesion, cargando, salir, esPersonal } = useSesion();
@@ -45,9 +46,17 @@ export function Diseno() {
       </a>
       <header className="encabezado">
         <div className="contenedor">
-          <Link to="/" className="logo">
-            Respuestas para Personas Naturales
-            <small>Capacitaciones IC</small>
+          <Link
+            to="/"
+            className="logo"
+            aria-label="Capacitaciones IC · Respuestas para Personas Naturales, inicio"
+          >
+            <Logo className="logo-marca" />
+            <span className="logo-texto" aria-hidden="true">
+              Respuestas para
+              <br />
+              Personas Naturales
+            </span>
           </Link>
           <nav className="nav" aria-label="Principal">
             <NavLink to="/catalogo">Catálogo</NavLink>
@@ -65,7 +74,7 @@ export function Diseno() {
       <footer className="pie">
         <div className="contenedor">
           <div>
-            <strong>Capacitaciones IC</strong>
+            <Logo className="pie-marca" />
             <p className="pequeno">Respuestas tributarias para personas naturales.</p>
           </div>
           <div>
