@@ -693,3 +693,6 @@ th {
   display: grid;
   gap: 0.75rem;
 }
+tr.fila-alerta td {
+  background: var(--c-error-fondo);
+}

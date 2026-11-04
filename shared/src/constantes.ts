@@ -50,6 +50,11 @@ export const ETIQUETAS_ESTADO_CONSULTA: Record<EstadoConsulta, string> = {
   CERRADA: 'Cerrada',
 };
 
+export const ETIQUETAS_CLASIFICACION: Record<Clasificacion, string> = {
+  CONSULTA_RAPIDA: 'Consulta rápida',
+  ASESORIA: 'Asesoría',
+};
+
 export const LIMITES = {
   tituloMax: 120,
   resumenMax: 300,
