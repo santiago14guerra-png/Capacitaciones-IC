@@ -654,3 +654,35 @@ th {
 .nav .boton {
   width: auto;
 }
+
+/* ---------- Compras (HU-11 a HU-14) ---------- */
+.datos {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+.dato {
+  display: grid;
+  grid-template-columns: minmax(8rem, 12rem) 1fr;
+  gap: 0.5rem;
+  align-items: baseline;
+  border-bottom: 1px dashed var(--c-borde);
+  padding-bottom: 0.5rem;
+}
+.dato dt {
+  color: var(--c-texto-suave);
+}
+.dato dd {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: baseline;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  .dato {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+}

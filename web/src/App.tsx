@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import { Diseno } from './componentes/Diseno';
 import type { Autenticador } from './lib/autenticacion/autenticador';
 import { ProveedorSesion, RequiereSesion } from './lib/sesion';
+import DetalleCompra from './paginas/compras/DetalleCompra';
 import CompletarPerfil from './paginas/cuenta/CompletarPerfil';
 import MiCuenta from './paginas/cuenta/MiCuenta';
 import ConfirmarCuenta from './paginas/ConfirmarCuenta';
@@ -39,6 +40,14 @@ export const rutas = [
         element: (
           <RequiereSesion>
             <MiCuenta />
+          </RequiereSesion>
+        ),
+      },
+      {
+        path: 'compras/:id',
+        element: (
+          <RequiereSesion>
+            <DetalleCompra />
           </RequiereSesion>
         ),
       },

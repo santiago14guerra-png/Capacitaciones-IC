@@ -164,7 +164,9 @@ export class PlataformaStack extends Stack {
     const reescrituraSpa = new cf.Function(this, 'ReescrituraSpa', {
       runtime: cf.FunctionRuntime.JS_2_0,
       code: cf.FunctionCode.fromInline(
-        "function handler(e){var r=e.request;if(r.uri.indexOf('.')===-1){r.uri='/index.html';}return r;}",
+        // Rutas del sitio → index.html; los archivos estáticos (con extensión conocida) pasan.
+        // Las rutas pueden tener puntos, p. ej. /compras/<sub>.<fichaId>.
+        "function handler(e){var r=e.request;if(!/\\.(js|css|map|svg|png|jpe?g|ico|json|txt|webmanifest|woff2?)$/i.test(r.uri)){r.uri='/index.html';}return r;}",
       ),
     });
     const cabeceras = new cf.ResponseHeadersPolicy(this, 'Cabeceras', {

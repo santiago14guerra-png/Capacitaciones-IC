@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { Contexto } from '../application/contexto.js';
 import type { DirectorioUsuarios, Reloj } from '../application/puertos.js';
 import { RepoBusquedasDynamo } from '../adapters/dynamodb/repo-busquedas.js';
+import { ContadoresDynamo, RepoComprasDynamo } from '../adapters/dynamodb/repo-compras.js';
 import { RepoCategoriasDynamo } from '../adapters/dynamodb/repo-categorias.js';
 import { RepoFichasDynamo } from '../adapters/dynamodb/repo-fichas.js';
 import { RepoPerfilesDynamo } from '../adapters/dynamodb/repo-perfiles.js';
@@ -31,6 +32,8 @@ export function componer({
     categorias: new RepoCategoriasDynamo(tabla),
     fichas: new RepoFichasDynamo(tabla),
     busquedas: new RepoBusquedasDynamo(tabla, ids.nuevo),
+    compras: new RepoComprasDynamo(tabla),
+    contadores: new ContadoresDynamo(tabla),
     negocio,
   };
 }

@@ -1,12 +1,14 @@
-import type { FichaDetalleDto } from '@ic/shared';
-import type { ReactNode } from 'react';
-import { Link, useParams } from 'react-router';
+import type { CompraDto, FichaDetalleDto } from '@ic/shared';
+import { useState, type ReactNode } from 'react';
+import { Link, useNavigate, useParams } from 'react-router';
 import { AvisoError } from '../componentes/Campo';
 import { Contacto } from '../componentes/Contacto';
+import { EstadoCompra } from '../componentes/EstadoCompra';
 import { HtmlSeguro } from '../componentes/HtmlSeguro';
 import { TarjetaFicha } from '../componentes/TarjetaFicha';
 import { VistaFicha } from '../componentes/VistaFicha';
-import { api } from '../lib/api';
+import { api, ErrorApi } from '../lib/api';
+import { formatoPrecio } from '../lib/formato';
 import { Cargando, useRutaIngreso, useSesion } from '../lib/sesion';
 import { useTitulo } from '../lib/titulo';
 import { useCarga } from '../lib/useCarga';
@@ -25,10 +27,13 @@ export function BloqueBloqueado({ ficha, accion }: { ficha: FichaDetalleDto; acc
   );
 }
 
-/** Acción para obtener la respuesta. HU-11 la reemplaza por la compra por transferencia. */
-export function AccionObtener({ ficha: _ficha }: { ficha: FichaDetalleDto }) {
+/** Acción para obtener la respuesta: ingresar, o comprar por transferencia (HU-11). */
+export function AccionObtener({ ficha }: { ficha: FichaDetalleDto }) {
   const { sesion } = useSesion();
   const ingreso = useRutaIngreso();
+  const navegar = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
   if (!sesion) {
     // HU-10 CA3: lleva a ingresar o registrarse y luego regresa a la misma ficha.
     return (
@@ -40,7 +45,45 @@ export function AccionObtener({ ficha: _ficha }: { ficha: FichaDetalleDto }) {
       </div>
     );
   }
-  return <p className="suave">Muy pronto podrá comprarla aquí.</p>;
+  if (ficha.compra && ficha.compra.estado !== 'RECHAZADA') {
+    return (
+      <div className="pila">
+        <p>
+          Compra en curso · referencia <strong>{ficha.compra.referencia}</strong> ·{' '}
+          <EstadoCompra estado={ficha.compra.estado} />
+        </p>
+        <Link className="boton" to={`/compras/${ficha.compra.id}`}>
+          Ver datos de pago y comprobante
+        </Link>
+      </div>
+    );
+  }
+  const comprar = async () => {
+    setError(null);
+    setEnviando(true);
+    try {
+      const compra = await api<CompraDto>(`/fichas/${ficha.id}/compra`, { cuerpo: {} });
+      navegar(`/compras/${compra.id}`);
+    } catch (e) {
+      if (e instanceof ErrorApi && e.campos.perfil) {
+        return navegar(`/cuenta/completar?volver=${encodeURIComponent(`/fichas/${ficha.id}`)}`);
+      }
+      setError(e instanceof Error ? e.message : 'Ocurrió un error');
+    } finally {
+      setEnviando(false);
+    }
+  };
+  return (
+    <div className="pila">
+      {ficha.compra?.estado === 'RECHAZADA' && (
+        <p className="suave">Su pago anterior fue rechazado. Puede intentarlo de nuevo.</p>
+      )}
+      <AvisoError mensaje={error} />
+      <button className="boton" type="button" onClick={comprar} disabled={enviando}>
+        {enviando ? 'Preparando…' : `Comprar por transferencia · ${formatoPrecio(ficha.precio)}`}
+      </button>
+    </div>
+  );
 }
 
 export default function DetalleFicha() {

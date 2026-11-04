@@ -1,0 +1,93 @@
+import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { renderizar, respuestaError, SESION_CLIENTE, simularApi } from '../../prueba/utilidades';
+
+const ficha = {
+  id: 'f1',
+  titulo: 'Arriendo',
+  resumen: 'R',
+  pregunta: 'P',
+  categoriaId: 'a',
+  categoriaNombre: 'A',
+  etiquetas: [],
+  normas: [],
+  precio: 35000,
+  vigenteA: '2026-10-01T00:00:00Z',
+  estado: 'PUBLICADA',
+  enRevision: false,
+  relacionadas: [],
+  tieneAcceso: false,
+};
+const compra = {
+  id: 'ana.f1',
+  referencia: 'RPN-000123',
+  fichaId: 'f1',
+  fichaTitulo: 'Arriendo',
+  valor: 35000,
+  estado: 'PENDIENTE_PAGO',
+  tieneComprobante: false,
+  creadaEn: '2026-11-01T00:00:00Z',
+  actualizadaEn: '2026-11-01T00:00:00Z',
+  datosBancarios: {
+    banco: '[PENDIENTE: banco]',
+    tipoCuenta: 'Ahorros',
+    numeroCuenta: '[PENDIENTE: número de cuenta]',
+    titular: 'X',
+  },
+};
+
+describe('HU-11 · solicitar compra', () => {
+  it('desde la ficha crea la compra y muestra referencia, valor y datos bancarios', async () => {
+    const llamadas = simularApi({
+      'GET /sesion': SESION_CLIENTE,
+      'GET /fichas/f1': ficha,
+      'POST /fichas/f1/compra': compra,
+      'GET /compras/ana.f1': compra,
+    });
+    const { enrutador } = renderizar('/fichas/f1', { conSesion: true });
+    fireEvent.click(await screen.findByRole('button', { name: /Comprar por transferencia/ }));
+    await waitFor(() => expect(enrutador.state.location.pathname).toBe('/compras/ana.f1'));
+    expect(llamadas.some((l) => l.metodo === 'POST' && l.ruta === '/fichas/f1/compra')).toBe(true);
+    expect(await screen.findByText('RPN-000123')).toBeTruthy();
+    const texto = document.body.textContent!;
+    for (const t of [
+      'Pendiente de pago',
+      'Ahorros',
+      '[PENDIENTE: banco]',
+      '[PENDIENTE: número de cuenta]',
+      'Titular',
+    ]) {
+      expect(texto).toContain(t);
+    }
+    expect(texto.replace(/\s/g, ' ')).toMatch(/\$ ?35\.000/);
+  });
+
+  it('si faltan los datos de facturación lleva a completarlos y regresa a la ficha', async () => {
+    simularApi({
+      'GET /sesion': SESION_CLIENTE,
+      'GET /fichas/f1': ficha,
+      'POST /fichas/f1/compra': () =>
+        respuestaError(422, 'VALIDACION', 'Complete', { perfil: 'x' }),
+    });
+    const { enrutador } = renderizar('/fichas/f1', { conSesion: true });
+    fireEvent.click(await screen.findByRole('button', { name: /Comprar por transferencia/ }));
+    await waitFor(() => expect(enrutador.state.location.pathname).toBe('/cuenta/completar'));
+    expect(enrutador.state.location.search).toBe('?volver=%2Ffichas%2Ff1');
+  });
+
+  it('con una compra en curso lleva a sus datos en lugar de crear otra', async () => {
+    simularApi({
+      'GET /sesion': SESION_CLIENTE,
+      'GET /fichas/f1': {
+        ...ficha,
+        compra: { id: 'ana.f1', estado: 'EN_VERIFICACION', referencia: 'RPN-000123' },
+      },
+    });
+    renderizar('/fichas/f1', { conSesion: true });
+    expect(
+      await screen.findByRole('link', { name: 'Ver datos de pago y comprobante' }),
+    ).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /Comprar/ })).toBeNull();
+    expect(screen.getByText('En verificación')).toBeTruthy();
+  });
+});
