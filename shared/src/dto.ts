@@ -63,6 +63,17 @@ export interface FichaAdminDto {
   origenConsultaId?: string;
 }
 
+export interface FichaAdminResumenDto {
+  id: string;
+  titulo: string;
+  categoriaId: string;
+  categoriaNombre: string;
+  estado: EstadoFicha;
+  precio: number | null;
+  actualizadaEn: string;
+  publicadaAlgunaVez: boolean;
+}
+
 export interface Pagina<T> {
   elementos: T[];
   pagina: number;

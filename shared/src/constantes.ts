@@ -31,6 +31,11 @@ export type EstadoConsulta = (typeof ESTADOS_CONSULTA)[number];
 export const CLASIFICACIONES = ['CONSULTA_RAPIDA', 'ASESORIA'] as const;
 export type Clasificacion = (typeof CLASIFICACIONES)[number];
 
+export const ETIQUETAS_ESTADO_FICHA: Record<EstadoFicha, string> = {
+  BORRADOR: 'Borrador',
+  PUBLICADA: 'Publicada',
+  DESPUBLICADA: 'Despublicada',
+};
 export const ETIQUETAS_ESTADO_COMPRA: Record<EstadoCompra, string> = {
   PENDIENTE_PAGO: 'Pendiente de pago',
   EN_VERIFICACION: 'En verificación',
