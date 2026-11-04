@@ -1,0 +1,27 @@
+{
+  "name": "capacitaciones-ic",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Respuestas para Personas Naturales — plataforma de Capacitaciones IC",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "workspaces": ["shared", "api", "web", "infra"],
+  "scripts": {
+    "dev": "npm run dev --workspace api & npm run dev --workspace web & wait",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "synth": "npm run synth --workspace infra",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.0",
+    "eslint": "^10.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "~5.9.0",
+    "typescript-eslint": "^8.0.0"
+  }
+}
