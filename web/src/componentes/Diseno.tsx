@@ -21,7 +21,6 @@ function MenuUsuario() {
     <>
       {esPersonal && <NavLink to="/panel">Panel</NavLink>}
       <NavLink to="/cuenta" title="Mi cuenta">
-        <span aria-hidden="true">👤 </span>
         {nombre}
       </NavLink>
       <button

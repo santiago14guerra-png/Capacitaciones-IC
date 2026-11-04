@@ -29,7 +29,6 @@ export default function Inicio() {
     <div className="inicio">
       {/* CA1: nombre, propuesta de valor y buscador sin desplazarse. */}
       <section className="heroe">
-        <p className="heroe-marca">Capacitaciones IC</p>
         <h1>Respuestas para Personas Naturales</h1>
         <p className="heroe-frase">
           Respuestas claras a sus dudas tributarias, escritas por los directores de Capacitaciones
@@ -41,11 +40,8 @@ export default function Inicio() {
       <section aria-labelledby="como-funciona" className="seccion">
         <h2 id="como-funciona">Cómo funciona</h2>
         <ol className="pasos">
-          {PASOS.map((p, i) => (
+          {PASOS.map((p) => (
             <li key={p.titulo} className="tarjeta">
-              <span className="paso-numero" aria-hidden="true">
-                {i + 1}
-              </span>
               <h3>{p.titulo}</h3>
               <p>{p.texto}</p>
             </li>
