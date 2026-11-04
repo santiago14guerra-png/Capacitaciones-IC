@@ -2,12 +2,15 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import { Diseno } from './componentes/Diseno';
 import type { Autenticador } from './lib/autenticacion/autenticador';
 import { ProveedorSesion, RequiereSesion } from './lib/sesion';
+import CompletarPerfil from './paginas/cuenta/CompletarPerfil';
 import MiCuenta from './paginas/cuenta/MiCuenta';
+import ConfirmarCuenta from './paginas/ConfirmarCuenta';
 import Ingresar from './paginas/Ingresar';
 import Inicio from './paginas/Inicio';
 import PoliticaDatos from './paginas/legal/PoliticaDatos';
 import Terminos from './paginas/legal/Terminos';
 import NoEncontrada from './paginas/NoEncontrada';
+import Registro from './paginas/Registro';
 
 export const rutas = [
   {
@@ -15,6 +18,8 @@ export const rutas = [
     children: [
       { index: true, element: <Inicio /> },
       { path: 'ingresar', element: <Ingresar /> },
+      { path: 'registro', element: <Registro /> },
+      { path: 'registro/confirmar', element: <ConfirmarCuenta /> },
       { path: 'privacidad', element: <PoliticaDatos /> },
       { path: 'terminos', element: <Terminos /> },
       {
@@ -22,6 +27,14 @@ export const rutas = [
         element: (
           <RequiereSesion>
             <MiCuenta />
+          </RequiereSesion>
+        ),
+      },
+      {
+        path: 'cuenta/completar',
+        element: (
+          <RequiereSesion>
+            <CompletarPerfil />
           </RequiereSesion>
         ),
       },

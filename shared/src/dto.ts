@@ -74,6 +74,9 @@ export interface PerfilDto {
   direccion: string;
   ciudad: string;
   autorizacionDatosEn: string;
+  /** Versión de la política aceptada (HU-25). */
+  versionPoliticaDatos: string;
+  actualizadoEn: string;
 }
 
 export interface SesionDto {

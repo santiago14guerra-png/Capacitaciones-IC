@@ -5,6 +5,7 @@ import type { Contexto } from '../../application/contexto.js';
 import type { VerificadorToken } from '../../application/puertos.js';
 import type { Actor } from '../../domain/actor.js';
 import { ErrorDominio } from '../../domain/errores.js';
+import { rutasPerfil } from './rutas/perfil.js';
 import { rutasSesion } from './rutas/sesion.js';
 
 export type Entorno = { Variables: { actor: Actor | null } };
@@ -28,6 +29,7 @@ export function crearApp(deps: Dependencias, extras?: (app: Hono<Entorno>) => vo
 
   app.get('/salud', (c) => c.json({ estado: 'ok' }));
   app.route('/', rutasSesion(deps));
+  app.route('/', rutasPerfil(deps));
   extras?.(app);
 
   app.notFound((c) => c.json({ error: 'NO_ENCONTRADO', mensaje: 'Ruta no encontrada' }, 404));
