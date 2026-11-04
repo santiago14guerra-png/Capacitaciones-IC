@@ -10,6 +10,7 @@ import {
 import { CATEGORIAS_INICIALES, ordenarCategorias, type Categoria } from '../domain/categoria.js';
 import { ErrorDominio, noEncontrado, validacion } from '../domain/errores.js';
 import type { FichaMeta } from '../domain/ficha.js';
+import { invalidarCatalogo } from './catalogo.js';
 import type { Contexto } from './contexto.js';
 
 /** HU-07 CA4: categorías activas en el orden del panel, para inicio y catálogo. */
@@ -118,6 +119,7 @@ export async function reasignarFichas(ctx: Contexto, id: string, cuerpo: unknown
   const fichas = (await todasLasFichas(ctx)).filter((f) => f.categoriaId === id);
   // Cambiar la categoría no altera la fecha «Vigente a»: el contenido no cambió.
   await Promise.all(fichas.map((f) => ctx.fichas.guardarMeta({ ...f, categoriaId: destinoId })));
+  invalidarCatalogo(ctx);
   return { movidas: fichas.length };
 }
 
