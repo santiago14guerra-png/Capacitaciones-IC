@@ -94,3 +94,26 @@ export async function obtenerCompra(
 ): Promise<CompraDto> {
   return aCompraDto(ctx, await exigirCompraPropia(ctx, a, id));
 }
+
+/**
+ * HU-14: las compras del cliente. Las aprobadas forman su biblioteca; una ficha
+ * despublicada sigue disponible con el aviso «En revisión».
+ */
+export async function misCompras(ctx: Contexto, a: Actor | null): Promise<CompraDto[]> {
+  const actor = exigirSesion(a);
+  const compras = await ctx.compras.listarDeUsuario(actor.sub);
+  const metas = await Promise.all(compras.map((c) => ctx.fichas.obtenerMeta(c.fichaId)));
+  return (
+    compras
+      .map((c, i) => {
+        const { datosBancarios: _, ...dto } = aCompraDto(ctx, c);
+        return { ...dto, fichaEnRevision: metas[i]?.estado !== 'PUBLICADA' };
+      })
+      // Primero las compras en curso; luego la biblioteca, de la más reciente a la más antigua.
+      .sort(
+        (x, y) =>
+          Number(x.estado === 'APROBADA') - Number(y.estado === 'APROBADA') ||
+          (y.aprobadaEn ?? y.actualizadaEn).localeCompare(x.aprobadaEn ?? x.actualizadaEn),
+      )
+  );
+}
