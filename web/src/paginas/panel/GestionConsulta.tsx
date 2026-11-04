@@ -16,11 +16,21 @@ import { formatoFechaHora } from '../../lib/formato';
 import { Cargando } from '../../lib/sesion';
 import { abrirArchivo } from '../../lib/subida';
 import { useCarga } from '../../lib/useCarga';
+import { useAccion } from '../../lib/accion';
+import { BotonAccion } from '../../componentes/BotonAccion';
 
 /** HU-20: convierte la respuesta en una ficha borrador anonimizada para revisar. */
 function ConvertirEnFicha({ consulta }: { consulta: ConsultaAdminDto }) {
   const navegar = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [convertir, convirtiendo] = useAccion(async () => {
+    try {
+      const f = await api<{ id: string }>(`/admin/consultas/${consulta.id}/ficha`, { cuerpo: {} });
+      navegar(`/panel/fichas/${f.id}`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'No se pudo convertir');
+    }
+  });
   if (consulta.fichaId) {
     return (
       <p className="aviso exito">
@@ -46,18 +56,11 @@ function ConvertirEnFicha({ consulta }: { consulta: ConsultaAdminDto }) {
       <button
         className="boton secundario"
         type="button"
-        onClick={async () => {
-          try {
-            const f = await api<{ id: string }>(`/admin/consultas/${consulta.id}/ficha`, {
-              cuerpo: {},
-            });
-            navegar(`/panel/fichas/${f.id}`);
-          } catch (e) {
-            setError(e instanceof Error ? e.message : 'No se pudo convertir');
-          }
-        }}
+        onClick={convertir}
+        disabled={convirtiendo}
+        aria-busy={convirtiendo}
       >
-        Convertir en ficha
+        {convirtiendo ? 'Convirtiendo…' : 'Convertir en ficha'}
       </button>
     </div>
   );
@@ -77,7 +80,7 @@ function Formulario({
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [aviso, setAviso] = useState<{ tipo: string; texto: string } | null>(null);
 
-  const guardar = async (e: FormEvent) => {
+  const [guardar, guardando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     setErrores({});
     setAviso(null);
@@ -97,7 +100,7 @@ function Formulario({
       if (err instanceof ErrorApi && Object.keys(err.campos).length) setErrores(err.campos);
       setAviso({ tipo: 'error', texto: err instanceof Error ? err.message : 'Ocurrió un error' });
     }
-  };
+  });
 
   return (
     <form onSubmit={guardar} className="tarjeta pila" noValidate>
@@ -160,8 +163,8 @@ function Formulario({
           />
         </Campo>
       )}
-      <button className="boton" type="submit">
-        Guardar
+      <button className="boton" type="submit" disabled={guardando} aria-busy={guardando}>
+        {guardando ? 'Guardando…' : 'Guardar'}
       </button>
     </form>
   );
@@ -207,13 +210,13 @@ export default function GestionConsulta() {
           <div className="dato">
             <dt>Adjunto</dt>
             <dd>
-              <button
+              <BotonAccion
+                ocupadoTexto="Abriendo…"
                 className="enlace-boton"
-                type="button"
-                onClick={() => abrirArchivo(`/admin/consultas/${datos.id}/adjunto`)}
+                alPulsar={() => abrirArchivo(`/admin/consultas/${datos.id}/adjunto`)}
               >
                 Ver adjunto
-              </button>
+              </BotonAccion>
             </dd>
           </div>
         )}

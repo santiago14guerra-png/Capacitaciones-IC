@@ -26,7 +26,14 @@
   --c-error-fondo: #f5e6e4;
   --c-aviso: #5f4b12;
   --c-aviso-fondo: #efe9d8;
-  --c-marca: #d8e6d0;
+  --c-marca: #efe4cc;
+  /* Detalle: latón apagado, solo para acentos pequeños (foco, menú activo, resaltado). */
+  --c-detalle: #a6834a;
+  /* Movimiento */
+  --dur-rapida: 120ms;
+  --dur: 240ms;
+  --dur-lenta: 520ms;
+  --curva: cubic-bezier(0.2, 0.7, 0.2, 1);
   --radio: 2px;
   --ancho: 1120px;
   --fuente: 'Albert Sans Variable', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
@@ -87,7 +94,7 @@ img {
   max-width: 100%;
 }
 :focus-visible {
-  outline: 3px solid #4f8a6f;
+  outline: 3px solid var(--c-detalle);
   outline-offset: 2px;
 }
 mark {
@@ -790,5 +797,300 @@ tr.fila-alerta td {
   }
   .barras-etiqueta {
     grid-column: 1 / -1;
+  }
+}
+
+/* =====================================================================
+ * Interacción y movimiento
+ * Solo transform y opacity. Con «reducir movimiento» se quita el desplazamiento.
+ * ===================================================================== */
+
+/* ---------- Botones: respuesta al pasar, al presionar y mientras trabajan ---------- */
+.boton {
+  position: relative;
+  transition:
+    background-color var(--dur) var(--curva),
+    border-color var(--dur) var(--curva),
+    color var(--dur) var(--curva),
+    transform var(--dur-rapida) var(--curva);
+}
+.boton:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+.boton:not(:disabled):active {
+  transform: translateY(1px) scale(0.97);
+  transition-duration: 60ms;
+}
+.boton[aria-busy='true'] {
+  cursor: progress;
+  opacity: 0.85;
+  padding-right: 2.6rem;
+}
+.boton[aria-busy='true']::after {
+  content: '';
+  position: absolute;
+  right: 0.95rem;
+  top: 50%;
+  width: 1rem;
+  height: 1rem;
+  margin-top: -0.5rem;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: girar 700ms linear infinite;
+}
+.enlace-boton {
+  transition:
+    opacity var(--dur-rapida),
+    text-decoration-color var(--dur);
+}
+.enlace-boton:active,
+a:active {
+  opacity: 0.7;
+}
+.enlace-boton[aria-busy='true'] {
+  cursor: progress;
+  opacity: 0.6;
+}
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Enlaces y menú ---------- */
+a {
+  text-decoration-thickness: 1px;
+  transition:
+    color var(--dur) var(--curva),
+    text-decoration-color var(--dur) var(--curva);
+}
+.nav a:not(.boton) {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
+}
+.nav a:not(.boton):hover {
+  text-decoration-color: var(--c-borde);
+}
+.nav a:not(.boton)[aria-current='page'] {
+  text-decoration-color: var(--c-detalle);
+}
+.panel-nav a {
+  transition:
+    background-color var(--dur) var(--curva),
+    color var(--dur) var(--curva);
+}
+.panel-nav a:not([aria-current='page']):hover {
+  background: var(--c-superficie-2);
+}
+
+/* ---------- Campos ---------- */
+input,
+select,
+textarea {
+  transition:
+    border-color var(--dur) var(--curva),
+    background-color var(--dur) var(--curva);
+}
+input:hover:not(:focus),
+select:hover:not(:focus),
+textarea:hover:not(:focus) {
+  border-color: #7b847e;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--c-primario);
+}
+
+/* ---------- Encabezado fijo en pantallas anchas; sombra solo cuando la página ya bajó.
+ * En celular ocupa tres renglones: se deja que suba con la página. ---------- */
+@media (min-width: 900px) {
+  .encabezado {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    transition: box-shadow var(--dur) var(--curva);
+  }
+}
+.encabezado.desplazado {
+  box-shadow:
+    0 1px 0 rgb(0 0 0 / 6%),
+    0 6px 18px rgb(22 48 42 / 8%);
+}
+
+/* ---------- Tarjetas de ficha: toda la tarjeta es el enlace ---------- */
+.tarjeta-ficha {
+  position: relative;
+  transition:
+    transform var(--dur) var(--curva),
+    background-color var(--dur) var(--curva);
+}
+.tarjeta-ficha h3 a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.tarjeta-ficha:hover {
+  transform: translateY(-3px);
+}
+.tarjeta-ficha:hover h3 a {
+  text-decoration: underline;
+  text-decoration-color: var(--c-detalle);
+}
+.tarjeta-ficha:active {
+  transform: translateY(0) scale(0.99);
+}
+.tarjeta-ficha:focus-within {
+  outline: 3px solid var(--c-detalle);
+  outline-offset: 2px;
+}
+.tarjeta-ficha h3 a:focus-visible {
+  outline: none;
+}
+a.tarjeta {
+  transition:
+    transform var(--dur) var(--curva),
+    background-color var(--dur) var(--curva);
+}
+a.tarjeta:hover {
+  transform: translateY(-3px);
+}
+a.tarjeta:active {
+  transform: scale(0.99);
+}
+
+/* ---------- Entrada de cada página ---------- */
+.entrada-pagina {
+  animation: aparecer var(--dur-lenta) var(--curva) both;
+}
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* ---------- Revelar al llegar con el desplazamiento ----------
+ * Solo se ocultan cuando el script está activo (clase en <html>); sin script todo se ve. */
+.con-revelar .revelar {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity var(--dur-lenta) var(--curva),
+    transform var(--dur-lenta) var(--curva);
+  transition-delay: calc(var(--orden, 0) * 70ms);
+}
+.con-revelar .revelar.revelado {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Esqueletos de carga ---------- */
+.esqueleto {
+  background: var(--c-superficie);
+  border-radius: var(--radio);
+  padding: 1.25rem;
+  min-height: 210px;
+  display: grid;
+  gap: 0.7rem;
+  align-content: start;
+}
+.esqueleto span {
+  display: block;
+  height: 0.9rem;
+  border-radius: var(--radio);
+  background: var(--c-superficie-2);
+  animation: latir 1.4s ease-in-out infinite;
+}
+.esqueleto span:nth-child(2) {
+  height: 1.4rem;
+  width: 85%;
+}
+.esqueleto span:nth-child(3) {
+  width: 95%;
+}
+.esqueleto span:nth-child(4) {
+  width: 60%;
+}
+@keyframes latir {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ---------- Portada: monograma y franja de confianza ---------- */
+.heroe {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.heroe-monograma {
+  position: absolute;
+  right: -2%;
+  bottom: -12%;
+  height: 92%;
+  width: auto;
+  color: #1d3c34;
+  z-index: -1;
+  pointer-events: none;
+  animation: deslizar 1.2s var(--curva) both;
+}
+@keyframes deslizar {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+.confianza {
+  list-style: none;
+  margin: 0;
+  padding: 1.75rem 0 0;
+  display: grid;
+  gap: 1.5rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+.confianza strong {
+  display: block;
+  font-family: var(--fuente-titulos);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--c-campo);
+  margin-bottom: 0.25rem;
+}
+.confianza p {
+  margin: 0;
+  color: var(--c-texto-suave);
+  font-size: 0.95rem;
+}
+@media (max-width: 640px) {
+  .heroe-monograma {
+    height: 55%;
+    bottom: -6%;
+    right: -12%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+  .boton[aria-busy='true']::after {
+    animation: none;
+    border-right-color: currentColor;
+    opacity: 0.6;
+  }
+  .con-revelar .revelar,
+  .boton:not(:disabled):hover,
+  .boton:not(:disabled):active,
+  .tarjeta-ficha:hover,
+  a.tarjeta:hover {
+    transform: none;
   }
 }

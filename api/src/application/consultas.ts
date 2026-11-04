@@ -77,6 +77,18 @@ export async function enviarConsulta(
     throw validacion('Complete sus datos antes de enviar la consulta', {
       perfil: 'Datos pendientes',
     });
+  // Doble envío (doble clic, reintento de red): si la misma consulta llegó hace menos de dos
+  // minutos, se devuelve la ya radicada en lugar de crear otra.
+  const hace = ctx.reloj.ahora().getTime() - 2 * 60_000;
+  const repetida = (await ctx.consultas.listarDeUsuario(actor.sub)).find(
+    (c) =>
+      c.asunto === d.asunto &&
+      c.descripcion === d.descripcion &&
+      c.categoriaId === d.categoriaId &&
+      c.adjuntoLlave === d.adjuntoLlave &&
+      new Date(c.recibidaEn).getTime() >= hace,
+  );
+  if (repetida) return aConsultaDto(ctx, repetida);
   const ahora = ctx.reloj.ahora().toISOString();
   const consulta: Consulta = {
     id: ctx.ids.nuevo(),

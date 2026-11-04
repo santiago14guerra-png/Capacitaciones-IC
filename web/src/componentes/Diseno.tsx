@@ -1,7 +1,10 @@
-import { Link, NavLink, Outlet, ScrollRestoration, useNavigate } from 'react-router';
+import { useCallback, useEffect, useState } from 'react';
+import { Link, NavLink, Outlet, ScrollRestoration, useLocation, useNavigate } from 'react-router';
+import { useRevelar } from '../lib/revelar';
 import { useSesion } from '../lib/sesion';
 import { Contacto } from './Contacto';
 import { Logo } from './Logo';
+import { BotonAccion } from './BotonAccion';
 
 function MenuUsuario() {
   const { sesion, cargando, salir, esPersonal } = useSesion();
@@ -24,27 +27,41 @@ function MenuUsuario() {
       <NavLink to="/cuenta" title="Mi cuenta">
         {nombre}
       </NavLink>
-      <button
-        type="button"
+      <BotonAccion
+        ocupadoTexto="Cerrando…"
         className="enlace-boton"
-        onClick={async () => {
+        alPulsar={async () => {
           await salir();
           navegar('/', { replace: true });
         }}
       >
         Cerrar sesión
-      </button>
+      </BotonAccion>
     </>
   );
 }
 
+function useDesplazado() {
+  const [desplazado, setDesplazado] = useState(false);
+  useEffect(() => {
+    const revisar = () => setDesplazado(window.scrollY > 8);
+    revisar();
+    window.addEventListener('scroll', revisar, { passive: true });
+    return () => window.removeEventListener('scroll', revisar);
+  }, []);
+  return desplazado;
+}
+
 export function Diseno() {
+  const { pathname } = useLocation();
+  const desplazado = useDesplazado();
+  useRevelar(useCallback(() => document.getElementById('contenido'), []));
   return (
     <>
       <a className="saltar" href="#contenido">
         Saltar al contenido
       </a>
-      <header className="encabezado">
+      <header className={`encabezado${desplazado ? ' desplazado' : ''}`}>
         <div className="contenedor">
           <Link
             to="/"
@@ -67,7 +84,7 @@ export function Diseno() {
         </div>
       </header>
       <main id="contenido">
-        <div className="contenedor">
+        <div className="contenedor entrada-pagina" key={pathname}>
           <Outlet />
         </div>
       </main>

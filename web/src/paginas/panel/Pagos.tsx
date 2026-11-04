@@ -6,6 +6,8 @@ import { api } from '../../lib/api';
 import { formatoFechaHora, formatoPrecio } from '../../lib/formato';
 import { abrirArchivo } from '../../lib/subida';
 import { useCarga } from '../../lib/useCarga';
+import { useAccion } from '../../lib/accion';
+import { BotonAccion } from '../../componentes/BotonAccion';
 
 const VISTAS = [
   { estado: 'EN_VERIFICACION', nombre: 'Por verificar' },
@@ -17,7 +19,7 @@ function Decision({ pago, alDecidir }: { pago: CompraAdminDto; alDecidir(): void
   const [rechazando, setRechazando] = useState(false);
   const [motivo, setMotivo] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const decidir = async (cuerpo: object) => {
+  const [decidir, decidiendo] = useAccion(async (cuerpo: object) => {
     setError(null);
     try {
       await api(`/admin/pagos/${pago.id}/decision`, { cuerpo });
@@ -25,7 +27,7 @@ function Decision({ pago, alDecidir }: { pago: CompraAdminDto; alDecidir(): void
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Ocurrió un error');
     }
-  };
+  });
   return (
     <div className="pila" style={{ minWidth: 220 }}>
       <AvisoError mensaje={error} />
@@ -34,6 +36,8 @@ function Decision({ pago, alDecidir }: { pago: CompraAdminDto; alDecidir(): void
           <button
             className="boton pequeno"
             type="button"
+            disabled={decidiendo}
+            aria-busy={decidiendo}
             onClick={() => decidir({ decision: 'APROBAR' })}
           >
             Aprobar
@@ -60,7 +64,8 @@ function Decision({ pago, alDecidir }: { pago: CompraAdminDto; alDecidir(): void
             <button
               className="boton peligro pequeno"
               type="button"
-              disabled={!motivo.trim()}
+              disabled={!motivo.trim() || decidiendo}
+              aria-busy={decidiendo}
               onClick={() => decidir({ decision: 'RECHAZAR', motivo })}
             >
               Confirmar rechazo
@@ -128,17 +133,17 @@ export default function Pagos() {
                 </td>
                 <td>
                   {p.tieneComprobante ? (
-                    <button
+                    <BotonAccion
+                      ocupadoTexto="Abriendo…"
                       className="enlace-boton"
-                      type="button"
-                      onClick={() =>
+                      alPulsar={() =>
                         abrirArchivo(`/admin/pagos/${p.id}/comprobante`).catch((e) =>
                           setAviso(e.message),
                         )
                       }
                     >
                       Ver comprobante
-                    </button>
+                    </BotonAccion>
                   ) : (
                     '—'
                   )}

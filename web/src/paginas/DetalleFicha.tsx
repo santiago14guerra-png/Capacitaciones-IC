@@ -11,6 +11,7 @@ import { formatoPrecio } from '../lib/formato';
 import { Cargando, useRutaIngreso, useSesion } from '../lib/sesion';
 import { useTitulo } from '../lib/titulo';
 import { useCarga } from '../lib/useCarga';
+import { useAccion } from '../lib/accion';
 
 /** Lo que ve quien aún no tiene acceso: nunca recibe la respuesta (HU-10 CA2). */
 export function BloqueBloqueado({ ficha, accion }: { ficha: FichaDetalleDto; accion: ReactNode }) {
@@ -31,7 +32,6 @@ export function AccionObtener({ ficha }: { ficha: FichaDetalleDto }) {
   const ingreso = useRutaIngreso();
   const navegar = useNavigate();
   const [error, setError] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);
   if (!sesion) {
     // HU-10 CA3: lleva a ingresar o registrarse y luego regresa a la misma ficha.
     return (
@@ -56,9 +56,8 @@ export function AccionObtener({ ficha }: { ficha: FichaDetalleDto }) {
       </div>
     );
   }
-  const comprar = async () => {
+  const [comprar, enviando] = useAccion(async () => {
     setError(null);
-    setEnviando(true);
     try {
       const compra = await api<CompraDto>(`/fichas/${ficha.id}/compra`, { cuerpo: {} });
       navegar(`/compras/${compra.id}`);
@@ -67,17 +66,21 @@ export function AccionObtener({ ficha }: { ficha: FichaDetalleDto }) {
         return navegar(`/cuenta/completar?volver=${encodeURIComponent(`/fichas/${ficha.id}`)}`);
       }
       setError(e instanceof Error ? e.message : 'Ocurrió un error');
-    } finally {
-      setEnviando(false);
     }
-  };
+  });
   return (
     <div className="pila">
       {ficha.compra?.estado === 'RECHAZADA' && (
         <p className="suave">Su pago anterior fue rechazado. Puede intentarlo de nuevo.</p>
       )}
       <AvisoError mensaje={error} />
-      <button className="boton" type="button" onClick={comprar} disabled={enviando}>
+      <button
+        className="boton"
+        type="button"
+        onClick={comprar}
+        disabled={enviando}
+        aria-busy={enviando}
+      >
         {enviando ? 'Preparando…' : `Comprar por transferencia · ${formatoPrecio(ficha.precio)}`}
       </button>
     </div>

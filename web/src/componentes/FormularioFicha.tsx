@@ -11,6 +11,7 @@ import { Campo } from './Campo';
 import { EditorTexto } from './EditorTexto';
 import { HtmlSeguro } from './HtmlSeguro';
 import { VistaFicha } from './VistaFicha';
+import { useAccion } from '../lib/accion';
 
 interface Valores extends Record<string, unknown> {
   titulo: string;
@@ -65,23 +66,19 @@ interface Props {
 export function FormularioFicha({ ficha, categorias, alGuardar, acciones }: Props) {
   const f = useFormulario<Valores>(desdeFicha(ficha));
   const [previa, setPrevia] = useState(false);
-  const [enviando, setEnviando] = useState(false);
   const { campo, errores, valores, poner } = f;
   const categoria = categorias.find((c) => c.id === valores.categoriaId);
 
-  const enviar = async (e: FormEvent) => {
+  const [enviar, enviando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     const datos = f.validar(esquemaGuardarFicha, aDatos(valores));
     if (!datos) return setPrevia(false);
-    setEnviando(true);
     try {
       await alGuardar(datos);
     } catch (err) {
       if (!f.errorApi(err)) throw err;
-    } finally {
-      setEnviando(false);
     }
-  };
+  });
 
   const contador = (n: number, max: number) => (
     <span className="contador" aria-live="polite">
@@ -220,7 +217,7 @@ export function FormularioFicha({ ficha, categorias, alGuardar, acciones }: Prop
         </p>
       )}
       <div className="fila">
-        <button className="boton" type="submit" disabled={enviando}>
+        <button className="boton" type="submit" disabled={enviando} aria-busy={enviando}>
           {enviando ? 'Guardando…' : 'Guardar'}
         </button>
         <button className="boton secundario" type="button" onClick={() => setPrevia(true)}>

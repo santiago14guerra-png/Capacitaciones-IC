@@ -14,6 +14,7 @@ import { formatoFechaHora, formatoPrecio } from '../../lib/formato';
 import { useFormulario } from '../../lib/formulario';
 import { subirArchivo } from '../../lib/subida';
 import { useCarga } from '../../lib/useCarga';
+import { useAccion } from '../../lib/accion';
 
 /** Mientras escribe el asunto, sugiere fichas que quizá ya respondan su duda (HU-15). */
 function useSugerencias(asunto: string) {
@@ -43,15 +44,13 @@ export default function NuevaConsulta() {
   const [adjunto, setAdjunto] = useState<File | null>(null);
   const [enviada, setEnviada] = useState<ConsultaDto | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);
   const sugerencias = useSugerencias(f.valores.asunto);
 
-  const enviar = async (e: FormEvent) => {
+  const [enviar, enviando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     const d = f.validar(esquemaConsulta);
     if (!d) return;
-    setEnviando(true);
     try {
       const adjuntoLlave = adjunto
         ? await subirArchivo('/consultas/adjunto/subida', adjunto)
@@ -60,10 +59,8 @@ export default function NuevaConsulta() {
       window.scrollTo(0, 0);
     } catch (err) {
       if (!f.errorApi(err)) setError(err instanceof Error ? err.message : 'No se pudo enviar');
-    } finally {
-      setEnviando(false);
     }
-  };
+  });
 
   if (enviada) {
     return (
@@ -141,7 +138,7 @@ export default function NuevaConsulta() {
           <textarea {...f.campo('descripcion')} rows={7} maxLength={5000} />
         </Campo>
         <SelectorArchivo id="adjunto" etiqueta="Adjunto (opcional)" alElegir={setAdjunto} />
-        <button className="boton" type="submit" disabled={enviando}>
+        <button className="boton" type="submit" disabled={enviando} aria-busy={enviando}>
           {enviando ? 'Enviando…' : 'Enviar consulta'}
         </button>
       </form>

@@ -4,6 +4,7 @@ import { AvisoError, Campo } from '../../componentes/Campo';
 import { api, ErrorApi } from '../../lib/api';
 import { Cargando } from '../../lib/sesion';
 import { useCarga } from '../../lib/useCarga';
+import { useAccion } from '../../lib/accion';
 
 /** HU-07: crear, renombrar, ordenar, activar y desactivar categorías. */
 export default function Categorias() {
@@ -20,7 +21,7 @@ export default function Categorias() {
   );
   const [destino, setDestino] = useState('');
 
-  const accion = async (f: () => Promise<unknown>) => {
+  const accionInterno = async (f: () => Promise<unknown>) => {
     setAviso(null);
     try {
       await f();
@@ -32,7 +33,7 @@ export default function Categorias() {
     }
   };
 
-  const crear = async (e: FormEvent) => {
+  const crearInterno = async (e: FormEvent) => {
     e.preventDefault();
     setErrorNombre(undefined);
     try {
@@ -46,7 +47,7 @@ export default function Categorias() {
     }
   };
 
-  const mover = async (indice: number, delta: -1 | 1) => {
+  const moverInterno = async (indice: number, delta: -1 | 1) => {
     if (!datos) return;
     const ids = datos.map((c) => c.id);
     [ids[indice], ids[indice + delta]] = [ids[indice + delta]!, ids[indice]!];
@@ -65,7 +66,7 @@ export default function Categorias() {
     }
   };
 
-  const desactivar = async (c: CategoriaAdminDto) => {
+  const desactivarInterno = async (c: CategoriaAdminDto) => {
     setAviso(null);
     try {
       await api(`/admin/categorias/${c.id}/desactivar`, { cuerpo: {} });
@@ -78,9 +79,9 @@ export default function Categorias() {
     }
   };
 
-  const reasignarYDesactivar = async () => {
+  const reasignarYDesactivarInterno = async () => {
     if (!bloqueo || !destino) return;
-    const ok = await accion(async () => {
+    const ok = await accionInterno(async () => {
       await api(`/admin/categorias/${bloqueo.categoria.id}/reasignar`, {
         cuerpo: { destinoId: destino },
       });
@@ -89,9 +90,20 @@ export default function Categorias() {
     if (ok) setBloqueo(null);
   };
 
+  // Un solo bloqueo para toda la página: un doble clic no crea, mueve ni desactiva dos veces.
+  const [hacer, ocupado] = useAccion((f: () => unknown) => f());
+  const accion = (f: () => Promise<unknown>) => hacer(() => accionInterno(f));
+  const crear = (e: FormEvent) => {
+    e.preventDefault();
+    return hacer(() => crearInterno(e));
+  };
+  const mover = (i: number, d: -1 | 1) => hacer(() => moverInterno(i, d));
+  const desactivar = (c: CategoriaAdminDto) => hacer(() => desactivarInterno(c));
+  const reasignarYDesactivar = () => hacer(() => reasignarYDesactivarInterno());
+
   if (cargando && !datos) return <Cargando />;
   return (
-    <section className="pila">
+    <section className="pila" aria-busy={ocupado}>
       <h1>Categorías</h1>
       <p className="suave">El orden de esta lista es el mismo del inicio y del catálogo.</p>
       <AvisoError mensaje={error?.message ?? aviso} />
@@ -194,17 +206,17 @@ export default function Categorias() {
                   {editando?.id === c.id ? (
                     <form
                       className="fila"
-                      onSubmit={async (e) => {
+                      onSubmit={(e) => {
                         e.preventDefault();
-                        if (
-                          await accion(() =>
+                        void hacer(async () => {
+                          const ok = await accionInterno(() =>
                             api(`/admin/categorias/${c.id}`, {
                               metodo: 'PUT',
                               cuerpo: { nombre: editando.nombre },
                             }),
-                          )
-                        )
-                          setEditando(null);
+                          );
+                          if (ok) setEditando(null);
+                        });
                       }}
                     >
                       <input

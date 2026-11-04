@@ -2,17 +2,16 @@ import { useState, type FormEvent } from 'react';
 import { AvisoError, Campo } from '../../componentes/Campo';
 import { descargar } from '../../lib/api';
 import { hoyLocal, inicioDeMes } from '../../lib/fechas';
+import { useAccion } from '../../lib/accion';
 
 /** HU-19: descarga en Excel los datos fiscales de las compras verificadas en un periodo. */
 export default function ExportarSiigo() {
   const [desde, setDesde] = useState(inicioDeMes());
   const [hasta, setHasta] = useState(hoyLocal());
   const [error, setError] = useState<string | null>(null);
-  const [descargando, setDescargando] = useState(false);
-  const enviar = async (e: FormEvent) => {
+  const [enviar, descargando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    setDescargando(true);
     try {
       await descargar(
         `/admin/exportaciones/siigo?${new URLSearchParams({ desde, hasta })}`,
@@ -20,10 +19,8 @@ export default function ExportarSiigo() {
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo descargar');
-    } finally {
-      setDescargando(false);
     }
-  };
+  });
   return (
     <section className="pila formulario">
       <h1>Exportar para Siigo</h1>
@@ -56,7 +53,12 @@ export default function ExportarSiigo() {
           />
         </Campo>
         <div>
-          <button className="boton" type="submit" disabled={descargando || !desde || !hasta}>
+          <button
+            className="boton"
+            type="submit"
+            disabled={descargando || !desde || !hasta}
+            aria-busy={descargando}
+          >
             {descargando ? 'Generando…' : 'Descargar Excel'}
           </button>
         </div>

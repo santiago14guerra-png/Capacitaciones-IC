@@ -81,4 +81,23 @@ describe('HU-15 · enviar consulta', () => {
     });
     expect(r.estado).toBe(422);
   });
+
+  it('un segundo envío de la misma consulta devuelve el mismo radicado', async () => {
+    const otra = { ...consulta, asunto: 'Pregunta enviada dos veces' };
+    const a = await e.json('/consultas', { token: CLIENTE, cuerpo: otra });
+    const b = await e.json('/consultas', { token: CLIENTE, cuerpo: otra });
+    expect(b.datos.radicado).toBe(a.datos.radicado);
+    const mias = (await e.json('/consultas', { token: CLIENTE })).datos.filter(
+      (x: { asunto: string }) => x.asunto === otra.asunto,
+    );
+    expect(mias).toHaveLength(1);
+  });
+
+  it('pasados dos minutos se puede volver a enviar la misma pregunta', async () => {
+    const otra = { ...consulta, asunto: 'Pregunta repetida después' };
+    const a = await e.json('/consultas', { token: CLIENTE, cuerpo: otra });
+    e.reloj.avanzar(1);
+    const b = await e.json('/consultas', { token: CLIENTE, cuerpo: otra });
+    expect(b.datos.radicado).not.toBe(a.datos.radicado);
+  });
 });

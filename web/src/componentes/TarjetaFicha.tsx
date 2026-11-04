@@ -14,7 +14,7 @@ export function TarjetaFicha({
   resumen?: ReactNode;
 }) {
   return (
-    <article className="tarjeta tarjeta-ficha">
+    <article className="tarjeta tarjeta-ficha revelar">
       <div className="fila entre">
         <span className="chip">{ficha.categoriaNombre}</span>
         <strong className="tarjeta-precio">{formatoPrecio(ficha.precio)}</strong>

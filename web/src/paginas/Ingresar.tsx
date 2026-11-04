@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { ErrorAuth, MENSAJES_AUTH } from '../lib/autenticacion/tipos';
 import { rutaSegura, useSesion } from '../lib/sesion';
+import { useAccion } from '../lib/accion';
 
 export default function Ingresar() {
   const { autenticador, recargar } = useSesion();
@@ -13,17 +14,15 @@ export default function Ingresar() {
   const [nueva, setNueva] = useState('');
   const [desafio, setDesafio] = useState<string | null>(null);
   const [error, setError] = useState<{ codigo: string; mensaje: string } | null>(null);
-  const [enviando, setEnviando] = useState(false);
 
   const terminar = async () => {
     await recargar();
     navegar(volver, { replace: true });
   };
 
-  const enviar = async (e: FormEvent) => {
+  const [enviar, enviando] = useAccion(async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    setEnviando(true);
     try {
       if (desafio) {
         await autenticador.completarNuevaContrasena(correo, desafio, nueva);
@@ -38,10 +37,8 @@ export default function Ingresar() {
         codigo,
         mensaje: err instanceof ErrorAuth ? err.message : MENSAJES_AUTH.DESCONOCIDO,
       });
-    } finally {
-      setEnviando(false);
     }
-  };
+  });
 
   return (
     <section className="formulario">
@@ -104,7 +101,7 @@ export default function Ingresar() {
           </div>
         )}
         <div className="fila">
-          <button className="boton" type="submit" disabled={enviando}>
+          <button className="boton" type="submit" disabled={enviando} aria-busy={enviando}>
             {enviando ? 'Ingresando…' : 'Ingresar'}
           </button>
           <Link to="/recuperar">Olvidé mi contraseña</Link>

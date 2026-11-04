@@ -2,10 +2,10 @@ import { LIMITES, type ResultadoBusquedaDto } from '@ic/shared';
 import { Link, useSearchParams } from 'react-router';
 import { Buscador } from '../componentes/Buscador';
 import { AvisoError } from '../componentes/Campo';
+import { Esqueletos } from '../componentes/Esqueletos';
 import { Resaltado } from '../componentes/Resaltado';
 import { TarjetaFicha } from '../componentes/TarjetaFicha';
 import { api } from '../lib/api';
-import { Cargando } from '../lib/sesion';
 import { useCarga } from '../lib/useCarga';
 
 /** HU-09: resultados por relevancia con el término resaltado. */
@@ -26,7 +26,7 @@ export default function Buscar() {
         <p className="aviso info">Escriba al menos {LIMITES.terminoMin} letras para buscar.</p>
       )}
       <AvisoError mensaje={error?.message} />
-      {cargando && !corta && <Cargando />}
+      {cargando && !corta && <Esqueletos cantidad={3} />}
       {datos && (
         <>
           <p className="suave" aria-live="polite">
