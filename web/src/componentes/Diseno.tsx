@@ -2,7 +2,7 @@ import { Link, NavLink, Outlet, ScrollRestoration, useNavigate } from 'react-rou
 import { useSesion } from '../lib/sesion';
 
 function MenuUsuario() {
-  const { sesion, cargando, salir } = useSesion();
+  const { sesion, cargando, salir, esPersonal } = useSesion();
   const navegar = useNavigate();
   if (cargando) return null;
   if (!sesion) {
@@ -18,6 +18,7 @@ function MenuUsuario() {
   const nombre = sesion.perfil?.nombres ?? sesion.correo;
   return (
     <>
+      {esPersonal && <NavLink to="/panel">Panel</NavLink>}
       <NavLink to="/cuenta" title="Mi cuenta">
         <span aria-hidden="true">👤 </span>
         {nombre}

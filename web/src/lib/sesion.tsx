@@ -137,3 +137,20 @@ export function RequiereSesion({ children }: { children: ReactNode }) {
   }
   return <>{children}</>;
 }
+
+/** HU-04: el panel solo es para administrador o director. La API lo vuelve a verificar. */
+export function RequierePersonal({ children }: { children: ReactNode }) {
+  const { cargando, sesion, esPersonal } = useSesion();
+  const ingreso = useRutaIngreso();
+  if (cargando) return <Cargando />;
+  if (!sesion) return <Navigate to={ingreso} replace />;
+  if (!esPersonal) {
+    return (
+      <section className="pila">
+        <h1>No tiene permiso para ver esta página</h1>
+        <p>El panel es solo para el personal de Capacitaciones IC.</p>
+      </section>
+    );
+  }
+  return <>{children}</>;
+}

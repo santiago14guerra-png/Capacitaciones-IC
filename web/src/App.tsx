@@ -10,6 +10,8 @@ import Inicio from './paginas/Inicio';
 import PoliticaDatos from './paginas/legal/PoliticaDatos';
 import Terminos from './paginas/legal/Terminos';
 import NoEncontrada from './paginas/NoEncontrada';
+import DisenoPanel from './paginas/panel/DisenoPanel';
+import InicioPanel from './paginas/panel/InicioPanel';
 import Registro from './paginas/Registro';
 
 export const rutas = [
@@ -37,6 +39,11 @@ export const rutas = [
             <CompletarPerfil />
           </RequiereSesion>
         ),
+      },
+      {
+        path: 'panel',
+        element: <DisenoPanel />,
+        children: [{ index: true, element: <InicioPanel /> }],
       },
       { path: '*', element: <NoEncontrada /> },
     ],
