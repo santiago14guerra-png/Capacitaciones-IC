@@ -575,3 +575,74 @@ th {
   min-height: 58px;
   font-size: 1.05rem;
 }
+
+/* ---------- Inicio (HU-01) ---------- */
+.heroe {
+  background: linear-gradient(160deg, var(--c-primario), #1d5a86);
+  color: #fff;
+  border-radius: calc(var(--radio) * 1.5);
+  padding: clamp(1.5rem, 5vw, 3rem);
+  margin-top: -0.5rem;
+}
+.heroe h1 {
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+.heroe-marca {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin: 0 0 0.4rem;
+}
+.heroe-frase {
+  font-size: 1.1rem;
+  max-width: 46rem;
+  opacity: 0.95;
+}
+.heroe .boton {
+  background: var(--c-acento);
+  border-color: var(--c-acento);
+}
+.heroe .error-campo {
+  color: #ffe0e0;
+}
+.seccion {
+  margin-top: 2.5rem;
+}
+.pasos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.paso-numero {
+  display: inline-grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: var(--c-primario);
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.categorias-inicio {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+@media (max-width: 480px) {
+  .heroe .fila {
+    flex-wrap: wrap !important;
+  }
+  .heroe .fila .boton {
+    width: 100%;
+  }
+}

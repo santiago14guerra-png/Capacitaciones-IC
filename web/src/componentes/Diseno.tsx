@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet, ScrollRestoration, useNavigate } from 'react-router';
 import { useSesion } from '../lib/sesion';
+import { Contacto } from './Contacto';
 
 function MenuUsuario() {
   const { sesion, cargando, salir, esPersonal } = useSesion();
@@ -65,6 +66,10 @@ export function Diseno() {
           <div>
             <strong>Capacitaciones IC</strong>
             <p className="pequeno">Respuestas tributarias para personas naturales.</p>
+          </div>
+          <div>
+            <strong>Contacto</strong>
+            <Contacto claro />
           </div>
           <nav aria-label="Legal" className="pequeno">
             <Link to="/privacidad">Política de tratamiento de datos</Link>
