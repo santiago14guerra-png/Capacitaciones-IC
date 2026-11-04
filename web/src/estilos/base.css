@@ -403,3 +403,39 @@ th {
     width: auto;
   }
 }
+
+/* ---------- Panel (HU-04) ---------- */
+.panel {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+.panel-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--c-borde);
+  padding-bottom: 0.5rem;
+}
+.panel-nav a {
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.45rem 0.8rem;
+  border-radius: 8px;
+}
+.panel-nav a[aria-current='page'] {
+  background: var(--c-primario);
+  color: #fff;
+}
+@media (min-width: 960px) {
+  .panel {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+  .panel-nav {
+    flex-direction: column;
+    border-bottom: 0;
+    border-right: 1px solid var(--c-borde);
+    padding: 0 1rem 0 0;
+    align-self: start;
+  }
+}

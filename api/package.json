@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/bootstrap/local.ts",
     "typecheck": "tsc -p .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "crear-personal": "tsx scripts/crear-personal.ts"
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.900.0",
