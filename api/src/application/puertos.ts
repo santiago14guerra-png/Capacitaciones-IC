@@ -1,5 +1,8 @@
 import type { Actor } from '../domain/actor.js';
+import type { Categoria } from '../domain/categoria.js';
+import type { Ficha, FichaMeta } from '../domain/ficha.js';
 import type { Perfil } from '../domain/perfil.js';
+import type { EstadoFicha } from '@ic/shared';
 
 /** Verifica un token y devuelve el actor; null si es inválido o venció. */
 export interface VerificadorToken {
@@ -27,4 +30,20 @@ export interface Sistema {
 export interface RepoPerfiles {
   obtener(sub: string): Promise<Perfil | null>;
   guardar(perfil: Perfil): Promise<void>;
+}
+
+export interface RepoCategorias {
+  listar(): Promise<Categoria[]>;
+  obtener(id: string): Promise<Categoria | null>;
+  guardar(categoria: Categoria): Promise<void>;
+}
+
+export interface RepoFichas {
+  listarPorEstado(estado: EstadoFicha): Promise<FichaMeta[]>;
+  obtenerMeta(id: string): Promise<FichaMeta | null>;
+  obtener(id: string): Promise<Ficha | null>;
+  /** Guarda metadatos y contenido. */
+  guardar(ficha: Ficha): Promise<void>;
+  guardarMeta(meta: FichaMeta): Promise<void>;
+  borrar(id: string): Promise<void>;
 }

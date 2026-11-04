@@ -2,7 +2,13 @@ import { NavLink, Outlet } from 'react-router';
 import { RequierePersonal } from '../../lib/sesion';
 
 /** Secciones del panel. Cada historia agrega la suya. */
-export const SECCIONES_PANEL: { ruta: string; nombre: string; descripcion: string }[] = [];
+export const SECCIONES_PANEL: { ruta: string; nombre: string; descripcion: string }[] = [
+  {
+    ruta: 'categorias',
+    nombre: 'Categorías',
+    descripcion: 'Crear, ordenar y desactivar categorías.',
+  },
+];
 
 export default function DisenoPanel() {
   return (

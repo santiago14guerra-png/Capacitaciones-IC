@@ -14,6 +14,11 @@ export interface CategoriaDto {
   activa: boolean;
 }
 
+export interface CategoriaAdminDto extends CategoriaDto {
+  fichasPublicadas: number;
+  fichasTotal: number;
+}
+
 /** Lo que cualquiera puede ver. Nunca incluye la respuesta. */
 export interface FichaResumenDto {
   id: string;

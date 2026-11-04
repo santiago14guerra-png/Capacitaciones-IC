@@ -7,12 +7,14 @@ import {
 } from '../adapters/local/autenticacion-dev.js';
 import { iniciarEmulador } from '../adapters/local/emulador.js';
 import { directorioDev, verificadorDev } from '../adapters/local/token-dev.js';
+import { sembrarCategorias } from '../application/categorias.js';
 import { componer } from './componer.js';
 
 /** Desarrollo local: misma app que en Lambda, con DynamoDB emulado y autenticación de desarrollo. */
 const puerto = Number(process.env.PUERTO ?? 3001);
 const { tabla } = await iniciarEmulador();
 const ctx = componer({ tabla, directorio: directorioDev });
+await sembrarCategorias(ctx);
 
 const app = crearApp({ ...ctx, verificador: verificadorDev }, (a) => {
   a.route('/dev/auth', crearAutenticacionDev());
