@@ -14,6 +14,8 @@ import DisenoPanel from './paginas/panel/DisenoPanel';
 import InicioPanel from './paginas/panel/InicioPanel';
 import CategoriasPanel from './paginas/panel/Categorias';
 import NuevaFicha from './paginas/panel/NuevaFicha';
+import FichasPanel from './paginas/panel/Fichas';
+import EditarFicha from './paginas/panel/EditarFicha';
 import Registro from './paginas/Registro';
 
 export const rutas = [
@@ -48,7 +50,9 @@ export const rutas = [
         children: [
           { index: true, element: <InicioPanel /> },
           { path: 'categorias', element: <CategoriasPanel /> },
+          { path: 'fichas', element: <FichasPanel /> },
           { path: 'fichas/nueva', element: <NuevaFicha /> },
+          { path: 'fichas/:id', element: <EditarFicha /> },
         ],
       },
       { path: '*', element: <NoEncontrada /> },
