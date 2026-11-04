@@ -17,7 +17,6 @@ export function BloqueBloqueado({ ficha, accion }: { ficha: FichaDetalleDto; acc
   return (
     <div className="bloqueada pila">
       <p style={{ fontSize: '1.1rem' }}>
-        <span aria-hidden="true">🔒 </span>
         <strong>La respuesta completa está disponible al obtener esta ficha.</strong>
       </p>
       {ficha.precio === 0 && <p>Es gratuita: solo necesita iniciar sesión.</p>}

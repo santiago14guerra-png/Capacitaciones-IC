@@ -22,7 +22,7 @@ contacto, tarifas y banco se configuran en `infra/cdk.json` → `negocio`, sin t
 | Razón social, NIT, dirección, plazos de conservación, política de devoluciones, responsabilidad | Política y términos (HU-25) | Texto final del **abogado**; luego cambiar `VERSION_POLITICA_DATOS` |
 | Plantilla de importación de Siigo y código de producto | Excel de HU-19 | Validar con la directora y ajustar `exportacion-siigo.ts` |
 | Categorías iniciales | HU-07 | Propuesta del equipo; se editan desde el panel |
-| Manual de marca | Colores y tipografía | Tokens en `web/src/estilos/base.css` |
+| Manual de marca | Colores y tipografía | Identidad sobria provisional («libro mayor»): verde contable `#1e4d3c`, campo `#16302a`, papel `#f3f3f0`; Source Serif 4 en títulos y Albert Sans en texto. Se cambian en los tokens de `web/src/estilos/base.css` |
 | Fichas reales (T-07) | Catálogo | Se cargan desde el panel |
 
 ## Antes del primer despliegue (SG)
