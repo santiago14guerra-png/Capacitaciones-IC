@@ -5,6 +5,7 @@ import type { Perfil } from '../domain/perfil.js';
 import type { EstadoCompra, EstadoFicha, SubidaDto, TipoArchivo } from '@ic/shared';
 import type { Compra } from '../domain/compra.js';
 import type { Consulta } from '../domain/consulta.js';
+import type { Correo } from '../domain/correos.js';
 
 /** Verifica un token y devuelve el actor; null si es inválido o venció. */
 export interface VerificadorToken {
@@ -94,4 +95,9 @@ export interface RepoConsultas {
   reemplazar(nueva: Consulta, previa: Consulta): Promise<boolean>;
   listarTodas(): Promise<Consulta[]>;
   listarDeUsuario(sub: string): Promise<Consulta[]>;
+}
+
+/** HU-18: envío de avisos por correo (Amazon SES en AWS). */
+export interface Notificador {
+  enviar(correo: Correo): Promise<void>;
 }

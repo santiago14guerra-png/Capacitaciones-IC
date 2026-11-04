@@ -10,6 +10,8 @@ import type { Actor } from '../domain/actor.js';
 import { erroresGestion, estaAtrasada, type Consulta } from '../domain/consulta.js';
 import { conflicto, noEncontrado, validacion } from '../domain/errores.js';
 import { sanearHtml } from '../domain/html.js';
+import { correoConsultaRespondida } from '../domain/correos.js';
+import { avisar } from './avisos.js';
 import { aConsultaDto } from './consultas.js';
 import type { Contexto } from './contexto.js';
 
@@ -100,5 +102,18 @@ export async function gestionarConsulta(
   };
   if (!(await ctx.consultas.reemplazar(nueva, previa)))
     throw conflicto('Otra persona acaba de cambiar esta consulta. Recárguela.');
+  // HU-18: avisa al responder o escalar (no al guardar de nuevo en el mismo estado).
+  if (respondida && nueva.estado !== previa.estado) {
+    await avisar(
+      ctx,
+      correoConsultaRespondida(
+        nueva.clienteCorreo,
+        nueva.radicado,
+        ctx.sitioUrl,
+        nueva.id,
+        nueva.estado === 'ESCALADA',
+      ),
+    );
+  }
   return { consulta: await aConsultaAdmin(ctx, nueva), previa, nueva };
 }

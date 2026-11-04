@@ -7,6 +7,8 @@ import {
 import type { Actor } from '../domain/actor.js';
 import { partesIdCompra, type Compra } from '../domain/compra.js';
 import { conflicto, noEncontrado } from '../domain/errores.js';
+import { correoPagoAprobado, correoPagoRechazado } from '../domain/correos.js';
+import { avisar } from './avisos.js';
 import { aCompraDto } from './compras.js';
 import type { Contexto } from './contexto.js';
 
@@ -72,5 +74,8 @@ export async function decidirPago(
       fecha: ahora,
     }),
   );
+  // HU-18: aviso al cliente con un enlace a la plataforma.
+  const correo = nueva.estado === 'APROBADA' ? correoPagoAprobado : correoPagoRechazado;
+  await avisar(ctx, correo(compra.clienteCorreo, compra.referencia, ctx.sitioUrl, id));
   return aAdmin(ctx, nueva);
 }

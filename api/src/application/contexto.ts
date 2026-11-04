@@ -1,4 +1,5 @@
 import type {
+  Notificador,
   RepoConsultas,
   Almacen,
   Contadores,
@@ -23,5 +24,8 @@ export interface Contexto extends Sistema {
   consultas: RepoConsultas;
   contadores: Contadores;
   archivos: Almacen;
+  notificador: Notificador;
+  /** URL pública del sitio, para los enlaces de los correos. */
+  sitioUrl: string;
   negocio: ConfigNegocio;
 }
