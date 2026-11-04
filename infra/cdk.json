@@ -1,0 +1,12 @@
+{
+  "app": "npx tsx bin/app.ts",
+  "context": {
+    "region": "us-east-1",
+    "repositorioGithub": "santiago14guerra-png/Capacitaciones-IC",
+    "ramaDespliegue": "develop",
+    "correoRemitente": "",
+    "dominioSes": "",
+    "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
+    "@aws-cdk/core:target-partitions": ["aws"]
+  }
+}
