@@ -121,9 +121,19 @@ export function Cargando() {
 
 /** Rutas privadas: sin sesión, lleva a ingresar y luego regresa a la misma página. */
 export function RequiereSesion({ children }: { children: ReactNode }) {
-  const { cargando, sesion } = useSesion();
+  const { cargando, sesion, esPersonal } = useSesion();
+  const l = useLocation();
   const ingreso = useRutaIngreso();
   if (cargando) return <Cargando />;
   if (!sesion) return <Navigate to={ingreso} replace />;
+  // HU-02 CA6: un cliente sin datos de facturación los completa antes de seguir.
+  if (!sesion.perfil && !esPersonal && l.pathname !== '/cuenta/completar') {
+    return (
+      <Navigate
+        to={`/cuenta/completar?volver=${encodeURIComponent(l.pathname + l.search)}`}
+        replace
+      />
+    );
+  }
   return <>{children}</>;
 }
