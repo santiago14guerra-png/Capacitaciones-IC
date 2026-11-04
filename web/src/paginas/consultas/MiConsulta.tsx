@@ -62,6 +62,7 @@ export default function MiConsulta() {
         <div className="aviso info">
           <h2 className="ficha-subtitulo">Su caso requiere una asesoría</h2>
           <p style={{ whiteSpace: 'pre-wrap' }}>{c.condicionesAsesoria}</p>
+          <Link to="/tarifas">Ver tarifas y alcance</Link>
         </div>
       )}
     </section>
