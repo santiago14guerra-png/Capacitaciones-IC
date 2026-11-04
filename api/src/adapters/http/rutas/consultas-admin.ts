@@ -3,6 +3,7 @@ import { urlAdjunto } from '../../../application/consultas.js';
 import {
   bandejaConsultas,
   consultaAdmin,
+  convertirEnFicha,
   gestionarConsulta,
 } from '../../../application/consultas-admin.js';
 import type { Contexto } from '../../../application/contexto.js';
@@ -19,6 +20,9 @@ export const rutasConsultasAdmin = (ctx: Contexto) =>
         (await gestionarConsulta(ctx, c.var.actor!, c.req.param('id'), await cuerpoJson(c)))
           .consulta,
       ),
+    )
+    .post('/:id/ficha', async (c) =>
+      c.json(await convertirEnFicha(ctx, c.var.actor!, c.req.param('id')), 201),
     )
     .get('/:id/adjunto', async (c) =>
       c.json(await urlAdjunto(ctx, c.var.actor, c.req.param('id'))),
