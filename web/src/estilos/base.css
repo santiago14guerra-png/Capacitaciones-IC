@@ -646,3 +646,11 @@ th {
     width: 100%;
   }
 }
+
+/* Ajustes tras la revisión visual del Sprint 1 */
+.pie mark {
+  color: var(--c-texto);
+}
+.nav .boton {
+  width: auto;
+}
