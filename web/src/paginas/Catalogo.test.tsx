@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { renderizar, simularApi } from '../prueba/utilidades';
 
@@ -64,10 +64,10 @@ describe('HU-08 · catálogo', () => {
     const vacio = (await screen.findByRole('heading', { name: /No encontramos respuestas/ }))
       .parentElement!;
     await waitFor(() =>
-      expect(screen.getByRole('link', { name: 'Escribirnos por WhatsApp' })).toBeTruthy(),
+      expect(within(vacio).getByRole('link', { name: 'Escribirnos por WhatsApp' })).toBeTruthy(),
     );
     expect(
-      screen.getByRole('link', { name: 'Escribirnos por WhatsApp' }).getAttribute('href'),
+      within(vacio).getByRole('link', { name: 'Escribirnos por WhatsApp' }).getAttribute('href'),
     ).toBe('https://wa.me/573001234567');
     expect(vacio.textContent).toContain('[PENDIENTE: correo institucional]');
   });
