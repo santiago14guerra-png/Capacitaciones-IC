@@ -7,7 +7,11 @@ import { ErrorDominio } from '../../domain/errores.js';
 
 export type Entorno = { Variables: { actor: Actor | null } };
 
-export function crearApp(verificador: VerificadorToken) {
+export interface Dependencias {
+  verificador: VerificadorToken;
+}
+
+export function crearApp({ verificador }: Dependencias) {
   const app = new Hono<Entorno>().basePath('/api');
 
   app.use('*', async (c, next) => {
