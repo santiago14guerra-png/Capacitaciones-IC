@@ -133,7 +133,8 @@ export default function DetalleFicha() {
         aviso={
           <div>
             <p style={{ margin: '0.4rem 0 0' }}>
-              ¿Su caso es distinto? <Link to="/consultas/nueva">Solicite una asesoría</Link>.
+              ¿Su caso es distinto? <Link to="/consultas/nueva">Solicite una asesoría</Link> y
+              conozca las <Link to="/tarifas">tarifas y el alcance del servicio</Link>.
             </p>
           </div>
         }
