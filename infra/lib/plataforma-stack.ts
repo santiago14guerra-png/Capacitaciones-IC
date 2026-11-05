@@ -21,6 +21,7 @@ import type { Construct } from 'constructs';
 
 export const RAIZ = resolve(import.meta.dirname, '../..');
 const GRUPOS = ['cliente', 'administrador', 'director'] as const;
+const DIAS_SIN_CONFIRMAR = 7;
 
 export interface PlataformaProps extends StackProps {
   ambiente: string;
@@ -51,6 +52,8 @@ export class PlataformaStack extends Stack {
       pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
       encryption: dynamodb.TableEncryptionV2.awsManagedKey(),
       removalPolicy: conservar,
+      // Las cuotas diarias se borran solas.
+      timeToLiveAttribute: 'expira',
       globalSecondaryIndexes: ['gsi1', 'gsi2'].map((n) => ({
         indexName: n,
         partitionKey: { name: `${n}pk`, type: dynamodb.AttributeType.STRING },
@@ -63,6 +66,18 @@ export class PlataformaStack extends Stack {
       encryption: s3.BucketEncryption.S3_MANAGED,
       enforceSSL: true,
       removalPolicy: conservar,
+      // Se conserva la versión confirmada de cada archivo aunque la URL de subida se reutilice.
+      versioned: true,
+      lifecycleRules: [
+        {
+          // La API quita la etiqueta al confirmar el comprobante o radicar la consulta.
+          id: 'BorrarSinConfirmar',
+          tagFilters: { estado: 'sin-confirmar' },
+          expiration: Duration.days(DIAS_SIN_CONFIRMAR),
+          noncurrentVersionExpiration: Duration.days(DIAS_SIN_CONFIRMAR),
+        },
+        { id: 'LimpiarMarcadores', expiredObjectDeleteMarker: true },
+      ],
     });
 
     const sitio = new s3.Bucket(this, 'Sitio', {
@@ -104,13 +119,6 @@ export class PlataformaStack extends Stack {
       ...base('triggers/post-confirmacion.ts'),
       logGroup: registro('PostConfirmacion'),
     });
-    // ARN genérico para evitar la dependencia circular grupo de usuarios ↔ disparador.
-    postConfirmacion.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: ['cognito-idp:AdminAddUserToGroup'],
-        resources: [`arn:aws:cognito-idp:${this.region}:${this.account}:userpool/*`],
-      }),
-    );
     const mensajes = new NodejsFunction(this, 'Mensajes', {
       ...base('triggers/mensajes.ts'),
       logGroup: registro('Mensajes'),
@@ -143,6 +151,17 @@ export class PlataformaStack extends Stack {
         : cognito.UserPoolEmail.withCognito(),
       removalPolicy: conservar,
     });
+    // Política aparte del rol: dentro de él crearía una dependencia circular con el grupo de usuarios.
+    postConfirmacion.role?.attachInlinePolicy(
+      new iam.Policy(this, 'PostConfirmacionGrupos', {
+        statements: [
+          new iam.PolicyStatement({
+            actions: ['cognito-idp:AdminAddUserToGroup'],
+            resources: [usuarios.userPoolArn],
+          }),
+        ],
+      }),
+    );
     const cliente = usuarios.addClient('Web', {
       authFlows: { userPassword: true },
       preventUserExistenceErrors: true,
@@ -189,7 +208,7 @@ export class PlataformaStack extends Stack {
             "script-src 'self'",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob:",
-            `connect-src 'self' https://cognito-idp.${this.region}.amazonaws.com https://*.amazonaws.com`,
+            `connect-src 'self' https://cognito-idp.${this.region}.amazonaws.com https://*.s3.${this.region}.amazonaws.com`,
             "object-src 'none'",
             "base-uri 'self'",
             "form-action 'self'",
@@ -216,7 +235,7 @@ export class PlataformaStack extends Stack {
 
     archivos.addCorsRule({
       allowedMethods: [s3.HttpMethods.POST, s3.HttpMethods.GET],
-      allowedOrigins: [urlSitio, 'http://localhost:5173'],
+      allowedOrigins: [urlSitio],
       allowedHeaders: ['*'],
       maxAge: 3000,
     });

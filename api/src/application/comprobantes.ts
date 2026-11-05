@@ -12,6 +12,7 @@ import { partesIdCompra, type Compra } from '../domain/compra.js';
 import { conflicto, noEncontrado, validacion } from '../domain/errores.js';
 import { aCompraDto, exigirCompraPropia } from './compras.js';
 import type { Contexto } from './contexto.js';
+import { exigirCuotaSubidas } from './subidas.js';
 
 const prefijo = (c: Pick<Compra, 'sub' | 'fichaId'>) => `comprobantes/${c.sub}/${c.fichaId}/`;
 const ADMITE_COMPROBANTE = new Set(['PENDIENTE_PAGO', 'EN_VERIFICACION']);
@@ -27,6 +28,7 @@ export async function prepararComprobante(
   if (!ADMITE_COMPROBANTE.has(compra.estado))
     throw conflicto('Esta compra ya no recibe comprobantes');
   const { tipo } = esquemaArchivo.parse(cuerpo);
+  await exigirCuotaSubidas(ctx, compra.sub);
   const llave = `${prefijo(compra)}${ctx.ids.nuevo()}.${EXTENSIONES[tipo]}`;
   return ctx.archivos.firmarSubida(llave, tipo, LIMITES.archivoMaxBytes);
 }
@@ -57,11 +59,14 @@ export async function confirmarComprobante(
       llave: 'Archivo no permitido',
     });
   }
+  // Antes de escribir la compra: si esto falla, el comprobante aún no quedó referenciado.
+  await ctx.archivos.conservar(llave, info.version);
   const ahora = ctx.reloj.ahora().toISOString();
   const nueva: Compra = {
     ...compra,
     estado: 'EN_VERIFICACION',
     comprobanteLlave: llave,
+    comprobanteVersion: info.version,
     comprobanteSubidoEn: ahora,
     actualizadaEn: ahora,
   };
@@ -85,5 +90,7 @@ export async function urlComprobante(
     compra = await exigirCompraPropia(ctx, actor, id);
   }
   if (!compra?.comprobanteLlave) throw noEncontrado('La compra no tiene comprobante');
-  return { url: await ctx.archivos.firmarDescarga(compra.comprobanteLlave) };
+  return {
+    url: await ctx.archivos.firmarDescarga(compra.comprobanteLlave, compra.comprobanteVersion),
+  };
 }

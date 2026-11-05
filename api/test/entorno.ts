@@ -38,6 +38,8 @@ export interface Entorno {
   /** Petición cruda a la app (p. ej. subir un archivo con FormData). */
   crudo(ruta: string, init?: RequestInit): Promise<Response>;
   reloj: RelojPrueba;
+  /** Llaves que el ciclo de vida del bucket borraría por no estar confirmadas. */
+  sinConfirmar(): string[];
   pedir(
     ruta: string,
     opciones?: { metodo?: string; token?: string; cuerpo?: unknown },
@@ -56,6 +58,7 @@ export function prepararEntorno(): Entorno {
     e.reloj = new RelojPrueba();
     const almacen = crearAlmacenLocal();
     e.correos = [];
+    e.sinConfirmar = almacen.sinConfirmar;
     e.ctx = componer({
       tabla,
       directorio: directorioDev,

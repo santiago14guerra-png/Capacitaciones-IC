@@ -1,10 +1,13 @@
 import { randomUUID } from 'node:crypto';
+import { LIMITES } from '@ic/shared';
 import type { Contexto } from '../application/contexto.js';
+import { CupoPorMinuto } from '../application/cupo.js';
 import type { Almacen, DirectorioUsuarios, Notificador, Reloj } from '../application/puertos.js';
 import { notificadorRegistro } from '../adapters/aws/notificador-ses.js';
 import { RepoBusquedasDynamo } from '../adapters/dynamodb/repo-busquedas.js';
 import { ContadoresDynamo, RepoComprasDynamo } from '../adapters/dynamodb/repo-compras.js';
 import { RepoConsultasDynamo } from '../adapters/dynamodb/repo-consultas.js';
+import { CuotasDynamo } from '../adapters/dynamodb/cuotas.js';
 import { RepoCategoriasDynamo } from '../adapters/dynamodb/repo-categorias.js';
 import { RepoFichasDynamo } from '../adapters/dynamodb/repo-fichas.js';
 import { RepoPerfilesDynamo } from '../adapters/dynamodb/repo-perfiles.js';
@@ -43,6 +46,8 @@ export function componer({
     compras: new RepoComprasDynamo(tabla),
     consultas: new RepoConsultasDynamo(tabla),
     contadores: new ContadoresDynamo(tabla),
+    cuotas: new CuotasDynamo(tabla),
+    cupoBusquedas: new CupoPorMinuto(LIMITES.registrosBusquedaPorMinuto, reloj),
     archivos,
     notificador,
     sitioUrl,

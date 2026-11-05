@@ -17,6 +17,8 @@ const indiceDe = (fichas: FichaMeta[]) => {
 /**
  * HU-09: búsqueda por palabra clave sobre las fichas publicadas.
  * Las sugerencias del formulario de consulta (HU-15) no se registran como búsquedas.
+ * La ruta es pública: el registro tiene un cupo por minuto para acotar las escrituras. Si se
+ * supera, la búsqueda responde igual y solo deja de contarse en los indicadores.
  */
 export async function buscarFichas(
   ctx: Contexto,
@@ -33,7 +35,7 @@ export async function buscarFichas(
   const [fichas, categorias] = await Promise.all([fichasPublicadas(ctx), nombresCategorias(ctx)]);
   const visibles = fichas.filter((f) => categorias.get(f.categoriaId)?.activa);
   const encontradas = buscar(indiceDe(visibles), terminos, consulta);
-  if (opciones.registrar) {
+  if (opciones.registrar && ctx.cupoBusquedas.tomar()) {
     // HU-09 CA5: término, fecha y número de resultados, sin datos de quien busca.
     await ctx.busquedas.registrar({
       termino: consulta.toLocaleLowerCase('es'),

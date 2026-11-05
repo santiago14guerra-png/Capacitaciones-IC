@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { limpiarHtml } from '../lib/html';
 
 interface Props {
   id: string;
@@ -18,7 +19,8 @@ export function EditorTexto({ id, valor, alCambiar, invalido, etiquetadoPor }: P
   const [enlace, setEnlace] = useState<string | null>(null);
 
   useEffect(() => {
-    if (ref.current && ref.current.innerHTML !== valor) ref.current.innerHTML = valor;
+    // Solo entra aquí con contenido que llega de afuera, nunca mientras se escribe.
+    if (ref.current && ref.current.innerHTML !== valor) ref.current.innerHTML = limpiarHtml(valor);
   }, [valor]);
 
   const emitir = () => alCambiar(ref.current?.innerHTML ?? '');

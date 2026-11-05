@@ -67,6 +67,57 @@ describe('T-05 infraestructura', () => {
     }
   });
 
+  it('versiona los archivos y borra solo lo que nadie confirmó', () => {
+    t.hasResourceProperties('AWS::S3::Bucket', {
+      VersioningConfiguration: { Status: 'Enabled' },
+      LifecycleConfiguration: {
+        Rules: Match.arrayWith([
+          Match.objectLike({
+            Id: 'BorrarSinConfirmar',
+            TagFilters: [{ Key: 'estado', Value: 'sin-confirmar' }],
+            ExpirationInDays: 7,
+            NoncurrentVersionExpiration: { NoncurrentDays: 7 },
+          }),
+        ]),
+      },
+    });
+  });
+
+  it('activa el vencimiento de las cuotas diarias', () => {
+    t.hasResourceProperties('AWS::DynamoDB::GlobalTable', {
+      TimeToLiveSpecification: { AttributeName: 'expira', Enabled: true },
+    });
+  });
+
+  it('la API puede leer versiones y quitar etiquetas del bucket', () => {
+    const permisos = JSON.stringify(t.findResources('AWS::IAM::Policy'));
+    expect(permisos).toContain('s3:GetObject*');
+    expect(permisos).toContain('s3:DeleteObject*');
+  });
+
+  it('el disparador solo actúa sobre el grupo de usuarios de esta pila', () => {
+    const permisos = JSON.stringify(t.findResources('AWS::IAM::Policy'));
+    expect(permisos).toContain('cognito-idp:AdminAddUserToGroup');
+    expect(permisos).not.toContain('userpool/*');
+  });
+
+  it('el navegador solo se conecta a Cognito y a S3 de la región', () => {
+    const politica = JSON.stringify(t.findResources('AWS::CloudFront::ResponseHeadersPolicy'));
+    expect(politica).toContain('https://*.s3.us-east-1.amazonaws.com');
+    expect(politica).not.toContain('https://*.amazonaws.com');
+  });
+
+  it('el bucket de archivos no acepta orígenes locales', () => {
+    expect(JSON.stringify(t.findResources('AWS::S3::Bucket'))).not.toContain('localhost');
+  });
+
+  it('aplica el límite de tasa a la etapa por defecto de la API', () => {
+    t.hasResourceProperties('AWS::ApiGatewayV2::Stage', {
+      StageName: '$default',
+      DefaultRouteSettings: { ThrottlingBurstLimit: 50, ThrottlingRateLimit: 20 },
+    });
+  });
+
   it('pasa a la Lambda de la API lo que necesita y nada de desarrollo local', () => {
     t.hasResourceProperties('AWS::Lambda::Function', {
       Runtime: 'nodejs22.x',
