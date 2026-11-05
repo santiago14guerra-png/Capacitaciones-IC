@@ -59,7 +59,7 @@ export function AccionObtener({ ficha }: { ficha: FichaDetalleDto }) {
   const [comprar, enviando] = useAccion(async () => {
     setError(null);
     try {
-      const compra = await api<CompraDto>(`/fichas/${ficha.id}/compra`, { cuerpo: {} });
+      const compra = await api<CompraDto>('/compras', { cuerpo: { fichaId: ficha.id } });
       navegar(`/compras/${compra.id}`);
     } catch (e) {
       if (e instanceof ErrorApi && e.campos.perfil) {

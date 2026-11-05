@@ -65,7 +65,7 @@ export default function Registro() {
       await autenticador.transporte.confirmar(normal, codigo.trim());
       // HU-02 CA6: la sesión se inicia, se guardan los datos y vuelve a la página de origen.
       await autenticador.ingresar(normal, contrasena);
-      await api('/perfil', { metodo: 'PUT', cuerpo: { ...facturacion, autorizaDatos } });
+      await api('/mi/perfil', { metodo: 'PUT', cuerpo: { ...facturacion, autorizaDatos } });
       await recargar();
       navegar(volver, { replace: true });
     } catch (err) {

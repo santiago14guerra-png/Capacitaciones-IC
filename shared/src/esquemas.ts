@@ -109,6 +109,8 @@ export const esquemaArchivo = z.object({
   tamano: z.number().int().positive().max(LIMITES.archivoMaxBytes, 'El archivo supera 5 MB'),
 });
 
+export const esquemaCompra = z.object({ fichaId: texto(64) });
+
 export const esquemaConfirmarArchivo = z.object({ llave: texto(300) });
 
 export const esquemaConsulta = z.object({

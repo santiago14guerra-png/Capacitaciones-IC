@@ -39,7 +39,7 @@ describe('HU-16 · bandeja de consultas', () => {
     simularApi({
       'GET /sesion': SESION_ADMIN,
       'GET /admin/consultas/c1': consulta,
-      'PUT /admin/consultas/c1': () =>
+      'PATCH /admin/consultas/c1': () =>
         respuestaError(422, 'VALIDACION', 'Revise los datos', {
           clasificacion: 'Clasifique la consulta como consulta rápida o asesoría',
         }),
@@ -56,7 +56,7 @@ describe('HU-16 · bandeja de consultas', () => {
     const llamadas = simularApi({
       'GET /sesion': SESION_ADMIN,
       'GET /admin/consultas/c1': consulta,
-      'PUT /admin/consultas/c1': {
+      'PATCH /admin/consultas/c1': {
         ...consulta,
         estado: 'RESPONDIDA',
         clasificacion: 'CONSULTA_RAPIDA',
@@ -71,7 +71,7 @@ describe('HU-16 · bandeja de consultas', () => {
     fireEvent.input(editor);
     fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
     await waitFor(() =>
-      expect(llamadas.find((l) => l.metodo === 'PUT')?.cuerpo).toEqual({
+      expect(llamadas.find((l) => l.metodo === 'PATCH')?.cuerpo).toEqual({
         estado: 'RESPONDIDA',
         clasificacion: 'CONSULTA_RAPIDA',
         respuestaHtml: '<p>Así se declara</p>',
@@ -122,7 +122,7 @@ describe('HU-16 · confirmación al guardar', () => {
     simularApi({
       'GET /sesion': SESION_ADMIN,
       'GET /admin/consultas/c1': consulta,
-      'PUT /admin/consultas/c1': {
+      'PATCH /admin/consultas/c1': {
         ...consulta,
         estado: 'EN_ANALISIS',
         clasificacion: 'ASESORIA',

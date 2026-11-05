@@ -24,7 +24,7 @@ beforeAll(async () => {
 
 describe('HU-09 · búsqueda por palabra clave', () => {
   it('CA1, CA2 y CA3: busca en publicadas sin importar tildes y ordena por relevancia', async () => {
-    const r = await e.json('/buscar?q=PENSION');
+    const r = await e.json('/fichas?q=PENSION');
     expect(r.estado).toBe(200);
     expect(r.datos.elementos.map((f: { id: string }) => f.id)).toEqual(['p1', 'p2']);
     expect(r.datos.terminos).toEqual(['pension']);
@@ -32,13 +32,13 @@ describe('HU-09 · búsqueda por palabra clave', () => {
   });
 
   it('busca también en etiquetas y pregunta', async () => {
-    expect((await e.json('/buscar?q=mesada')).datos.elementos[0].id).toBe('p1');
-    expect((await e.json('/buscar?q=impuesto')).datos.elementos[0].id).toBe('p2');
+    expect((await e.json('/fichas?q=mesada')).datos.elementos[0].id).toBe('p1');
+    expect((await e.json('/fichas?q=impuesto')).datos.elementos[0].id).toBe('p2');
   });
 
   it('CA4: con menos de 3 letras no busca ni registra', async () => {
     const antes = (await e.ctx.busquedas.listarMes(mes())).length;
-    const r = await e.json('/buscar?q=%20pe%20');
+    const r = await e.json('/fichas?q=%20pe%20');
     expect(r.estado).toBe(422);
     expect(r.datos.campos.q).toContain('3 letras');
     expect((await e.ctx.busquedas.listarMes(mes())).length).toBe(antes);
@@ -46,10 +46,10 @@ describe('HU-09 · búsqueda por palabra clave', () => {
 
   it('CA5: registra término, fecha y número de resultados; las sugerencias no se registran', async () => {
     e.reloj.avanzar(1);
-    await e.json('/buscar?q=Sucesión intestada');
+    await e.json('/fichas?q=Sucesión intestada');
     const contar = async () => (await e.ctx.busquedas.listarMes(mes())).length;
     const antes = await contar();
-    await e.json('/buscar?q=pension&sugerencia=1');
+    await e.json('/fichas?q=pension&sugerencia=1');
     expect(await contar()).toBe(antes);
     const registros = await e.ctx.busquedas.listarMes(mes());
     expect(registros.at(-1)).toEqual({
@@ -67,11 +67,11 @@ describe('registro de búsquedas', () => {
     const antes = await contar();
     const peticiones = LIMITES.registrosBusquedaPorMinuto + 5;
     for (let i = 0; i < peticiones; i++) {
-      expect((await e.json(`/buscar?q=termino${i}`)).estado).toBe(200);
+      expect((await e.json(`/fichas?q=termino${i}`)).estado).toBe(200);
     }
     expect((await contar()) - antes).toBe(LIMITES.registrosBusquedaPorMinuto);
     e.reloj.avanzar(1);
-    await e.json('/buscar?q=otra busqueda');
+    await e.json('/fichas?q=otra busqueda');
     expect((await contar()) - antes).toBe(LIMITES.registrosBusquedaPorMinuto + 1);
   });
 });
@@ -99,7 +99,7 @@ describe('HU-09 CA6 · rendimiento con 500 fichas', () => {
 
   it('responde en menos de 2 segundos incluso leyendo de la base (caché fría)', async () => {
     const inicio = performance.now();
-    const r = await e2.json('/buscar?q=pension renta');
+    const r = await e2.json('/fichas?q=pension renta');
     const ms = performance.now() - inicio;
     expect(r.datos.total).toBe(500);
     expect(ms).toBeLessThan(2000);

@@ -13,11 +13,11 @@ const enviar = async (nombre: string, categoriaId: string) => {
   ids[nombre] = r.datos.id;
 };
 const gestionar = (nombre: string, cuerpo: object) =>
-  e.json(`/admin/consultas/${ids[nombre]}`, { metodo: 'PUT', token: DIRECTOR, cuerpo });
+  e.json(`/admin/consultas/${ids[nombre]}`, { metodo: 'PATCH', token: DIRECTOR, cuerpo });
 
 beforeAll(async () => {
   await sembrarCategorias(e.ctx);
-  await e.json('/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
+  await e.json('/mi/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
   await enviar('vieja', 'arrendamientos');
   e.reloj.avanzar(49);
   await enviar('nueva', 'pensionados');

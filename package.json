@@ -5,7 +5,7 @@
   "description": "Respuestas para Personas Naturales — plataforma de Capacitaciones IC",
   "type": "module",
   "engines": { "node": ">=22" },
-  "workspaces": ["shared", "api", "web", "infra"],
+  "workspaces": ["shared", "api", "web", "infra", "e2e"],
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "lint": "eslint .",
@@ -15,6 +15,7 @@
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "synth": "npm run synth --workspace infra",
+    "e2e": "npm run e2e --workspace e2e",
     "check": "npm run lint && npm run typecheck && npm test && npm run build"
   },
   "devDependencies": {

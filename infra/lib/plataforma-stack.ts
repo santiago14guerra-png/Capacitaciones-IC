@@ -3,8 +3,11 @@ import { resolve } from 'node:path';
 import { CfnOutput, Duration, RemovalPolicy, Stack, type StackProps } from 'aws-cdk-lib';
 import { HttpApi } from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as cf from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
+import * as cwAcciones from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -15,8 +18,12 @@ import {
   type NodejsFunctionProps,
 } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as route53Destinos from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as snsSuscripciones from 'aws-cdk-lib/aws-sns-subscriptions';
 import type { Construct } from 'constructs';
 
 export const RAIZ = resolve(import.meta.dirname, '../..');
@@ -33,6 +40,17 @@ export interface PlataformaProps extends StackProps {
   dominioSes?: string;
   /** Contacto, tarifas y datos bancarios (cdk.json → negocio). Vacíos = [PENDIENTE]. */
   negocio?: Record<string, string>;
+  /**
+   * Unidades de lectura y de escritura para la tabla y para cada índice. La capa gratuita son
+   * 25 por cuenta, sumando todos los ambientes.
+   */
+  capacidad: number;
+  /** Impide borrar la tabla y el grupo de usuarios por error (producción). */
+  proteccionBorrado?: boolean;
+  /** Dominio propio con su zona de Route 53. Sin él, se usa la dirección de CloudFront. */
+  dominio?: { nombre: string; zonaId: string };
+  /** Correo que recibe las alarmas de CloudWatch. */
+  correoAlertas?: string;
 }
 
 /**
@@ -45,21 +63,29 @@ export class PlataformaStack extends Stack {
     const conservar = RemovalPolicy.RETAIN;
 
     // ---------- Datos ----------
-    const tabla = new dynamodb.TableV2(this, 'Tabla', {
+    // Capacidad aprovisionada fija: la asignación gratuita no aplica a bajo demanda, y el
+    // autoescalado crearía más alarmas de las que incluye la capa gratuita de CloudWatch.
+    const unidades = { readCapacity: props.capacidad, writeCapacity: props.capacidad };
+    const tabla = new dynamodb.Table(this, 'Tabla', {
       partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
       sortKey: { name: 'sk', type: dynamodb.AttributeType.STRING },
-      billing: dynamodb.Billing.onDemand(),
+      billingMode: dynamodb.BillingMode.PROVISIONED,
+      ...unidades,
       pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
-      encryption: dynamodb.TableEncryptionV2.awsManagedKey(),
+      encryption: dynamodb.TableEncryption.AWS_MANAGED,
+      deletionProtection: props.proteccionBorrado,
       removalPolicy: conservar,
       // Las cuotas diarias se borran solas.
       timeToLiveAttribute: 'expira',
-      globalSecondaryIndexes: ['gsi1', 'gsi2'].map((n) => ({
+    });
+    for (const n of ['gsi1', 'gsi2']) {
+      tabla.addGlobalSecondaryIndex({
         indexName: n,
         partitionKey: { name: `${n}pk`, type: dynamodb.AttributeType.STRING },
         sortKey: { name: `${n}sk`, type: dynamodb.AttributeType.STRING },
-      })),
-    });
+        ...unidades,
+      });
+    }
 
     const archivos = new s3.Bucket(this, 'Archivos', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
@@ -149,6 +175,7 @@ export class PlataformaStack extends Stack {
             sesVerifiedDomain: props.dominioSes,
           })
         : cognito.UserPoolEmail.withCognito(),
+      deletionProtection: props.proteccionBorrado,
       removalPolicy: conservar,
     });
     // Política aparte del rol: dentro de él crearía una dependencia circular con el grupo de usuarios.
@@ -218,8 +245,25 @@ export class PlataformaStack extends Stack {
       },
     });
 
+    const zona = props.dominio
+      ? route53.HostedZone.fromHostedZoneAttributes(this, 'Zona', {
+          hostedZoneId: props.dominio.zonaId,
+          zoneName: props.dominio.nombre,
+        })
+      : undefined;
+    const nombres = props.dominio ? [props.dominio.nombre, `www.${props.dominio.nombre}`] : [];
+    // CloudFront exige el certificado en us-east-1, la región de la plataforma.
+    const certificado = zona
+      ? new acm.Certificate(this, 'Certificado', {
+          domainName: nombres[0]!,
+          subjectAlternativeNames: nombres.slice(1),
+          validation: acm.CertificateValidation.fromDns(zona),
+        })
+      : undefined;
+
     const distribucion = new cf.Distribution(this, 'Distribucion', {
       defaultRootObject: 'index.html',
+      ...(certificado ? { domainNames: nombres, certificate: certificado } : {}),
       priceClass: cf.PriceClass.PRICE_CLASS_100,
       defaultBehavior: {
         origin: origins.S3BucketOrigin.withOriginAccessControl(sitio),
@@ -231,7 +275,19 @@ export class PlataformaStack extends Stack {
         ],
       },
     });
-    const urlSitio = `https://${distribucion.distributionDomainName}`;
+    const urlSitio = `https://${props.dominio?.nombre ?? distribucion.distributionDomainName}`;
+    if (zona) {
+      const destino = route53.RecordTarget.fromAlias(
+        new route53Destinos.CloudFrontTarget(distribucion),
+      );
+      nombres.forEach((nombre, i) => {
+        new route53.ARecord(this, `Registro${i}`, {
+          zone: zona,
+          recordName: nombre,
+          target: destino,
+        });
+      });
+    }
 
     archivos.addCorsRule({
       allowedMethods: [s3.HttpMethods.POST, s3.HttpMethods.GET],
@@ -294,6 +350,31 @@ export class PlataformaStack extends Stack {
         originRequestPolicy: cf.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
         responseHeadersPolicy: cabeceras,
       },
+    );
+
+    // ---------- Monitoreo ----------
+    const alertas = new sns.Topic(this, 'Alertas');
+    if (props.correoAlertas) {
+      alertas.addSubscription(new snsSuscripciones.EmailSubscription(props.correoAlertas));
+    }
+    const alarma = (nombre: string, metric: cloudwatch.IMetric) =>
+      new cloudwatch.Alarm(this, nombre, {
+        metric,
+        threshold: 1,
+        evaluationPeriods: 1,
+        treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+      }).addAlarmAction(new cwAcciones.SnsAction(alertas));
+    alarma('AlarmaErroresApi', api.metricErrors({ period: Duration.minutes(5) }));
+    alarma('AlarmaErrores5xx', httpApi.metricServerError({ period: Duration.minutes(5) }));
+    alarma(
+      'AlarmaThrottlingTabla',
+      new cloudwatch.Metric({
+        namespace: 'AWS/DynamoDB',
+        metricName: 'WriteThrottleEvents',
+        dimensionsMap: { TableName: tabla.tableName },
+        statistic: 'Sum',
+        period: Duration.minutes(5),
+      }),
     );
 
     // ---------- Sitio web ----------

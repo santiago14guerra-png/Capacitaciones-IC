@@ -6,11 +6,14 @@ export interface GithubOidcProps extends StackProps {
   /** `propietario/repositorio` en GitHub. */
   repositorio: string;
   rama: string;
+  /** Ambiente de GitHub cuyo despliegue requiere aprobación manual. */
+  ambienteProduccion: string;
 }
 
 /**
  * T-06 · Rol que GitHub Actions asume con OIDC: sin llaves de acceso guardadas en GitHub.
- * Solo puede asumir los roles de despliegue que crea `cdk bootstrap` y solo desde la rama indicada.
+ * Solo puede asumir los roles de despliegue que crea `cdk bootstrap`, y solo desde la rama de
+ * desarrollo o desde el ambiente protegido de producción (la rama `main` por sí sola no basta).
  */
 export class GithubOidcStack extends Stack {
   constructor(scope: Construct, id: string, props: GithubOidcProps) {
@@ -30,7 +33,10 @@ export class GithubOidcStack extends Stack {
       assumedBy: new iam.WebIdentityPrincipal(proveedor.openIdConnectProviderArn, {
         StringEquals: {
           'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
-          'token.actions.githubusercontent.com:sub': `repo:${props.repositorio}:ref:refs/heads/${props.rama}`,
+          'token.actions.githubusercontent.com:sub': [
+            `repo:${props.repositorio}:ref:refs/heads/${props.rama}`,
+            `repo:${props.repositorio}:environment:${props.ambienteProduccion}`,
+          ],
         },
       }),
     });

@@ -7,7 +7,7 @@ const e = prepararEntorno();
 let id = '';
 beforeAll(async () => {
   await sembrarCategorias(e.ctx);
-  await e.json('/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
+  await e.json('/mi/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
   id = (
     await e.json('/consultas', {
       token: CLIENTE,
@@ -28,7 +28,7 @@ describe('HU-20 · convertir una respuesta en ficha', () => {
 
   it('crea un borrador anonimizado ligado a la consulta', async () => {
     await e.json(`/admin/consultas/${id}`, {
-      metodo: 'PUT',
+      metodo: 'PATCH',
       token: DIRECTOR,
       cuerpo: {
         estado: 'RESPONDIDA',

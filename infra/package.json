@@ -8,7 +8,9 @@
     "test": "vitest run",
     "synth": "cdk synth --quiet",
     "deploy:dev": "cdk deploy IcDev --require-approval never -c conWeb=true",
-    "deploy:oidc": "cdk deploy IcGithubOidc"
+    "deploy:prod": "cdk deploy IcProd -c conWeb=true",
+    "deploy:oidc": "cdk deploy IcGithubOidc",
+    "deploy:cuenta": "cdk deploy IcCuenta"
   },
   "dependencies": {
     "aws-cdk-lib": "^2.200.0",

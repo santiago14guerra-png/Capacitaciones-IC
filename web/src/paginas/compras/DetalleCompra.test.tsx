@@ -41,13 +41,13 @@ describe('HU-11 · solicitar compra', () => {
     const llamadas = simularApi({
       'GET /sesion': SESION_CLIENTE,
       'GET /fichas/f1': ficha,
-      'POST /fichas/f1/compra': compra,
+      'POST /compras': compra,
       'GET /compras/ana.f1': compra,
     });
     const { enrutador } = renderizar('/fichas/f1', { conSesion: true });
     fireEvent.click(await screen.findByRole('button', { name: /Comprar por transferencia/ }));
     await waitFor(() => expect(enrutador.state.location.pathname).toBe('/compras/ana.f1'));
-    expect(llamadas.some((l) => l.metodo === 'POST' && l.ruta === '/fichas/f1/compra')).toBe(true);
+    expect(llamadas.some((l) => l.metodo === 'POST' && l.ruta === '/compras')).toBe(true);
     expect(await screen.findByText('RPN-000123')).toBeTruthy();
     const texto = document.body.textContent!;
     for (const t of [
@@ -66,8 +66,7 @@ describe('HU-11 · solicitar compra', () => {
     simularApi({
       'GET /sesion': SESION_CLIENTE,
       'GET /fichas/f1': ficha,
-      'POST /fichas/f1/compra': () =>
-        respuestaError(422, 'VALIDACION', 'Complete', { perfil: 'x' }),
+      'POST /compras': () => respuestaError(422, 'VALIDACION', 'Complete', { perfil: 'x' }),
     });
     const { enrutador } = renderizar('/fichas/f1', { conSesion: true });
     fireEvent.click(await screen.findByRole('button', { name: /Comprar por transferencia/ }));
@@ -115,13 +114,13 @@ describe('HU-12 · cargar comprobante', () => {
     const llamadas = simularApi({
       'GET /sesion': SESION_CLIENTE,
       'GET /compras/ana.f1': compra,
-      'POST /compras/ana.f1/comprobante/subida': {
+      'POST /compras/ana.f1/comprobante': {
         url: '/api/dev/archivos',
         llave: 'comprobantes/ana/f1/x.pdf',
         campos: { key: 'k' },
       },
       'POST /dev/archivos': () => new Response(null, { status: 204 }),
-      'POST /compras/ana.f1/comprobante': {
+      'PUT /compras/ana.f1/comprobante': {
         ...compra,
         estado: 'EN_VERIFICACION',
         tieneComprobante: true,
@@ -133,13 +132,13 @@ describe('HU-12 · cargar comprobante', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Enviar comprobante' }));
     expect(await screen.findByText(/Recibimos su comprobante/)).toBeTruthy();
-    expect(llamadas.find((l) => l.ruta === '/compras/ana.f1/comprobante/subida')!.cuerpo).toEqual({
+    expect(llamadas.find((l) => l.ruta === '/compras/ana.f1/comprobante')!.cuerpo).toEqual({
       nombre: 'c.pdf',
       tipo: 'application/pdf',
       tamano: 4,
     });
     expect(
-      llamadas.find((l) => l.ruta === '/compras/ana.f1/comprobante' && l.metodo === 'POST')!.cuerpo,
+      llamadas.find((l) => l.ruta === '/compras/ana.f1/comprobante' && l.metodo === 'PUT')!.cuerpo,
     ).toEqual({
       llave: 'comprobantes/ana/f1/x.pdf',
     });

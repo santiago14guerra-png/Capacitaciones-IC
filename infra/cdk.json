@@ -6,6 +6,11 @@
     "ramaDespliegue": "develop",
     "correoRemitente": "",
     "dominioSes": "",
+    "correoAlertas": "",
+    "ambientes": {
+      "dev": { "capacidad": 2 },
+      "prod": { "capacidad": 5, "dominio": "", "zonaId": "" }
+    },
     "negocio": {
       "_nota": "Datos que entrega la empresa. Vacíos se muestran como [PENDIENTE]. No inventar.",
       "CONTACTO_CORREO": "",

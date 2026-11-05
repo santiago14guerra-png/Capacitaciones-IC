@@ -13,15 +13,24 @@ beforeAll(async () => {
   await compraEnVerificacion(e, CLIENTE, 'f1');
   await compraEnVerificacion(e, OTRO_CLIENTE, 'f1');
   await compraEnVerificacion(e, CLIENTE, 'f2');
-  await e.json('/admin/pagos/ana.f1/decision', { token: ADMIN, cuerpo: { decision: 'APROBAR' } }); // 2 nov
-  await e.json('/admin/pagos/beto.f1/decision', {
+  await e.json('/admin/compras/ana.f1', {
+    metodo: 'PATCH',
+    token: ADMIN,
+    cuerpo: { decision: 'APROBAR' },
+  }); // 2 nov
+  await e.json('/admin/compras/beto.f1', {
+    metodo: 'PATCH',
     token: ADMIN,
     cuerpo: { decision: 'RECHAZAR', motivo: 'x' },
   });
   e.reloj.avanzar(24 * 30);
-  await e.json('/admin/pagos/ana.f2/decision', { token: ADMIN, cuerpo: { decision: 'APROBAR' } }); // 2 dic
+  await e.json('/admin/compras/ana.f2', {
+    metodo: 'PATCH',
+    token: ADMIN,
+    cuerpo: { decision: 'APROBAR' },
+  }); // 2 dic
   // HU-23: el cliente corrige su dirección después de comprar.
-  await e.json('/perfil', {
+  await e.json('/mi/perfil', {
     metodo: 'PUT',
     token: CLIENTE,
     cuerpo: { ...DATOS_PERFIL, direccion: 'Carrera 7 # 1-1' },

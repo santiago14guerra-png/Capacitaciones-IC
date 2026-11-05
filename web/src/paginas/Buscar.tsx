@@ -15,7 +15,7 @@ export default function Buscar() {
   const corta = q.length < LIMITES.terminoMin;
   const { datos, error, cargando } = useCarga(
     async (s) =>
-      corta ? null : api<ResultadoBusquedaDto>(`/buscar?q=${encodeURIComponent(q)}`, { senal: s }),
+      corta ? null : api<ResultadoBusquedaDto>(`/fichas?q=${encodeURIComponent(q)}`, { senal: s }),
     [q],
   );
   return (

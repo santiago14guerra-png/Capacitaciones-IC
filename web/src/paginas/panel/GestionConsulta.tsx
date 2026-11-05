@@ -86,7 +86,7 @@ function Formulario({
     setAviso(null);
     try {
       const c = await api<ConsultaAdminDto>(`/admin/consultas/${consulta.id}`, {
-        metodo: 'PUT',
+        metodo: 'PATCH',
         cuerpo: {
           estado,
           clasificacion: clasificacion || undefined,

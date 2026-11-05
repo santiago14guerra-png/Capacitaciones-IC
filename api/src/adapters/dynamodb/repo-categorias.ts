@@ -2,7 +2,7 @@ import type { RepoCategorias } from '../../application/puertos.js';
 import type { Categoria } from '../../domain/categoria.js';
 import type { Tabla } from './tabla.js';
 
-const PK = 'CATEGORIAS';
+const PK = 'CATEGORIA';
 const limpiar = ({ pk: _p, sk: _s, ...c }: Categoria & { pk?: string; sk?: string }): Categoria =>
   c;
 
