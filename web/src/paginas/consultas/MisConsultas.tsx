@@ -9,7 +9,7 @@ import { useCarga } from '../../lib/useCarga';
 
 /** HU-17: consultas del cliente con radicado, estado y fecha. */
 export default function MisConsultas() {
-  const { datos, error } = useCarga((s) => api<ConsultaDto[]>('/consultas', { senal: s }), []);
+  const { datos, error } = useCarga((s) => api<ConsultaDto[]>('/mi/consultas', { senal: s }), []);
   if (!datos) return error ? <AvisoError mensaje={error.message} /> : <Cargando />;
   return (
     <section className="pila">

@@ -15,22 +15,24 @@ export const rutasCatalogo = (ctx: Contexto) =>
         tarifas: ctx.negocio.tarifas,
       }),
     )
-    .get('/buscar', async (c) =>
-      c.json(
-        await buscarFichas(ctx, c.req.query('q') ?? '', {
-          registrar: c.req.query('sugerencia') !== '1',
-        }),
-      ),
-    )
     .get('/fichas/:id', async (c) =>
       c.json(await detalleFicha(ctx, c.var.actor, c.req.param('id'))),
     )
-    .get('/fichas', async (c) =>
-      c.json(
+    .get('/fichas', async (c) => {
+      const q = c.req.query('q');
+      if (q !== undefined) {
+        return c.json(
+          await buscarFichas(ctx, q, {
+            registrar: c.req.query('sugerencia') !== '1',
+            categorias: c.req.queries('categoria') ?? [],
+          }),
+        );
+      }
+      return c.json(
         await catalogo(ctx, {
           categorias: c.req.queries('categoria') ?? [],
           orden: c.req.query('orden'),
           pagina: Number(c.req.query('pagina') ?? 1),
         }),
-      ),
-    );
+      );
+    });

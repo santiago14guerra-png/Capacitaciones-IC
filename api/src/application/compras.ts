@@ -1,3 +1,4 @@
+import { esquemaCompra } from '@ic/shared';
 import type { CompraDto } from '@ic/shared';
 import { esPersonal, exigirSesion, type Actor } from '../domain/actor.js';
 import { formatoReferencia, idCompra, partesIdCompra, type Compra } from '../domain/compra.js';
@@ -47,9 +48,10 @@ export async function exigirCompraPropia(
 export async function solicitarCompra(
   ctx: Contexto,
   a: Actor | null,
-  fichaId: string,
+  cuerpo: unknown,
 ): Promise<CompraDto> {
   const actor = exigirSesion(a);
+  const { fichaId } = esquemaCompra.parse(cuerpo);
   if (esPersonal(actor)) throw conflicto('El personal ya tiene acceso a todas las fichas');
   const ficha = await ctx.fichas.obtenerMeta(fichaId);
   if (!ficha || ficha.estado !== 'PUBLICADA') throw noEncontrado('La respuesta no está disponible');

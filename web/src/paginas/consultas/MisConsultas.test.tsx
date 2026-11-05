@@ -18,7 +18,7 @@ const c = {
 
 describe('HU-17 · seguimiento de mis consultas', () => {
   it('lista las consultas con radicado, estado y fecha', async () => {
-    simularApi({ 'GET /sesion': SESION_CLIENTE, 'GET /consultas': [c] });
+    simularApi({ 'GET /sesion': SESION_CLIENTE, 'GET /mi/consultas': [c] });
     renderizar('/cuenta/consultas', { conSesion: true });
     const fila = (await screen.findByRole('link', { name: 'Arriendo' })).closest('li')!;
     expect(fila.textContent).toContain('RAD-000007');
@@ -26,7 +26,7 @@ describe('HU-17 · seguimiento de mis consultas', () => {
   });
 
   it('muestra la respuesta dentro de la plataforma', async () => {
-    simularApi({ 'GET /sesion': SESION_CLIENTE, 'GET /consultas/c1': c });
+    simularApi({ 'GET /sesion': SESION_CLIENTE, 'GET /mi/consultas/c1': c });
     renderizar('/cuenta/consultas/c1', { conSesion: true });
     expect(await screen.findByText('Así se declara')).toBeTruthy();
   });
@@ -34,7 +34,7 @@ describe('HU-17 · seguimiento de mis consultas', () => {
   it('si fue escalada muestra las condiciones de la asesoría', async () => {
     simularApi({
       'GET /sesion': SESION_CLIENTE,
-      'GET /consultas/c1': {
+      'GET /mi/consultas/c1': {
         ...c,
         estado: 'ESCALADA',
         respuestaHtml: undefined,

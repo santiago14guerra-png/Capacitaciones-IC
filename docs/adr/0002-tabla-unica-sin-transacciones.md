@@ -5,7 +5,7 @@
 **Contexto.** Aprobar un pago debe habilitar el acceso de inmediato y sin estados intermedios. Un
 ítem de «acceso» aparte exigiría una transacción entre dos ítems.
 
-**Decisión.** Una compra por par usuario–ficha (`USUARIO#<sub>` / `COMPRA#<fichaId>`). El acceso es
+**Decisión.** Una compra por par usuario–ficha (`USER#<sub>` / `COMPRA#<fichaId>`). El acceso es
 que esa compra esté `APROBADA`. Aprobar es una escritura condicional sobre un solo ítem. Se evita
 además la doble compra por construcción.
 

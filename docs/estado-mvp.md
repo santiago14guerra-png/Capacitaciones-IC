@@ -1,6 +1,6 @@
 # Estado del MVP (noviembre 2026)
 
-Las historias HU-01 a HU-25 y las tareas T-05 y T-06 están integradas en `develop`, cada una
+Las historias HU-01 a HU-25 y las tareas T-05, T-06 y T-08 están integradas en `develop`, cada una
 en su rama `feature/HU-XX-…` o `chore/T-0X-…`. Todas tienen pruebas automáticas (`npm run check`)
 y se recorrieron de punta a punta en local a 360 px y 1366 px.
 

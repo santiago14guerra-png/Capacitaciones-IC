@@ -16,7 +16,11 @@ beforeAll(async () => {
 describe('HU-18 · notificaciones por correo', () => {
   it('avisa al verificar un pago, con enlace y sin datos privados', async () => {
     e.correos.length = 0;
-    await e.json('/admin/pagos/ana.f1/decision', { token: ADMIN, cuerpo: { decision: 'APROBAR' } });
+    await e.json('/admin/compras/ana.f1', {
+      metodo: 'PATCH',
+      token: ADMIN,
+      cuerpo: { decision: 'APROBAR' },
+    });
     expect(e.correos).toHaveLength(1);
     expect(e.correos[0]).toMatchObject({
       para: 'ana@correo.co',
@@ -27,7 +31,8 @@ describe('HU-18 · notificaciones por correo', () => {
 
   it('avisa al rechazar, sin incluir el motivo', async () => {
     e.correos.length = 0;
-    await e.json('/admin/pagos/beto.f1/decision', {
+    await e.json('/admin/compras/beto.f1', {
+      metodo: 'PATCH',
       token: ADMIN,
       cuerpo: { decision: 'RECHAZAR', motivo: 'Motivo interno detallado' },
     });
@@ -36,7 +41,7 @@ describe('HU-18 · notificaciones por correo', () => {
   });
 
   it('avisa al responder una consulta sin incluir la respuesta, una sola vez', async () => {
-    await e.json('/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
+    await e.json('/mi/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
     const id = (
       await e.json('/consultas', {
         token: CLIENTE,
@@ -46,7 +51,7 @@ describe('HU-18 · notificaciones por correo', () => {
     e.correos.length = 0;
     const responder = () =>
       e.json(`/admin/consultas/${id}`, {
-        metodo: 'PUT',
+        metodo: 'PATCH',
         token: DIRECTOR,
         cuerpo: {
           estado: 'RESPONDIDA',
@@ -69,7 +74,8 @@ describe('HU-18 · notificaciones por correo', () => {
     const err = vi.spyOn(console, 'error').mockImplementation(() => {});
     await e.ctx.fichas.guardar(fichaDePrueba({ id: 'f2', precio: 1000 }));
     await compraEnVerificacion(e, CLIENTE, 'f2');
-    const r = await e.json('/admin/pagos/ana.f2/decision', {
+    const r = await e.json('/admin/compras/ana.f2', {
+      metodo: 'PATCH',
       token: ADMIN,
       cuerpo: { decision: 'APROBAR' },
     });

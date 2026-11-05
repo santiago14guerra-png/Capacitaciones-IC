@@ -15,7 +15,7 @@ export const rutasConsultasAdmin = (ctx: Contexto) =>
   new Hono<Entorno>()
     .get('/', async (c) => c.json(await bandejaConsultas(ctx, c.req.query())))
     .get('/:id', async (c) => c.json(await consultaAdmin(ctx, c.req.param('id'))))
-    .put('/:id', async (c) =>
+    .patch('/:id', async (c) =>
       c.json(
         (await gestionarConsulta(ctx, c.var.actor!, c.req.param('id'), await cuerpoJson(c)))
           .consulta,

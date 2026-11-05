@@ -1,4 +1,5 @@
-import { useState, type ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
+import { useForm, type FieldValues } from 'react-hook-form';
 import type { ZodType } from 'zod';
 import { ErrorApi } from './api';
 
@@ -12,12 +13,21 @@ export function erroresDe(issues: { path: PropertyKey[]; message: string }[]): E
 
 /** Estado de un formulario con validación compartida (zod) y errores junto a cada campo. */
 export function useFormulario<T extends Record<string, unknown>>(inicial: T) {
-  const [valores, setValores] = useState<T>(inicial);
-  const [errores, setErrores] = useState<Errores>({});
+  const form = useForm<FieldValues>({ defaultValues: inicial });
+  const valores = form.watch() as T;
+  const errores: Errores = Object.fromEntries(
+    Object.entries(form.formState.errors).map(([k, e]) => [k, String(e?.message ?? '')]),
+  );
+  const setErrores = (e: Errores) => {
+    form.clearErrors();
+    for (const [nombre, message] of Object.entries(e)) {
+      form.setError(nombre, { type: 'validacion', message });
+    }
+  };
 
   const poner = <K extends keyof T>(nombre: K, valor: T[K]) => {
-    setValores((v) => ({ ...v, [nombre]: valor }));
-    setErrores(({ [nombre as string]: _, ...resto }) => resto);
+    form.setValue(nombre as string, valor);
+    form.clearErrors(nombre as string);
   };
 
   const campo = (nombre: keyof T & string) => ({
@@ -58,5 +68,5 @@ export function useFormulario<T extends Record<string, unknown>>(inicial: T) {
     return false;
   };
 
-  return { valores, setValores, errores, setErrores, poner, campo, validar, errorApi };
+  return { valores, errores, setErrores, poner, campo, validar, errorApi };
 }

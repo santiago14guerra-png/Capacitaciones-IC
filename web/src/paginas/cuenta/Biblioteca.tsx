@@ -9,7 +9,7 @@ import { useCarga } from '../../lib/useCarga';
 
 /** HU-14: fichas adquiridas con su fecha de compra y estado de las compras pendientes. */
 export default function Biblioteca() {
-  const { datos, error } = useCarga((s) => api<CompraDto[]>('/compras', { senal: s }), []);
+  const { datos, error } = useCarga((s) => api<CompraDto[]>('/mi/biblioteca', { senal: s }), []);
   if (!datos) return error ? <AvisoError mensaje={error.message} /> : <Cargando />;
   const aprobadas = datos.filter((c) => c.estado === 'APROBADA');
   const enCurso = datos.filter((c) => c.estado !== 'APROBADA');

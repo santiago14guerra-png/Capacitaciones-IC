@@ -11,7 +11,11 @@ beforeAll(async () => {
   await e.ctx.fichas.guardar(fichaDePrueba({ id: 'f1', precio: 25000 }));
   invalidarCatalogo(e.ctx);
   await compraEnVerificacion(e, CLIENTE, 'f1');
-  await e.json('/admin/pagos/ana.f1/decision', { token: ADMIN, cuerpo: { decision: 'APROBAR' } });
+  await e.json('/admin/compras/ana.f1', {
+    metodo: 'PATCH',
+    token: ADMIN,
+    cuerpo: { decision: 'APROBAR' },
+  });
   const id = (
     await e.json('/consultas', {
       token: CLIENTE,
@@ -20,11 +24,11 @@ beforeAll(async () => {
   ).datos.id;
   e.reloj.avanzar(6);
   await e.json(`/admin/consultas/${id}`, {
-    metodo: 'PUT',
+    metodo: 'PATCH',
     token: DIRECTOR,
     cuerpo: { estado: 'RESPONDIDA', clasificacion: 'CONSULTA_RAPIDA', respuestaHtml: '<p>R</p>' },
   });
-  await e.json('/buscar?q=herencia yacente');
+  await e.json('/fichas?q=herencia yacente');
 });
 
 describe('HU-21 · panel de indicadores', () => {

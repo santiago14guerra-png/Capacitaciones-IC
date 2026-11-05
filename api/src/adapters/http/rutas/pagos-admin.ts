@@ -9,7 +9,7 @@ import { cuerpoJson } from '../cuerpo.js';
 export const rutasPagosAdmin = (ctx: Contexto) =>
   new Hono<Entorno>()
     .get('/', async (c) => c.json(await bandejaPagos(ctx, c.req.query('estado'))))
-    .post('/:id/decision', async (c) =>
+    .patch('/:id', async (c) =>
       c.json(await decidirPago(ctx, c.var.actor!, c.req.param('id'), await cuerpoJson(c))),
     )
     .get('/:id/comprobante', async (c) =>

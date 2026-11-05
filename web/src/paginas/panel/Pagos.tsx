@@ -22,7 +22,7 @@ function Decision({ pago, alDecidir }: { pago: CompraAdminDto; alDecidir(): void
   const [decidir, decidiendo] = useAccion(async (cuerpo: object) => {
     setError(null);
     try {
-      await api(`/admin/pagos/${pago.id}/decision`, { cuerpo });
+      await api(`/admin/compras/${pago.id}`, { metodo: 'PATCH', cuerpo });
       alDecidir();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Ocurrió un error');
@@ -84,7 +84,7 @@ function Decision({ pago, alDecidir }: { pago: CompraAdminDto; alDecidir(): void
 export default function Pagos() {
   const [vista, setVista] = useState<(typeof VISTAS)[number]['estado']>('EN_VERIFICACION');
   const { datos, error, recargar } = useCarga(
-    (s) => api<CompraAdminDto[]>(`/admin/pagos?estado=${vista}`, { senal: s }),
+    (s) => api<CompraAdminDto[]>(`/admin/compras?estado=${vista}`, { senal: s }),
     [vista],
   );
   const [aviso, setAviso] = useState<string | null>(null);
@@ -137,7 +137,7 @@ export default function Pagos() {
                       ocupadoTexto="Abriendo…"
                       className="enlace-boton"
                       alPulsar={() =>
-                        abrirArchivo(`/admin/pagos/${p.id}/comprobante`).catch((e) =>
+                        abrirArchivo(`/admin/compras/${p.id}/comprobante`).catch((e) =>
                           setAviso(e.message),
                         )
                       }

@@ -43,6 +43,7 @@ Con puertos, esos cambios son un adaptador nuevo y no una reescritura.
 | [0002](adr/0002-tabla-unica-sin-transacciones.md) | Tabla única; acceso derivado de la compra |
 | [0003](adr/0003-busqueda-en-memoria.md) | Búsqueda en memoria en la Lambda |
 | [0004](adr/0004-autenticacion-cognito.md) | Cognito y verificación de grupos en el servidor |
+| [0005](adr/0005-ambientes-dev-y-prod.md) | Ambientes dev y prod en la misma cuenta |
 
 ## Seguridad y datos personales (Ley 1581 de 2012)
 
