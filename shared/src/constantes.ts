@@ -65,6 +65,10 @@ export const LIMITES = {
   archivoMaxBytes: 5 * 1024 * 1024,
   urlFirmadaSegundos: 300,
   horasAlertaConsulta: 48,
+  /** Cuántas URL de subida puede pedir una cuenta al día (comprobantes y adjuntos). */
+  subidasPorDia: 20,
+  /** Tope por instancia de la API: acota el costo del registro de búsquedas anónimas. */
+  registrosBusquedaPorMinuto: 30,
 } as const;
 
 export const TIPOS_ARCHIVO = ['image/jpeg', 'image/png', 'application/pdf'] as const;

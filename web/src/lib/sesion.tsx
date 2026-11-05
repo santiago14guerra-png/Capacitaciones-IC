@@ -12,7 +12,6 @@ import { Navigate, useLocation } from 'react-router';
 import { api, configurarApi } from './api';
 import { Autenticador } from './autenticacion/autenticador';
 import { transporteCognito } from './autenticacion/cognito';
-import { transporteLocal } from './autenticacion/local';
 import { cargarConfig } from './config';
 
 interface ValorSesion {
@@ -28,11 +27,12 @@ const Contexto = createContext<ValorSesion | null>(null);
 
 export async function crearAutenticador() {
   const config = await cargarConfig();
-  return new Autenticador(
-    config.modo === 'local'
-      ? transporteLocal()
-      : transporteCognito(config.region!, config.clientId!),
-  );
+  // Solo en desarrollo y pruebas: el build de producción no incluye el transporte local.
+  if ((import.meta.env.DEV || import.meta.env.MODE === 'test') && config.modo === 'local') {
+    const { transporteLocal } = await import('./autenticacion/local');
+    return new Autenticador(transporteLocal());
+  }
+  return new Autenticador(transporteCognito(config.region!, config.clientId!));
 }
 
 export function ProveedorSesion({

@@ -77,12 +77,36 @@ export interface Contadores {
   siguiente(nombre: 'COMPRA' | 'CONSULTA'): Promise<number>;
 }
 
+/** Cuotas por cuenta y por día, con escritura condicional. */
+export interface Cuotas {
+  /** Suma una subida al día indicado (aaaa-mm-dd); false si la cuenta ya llegó a `maximo`. */
+  consumirSubida(sub: string, dia: string, maximo: number): Promise<boolean>;
+}
+
+/** Cupo en memoria: true mientras quede espacio en la ventana actual. */
+export interface Cupo {
+  tomar(): boolean;
+}
+
+export interface InfoArchivo {
+  tamano: number;
+  tipo: string;
+  /** Versión exacta del objeto. Falta en objetos anteriores al versionado del bucket. */
+  version?: string;
+}
+
 /** Archivos privados (comprobantes y adjuntos). Las URL vencen a los 5 minutos. */
 export interface Almacen {
-  /** URL para subir directo desde el navegador, limitada a `maxBytes` y al tipo indicado. */
+  /**
+   * URL para subir directo desde el navegador, limitada a `maxBytes` y al tipo indicado.
+   * El objeto nace marcado «sin confirmar» y el bucket lo borra si nadie lo confirma.
+   */
   firmarSubida(llave: string, tipo: TipoArchivo, maxBytes: number): Promise<SubidaDto>;
-  info(llave: string): Promise<{ tamano: number; tipo: string } | null>;
-  firmarDescarga(llave: string): Promise<string>;
+  info(llave: string): Promise<InfoArchivo | null>;
+  /** Quita la marca «sin confirmar» de esa versión para que el bucket no la borre. */
+  conservar(llave: string, version?: string): Promise<void>;
+  /** Con `version`, descarga esa versión aunque después se haya reemplazado el objeto. */
+  firmarDescarga(llave: string, version?: string): Promise<string>;
 }
 
 export interface RepoConsultas {

@@ -12,6 +12,7 @@ import { formatoRadicado, type Consulta } from '../domain/consulta.js';
 import { noEncontrado, validacion } from '../domain/errores.js';
 import { nombreCompleto } from '../domain/perfil.js';
 import type { Contexto } from './contexto.js';
+import { exigirCuotaSubidas } from './subidas.js';
 
 const prefijoAdjunto = (sub: string) => `consultas/${sub}/`;
 
@@ -42,6 +43,7 @@ export async function prepararAdjunto(
 ): Promise<SubidaDto> {
   const actor = exigirSesion(a);
   const { tipo } = esquemaArchivo.parse(cuerpo);
+  await exigirCuotaSubidas(ctx, actor.sub);
   const llave = `${prefijoAdjunto(actor.sub)}${ctx.ids.nuevo()}.${EXTENSIONES[tipo]}`;
   return ctx.archivos.firmarSubida(llave, tipo, LIMITES.archivoMaxBytes);
 }
@@ -57,6 +59,7 @@ export async function enviarConsulta(
   const categoria = await ctx.categorias.obtener(d.categoriaId);
   if (!categoria?.activa)
     throw validacion('Revise los datos', { categoriaId: 'Elija una categoría' });
+  let adjuntoVersion: string | undefined;
   if (d.adjuntoLlave) {
     const info =
       d.adjuntoLlave.startsWith(prefijoAdjunto(actor.sub)) && !d.adjuntoLlave.includes('..')
@@ -71,6 +74,7 @@ export async function enviarConsulta(
         adjuntoLlave: 'Adjunto inválido',
       });
     }
+    adjuntoVersion = info.version;
   }
   const perfil = await ctx.perfiles.obtener(actor.sub);
   if (!perfil)
@@ -89,6 +93,7 @@ export async function enviarConsulta(
       new Date(c.recibidaEn).getTime() >= hace,
   );
   if (repetida) return aConsultaDto(ctx, repetida);
+  if (d.adjuntoLlave) await ctx.archivos.conservar(d.adjuntoLlave, adjuntoVersion);
   const ahora = ctx.reloj.ahora().toISOString();
   const consulta: Consulta = {
     id: ctx.ids.nuevo(),
@@ -100,6 +105,7 @@ export async function enviarConsulta(
     asunto: d.asunto,
     descripcion: d.descripcion,
     adjuntoLlave: d.adjuntoLlave,
+    adjuntoVersion,
     estado: 'RECIBIDA',
     recibidaEn: ahora,
     actualizadaEn: ahora,
@@ -124,7 +130,7 @@ export async function exigirConsultaVisible(
 export async function urlAdjunto(ctx: Contexto, a: Actor | null, id: string) {
   const c = await exigirConsultaVisible(ctx, a, id);
   if (!c.adjuntoLlave) throw noEncontrado('La consulta no tiene adjunto');
-  return { url: await ctx.archivos.firmarDescarga(c.adjuntoLlave) };
+  return { url: await ctx.archivos.firmarDescarga(c.adjuntoLlave, c.adjuntoVersion) };
 }
 
 /**

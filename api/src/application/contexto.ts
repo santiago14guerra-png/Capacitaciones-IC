@@ -3,6 +3,8 @@ import type {
   RepoConsultas,
   Almacen,
   Contadores,
+  Cuotas,
+  Cupo,
   RepoCompras,
   DirectorioUsuarios,
   RepoBusquedas,
@@ -23,6 +25,9 @@ export interface Contexto extends Sistema {
   compras: RepoCompras;
   consultas: RepoConsultas;
   contadores: Contadores;
+  cuotas: Cuotas;
+  /** Limita cuántas búsquedas anónimas se escriben por minuto. */
+  cupoBusquedas: Cupo;
   archivos: Almacen;
   notificador: Notificador;
   /** URL pública del sitio, para los enlaces de los correos. */

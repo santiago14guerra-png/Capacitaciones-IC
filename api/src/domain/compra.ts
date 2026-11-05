@@ -17,6 +17,8 @@ export interface Compra {
   actualizadaEn: string;
   motivoRechazo?: string;
   comprobanteLlave?: string;
+  /** Versión de S3 que se confirmó: es la que descarga quien revisa el pago. */
+  comprobanteVersion?: string;
   comprobanteSubidoEn?: string;
   aprobadaEn?: string;
   decididaPor?: string;

@@ -1,11 +1,13 @@
+import { GRUPOS, LIMITES } from '@ic/shared';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { invalidarCatalogo } from '../src/application/catalogo.js';
 import { sembrarCategorias } from '../src/application/categorias.js';
-import { ADMIN, CLIENTE, OTRO_CLIENTE, prepararEntorno } from './entorno.js';
+import { ADMIN, CLIENTE, OTRO_CLIENTE, prepararEntorno, token } from './entorno.js';
 import { DATOS_PERFIL, fichaDePrueba } from './fabricas.js';
 import { subir } from './subir.js';
 
 const e = prepararEntorno();
+const CUOTA = token('carla', GRUPOS.cliente);
 const consulta = {
   categoriaId: 'arrendamientos',
   asunto: 'Arriendo de un local comercial',
@@ -99,5 +101,35 @@ describe('HU-15 · enviar consulta', () => {
     e.reloj.avanzar(1);
     const b = await e.json('/consultas', { token: CLIENTE, cuerpo: otra });
     expect(b.datos.radicado).not.toBe(a.datos.radicado);
+  });
+});
+
+describe('cuota de subidas', () => {
+  const pedir = (token = CUOTA) =>
+    e.json('/consultas/adjunto/subida', {
+      token,
+      cuerpo: { nombre: 'a.pdf', tipo: 'application/pdf', tamano: 10 },
+    });
+
+  it('un adjunto sin radicar queda marcado para borrarse; radicado, no', async () => {
+    const s = (await pedir(CLIENTE)).datos;
+    await subir(e, s, 10);
+    expect(e.sinConfirmar()).toContain(s.llave);
+    const r = await e.json('/consultas', {
+      token: CLIENTE,
+      cuerpo: { ...consulta, asunto: 'Otra consulta con adjunto', adjuntoLlave: s.llave },
+    });
+    expect(r.estado).toBe(201);
+    expect(e.sinConfirmar()).not.toContain(s.llave);
+  });
+
+  it('limita las URL por cuenta y por día', async () => {
+    for (let i = 0; i < LIMITES.subidasPorDia; i++) expect((await pedir()).estado).toBe(200);
+    const r = await pedir();
+    expect(r.estado).toBe(429);
+    expect(r.datos.error).toBe('LIMITE_EXCEDIDO');
+    expect((await pedir(OTRO_CLIENTE)).estado).toBe(200);
+    e.reloj.avanzar(24);
+    expect((await pedir()).estado).toBe(200);
   });
 });

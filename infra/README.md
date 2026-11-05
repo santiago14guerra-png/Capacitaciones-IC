@@ -46,6 +46,7 @@ npx cdk deploy IcDev -c conWeb=true -c dominioSes=<dominio> -c correoRemitente=n
 
 ## Decisiones
 
+- El bucket de archivos es versionado. Los objetos que nadie confirma (etiqueta `estado=sin-confirmar`) se borran a los 7 días; los comprobantes y adjuntos confirmados no vencen.
 - Tabla, grupo de usuarios y bucket de archivos se **conservan** si se borra la pila (datos de clientes).
 - El sitio y la API comparten dominio en CloudFront (`/api/*`), así que no hace falta CORS para la API.
 - `config.json` se genera en el despliegue con los identificadores de Cognito; no contiene secretos.

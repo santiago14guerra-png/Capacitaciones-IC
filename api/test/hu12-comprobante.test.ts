@@ -76,3 +76,42 @@ describe('HU-12 · cargar comprobante', () => {
     expect((await e.crudo(propia.datos.url.replace('firma=', 'firma=x'))).status).toBe(403);
   });
 });
+
+describe('integridad del comprobante', () => {
+  const esperado = 'ana.f2';
+  it('reutilizar la URL no cambia lo que descarga quien revisa el pago', async () => {
+    await e.ctx.fichas.guardar(fichaDePrueba({ id: 'f2', precio: 35000 }));
+    const compra = (await e.json('/fichas/f2/compra', { token: CLIENTE, cuerpo: {} })).datos;
+    expect(compra.id).toBe(esperado);
+    const s = (
+      await e.json(`/compras/${compra.id}/comprobante/subida`, {
+        token: CLIENTE,
+        cuerpo: { nombre: 'c.pdf', tipo: 'application/pdf', tamano: 100 },
+      })
+    ).datos;
+    await subir(e, s, 100);
+    await e.json(`/compras/${compra.id}/comprobante`, {
+      token: CLIENTE,
+      cuerpo: { llave: s.llave },
+    });
+
+    expect((await subir(e, s, 300)).status).toBe(204);
+
+    const { url } = (await e.json(`/admin/pagos/${compra.id}/comprobante`, { token: ADMIN })).datos;
+    const descarga = await e.crudo(url);
+    expect((await descarga.arrayBuffer()).byteLength).toBe(100);
+  });
+
+  it('un comprobante confirmado no queda marcado para borrarse', async () => {
+    const compra = (await e.ctx.compras.obtener('ana', 'f2'))!;
+    const s = await e.ctx.archivos.firmarSubida(
+      'comprobantes/ana/f2/huerfano.pdf',
+      'application/pdf',
+      100,
+    );
+    await subir(e, s, 10);
+    expect(e.sinConfirmar()).toContain(s.llave);
+    expect(compra.comprobanteVersion).toBe('1');
+    expect(await e.ctx.archivos.info(compra.comprobanteLlave!)).toMatchObject({ tamano: 300 });
+  });
+});
