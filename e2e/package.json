@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "demo": "tsx demo/recorrido.ts"
   },
   "devDependencies": {
-    "@playwright/test": "1.63.0"
+    "@playwright/test": "1.63.0",
+    "tsx": "^4.0.0"
   }
 }
