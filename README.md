@@ -5,6 +5,8 @@ Plataforma web (AWS serverless) para publicar, buscar y vender respuestas tribut
 - [Historias de usuario, tallas, responsables y estado por sprint](docs/historias-de-usuario.md)
 - [Estado del MVP y datos pendientes de la empresa](docs/estado-mvp.md)
 - [Comparación con la especificación de la entrega 2](docs/especificacion-entrega2.md)
+- [Manual de uso](docs/manual-usuario.md)
+- [Entrega a la empresa](docs/entrega-cliente.md)
 
 ## Estructura
 

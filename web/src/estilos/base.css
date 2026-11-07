@@ -481,9 +481,13 @@ th {
   background: var(--c-primario);
   color: #fff;
 }
+/* Las bandejas del panel tienen muchas columnas: usan más ancho que el sitio público. */
+.contenedor:has(.panel) {
+  max-width: 1320px;
+}
 @media (min-width: 960px) {
   .panel {
-    grid-template-columns: 220px minmax(0, 1fr);
+    grid-template-columns: 190px minmax(0, 1fr);
   }
   .panel-nav {
     flex-direction: column;
