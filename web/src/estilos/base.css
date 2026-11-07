@@ -315,13 +315,18 @@ input,
 select,
 textarea {
   font: inherit;
-  color: inherit;
+  /* Color propio: con «inherit», dentro de la portada oscura el texto salía casi blanco sobre blanco. */
+  color: var(--c-texto);
   min-height: 48px;
   padding: 0.55rem 0.75rem;
   border: 1.5px solid #9aa29c;
   border-radius: var(--radio);
   background: #fff;
   width: 100%;
+}
+::placeholder {
+  color: #5b6560;
+  opacity: 1;
 }
 textarea {
   min-height: 140px;
