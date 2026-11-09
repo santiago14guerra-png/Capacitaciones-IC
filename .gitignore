@@ -1,0 +1,14 @@
+node_modules/
+dist/
+cdk.out/
+coverage/
+.local/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+playwright-report/
+test-results/
+.taste-skill/
+e2e/demo/salida/

@@ -1,0 +1,89 @@
+name: Desplegar a dev
+
+# T-06: cada push a develop se prueba y se despliega al ambiente dev de AWS.
+# Credenciales temporales por OIDC: no hay llaves de AWS guardadas en GitHub.
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desplegar-dev
+  cancel-in-progress: false
+
+jobs:
+  verificar:
+    uses: ./.github/workflows/ci.yml
+
+  sin-configurar:
+    name: Despliegue pendiente de configurar
+    needs: verificar
+    if: ${{ vars.AWS_ROLE_ARN == '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "::warning::No se desplegó. Falta la variable AWS_ROLE_ARN (ver infra/README.md)."
+
+  # Aquí corre el código de terceros (scripts de instalación, build y synth), sin permiso OIDC.
+  empaquetar:
+    name: Construir sitio y sintetizar
+    needs: verificar
+    if: ${{ vars.AWS_ROLE_ARN != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Construir el sitio
+        run: npm run build --workspace web
+      - name: Sintetizar la pila
+        working-directory: infra
+        run: npx cdk synth IcDev --quiet -c conWeb=true
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ensamblado-cdk
+          path: infra/cdk.out
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
+
+  # Único job con OIDC: instala sin scripts y despliega lo ya sintetizado, sin ejecutar la app.
+  desplegar:
+    name: Desplegar IcDev
+    needs: empaquetar
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Sin `environment:` a propósito: cambiaría el `sub` del token OIDC y el rol no lo aceptaría.
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: ensamblado-cdk
+          path: infra/cdk.out
+      - uses: aws-actions/configure-aws-credentials@ff717079ee2060e4bcee96c4779b553acc87447c # v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          role-session-name: github-${{ github.run_id }}
+      - name: Desplegar con CDK
+        working-directory: infra
+        run: npx cdk deploy IcDev --app cdk.out --require-approval never --outputs-file salidas.json
+      - name: Publicar URL
+        working-directory: infra
+        run: |
+          sitio=$(node -p "require('./salidas.json').IcDev.SitioUrl")
+          echo "### Desplegado en dev: $sitio" >> "$GITHUB_STEP_SUMMARY"
