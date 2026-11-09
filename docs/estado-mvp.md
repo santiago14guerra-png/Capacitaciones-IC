@@ -13,17 +13,22 @@ los issues siguen abiertos.
 No se inventaron datos: se muestran como marcadores hasta que la empresa los entregue. Los de
 contacto, tarifas y banco se configuran en `infra/cdk.json` → `negocio`, sin tocar código.
 
-| Dato | Dónde aparece | Cómo se completa |
-| --- | --- | --- |
-| Correo y WhatsApp institucionales | Pie de página, catálogo | `CONTACTO_CORREO`, `CONTACTO_WHATSAPP` (número internacional, solo dígitos) |
-| Banco, tipo y número de cuenta, titular | Instrucciones de pago (HU-11) | `BANCO_*` |
-| Tarifas de consulta rápida y asesoría | Página de tarifas (HU-24) | `TARIFA_*` |
-| Criterio detallado consulta / asesoría (objetivo 4) | Página de tarifas | Texto en `web/src/paginas/Tarifas.tsx` |
-| Razón social, NIT, dirección, plazos de conservación, política de devoluciones, responsabilidad | Política y términos (HU-25) | Texto final del **abogado**; luego cambiar `VERSION_POLITICA_DATOS` |
-| Plantilla de importación de Siigo y código de producto | Excel de HU-19 | Validar con la directora y ajustar `exportacion-siigo.ts` |
-| Categorías iniciales | HU-07 | Propuesta del equipo; se editan desde el panel |
-| Manual de marca | Colores y tipografía | Identidad sobria provisional («libro mayor»): verde contable `#1e4d3c`, campo `#16302a`, papel `#f3f3f0`; Source Serif 4 en títulos y Albert Sans en texto. Se cambian en los tokens de `web/src/estilos/base.css` |
-| Fichas reales (T-07) | Catálogo | Se cargan desde el panel |
+| Dato                                                                                            | Dónde aparece                 | Cómo se completa                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Correo y WhatsApp institucionales                                                               | Pie de página, catálogo       | `CONTACTO_CORREO`, `CONTACTO_WHATSAPP` (número internacional, solo dígitos)                                                                                                                                        |
+| Banco, tipo y número de cuenta, titular                                                         | Instrucciones de pago (HU-11) | `BANCO_*`                                                                                                                                                                                                          |
+| Tarifas de consulta rápida y asesoría                                                           | Página de tarifas (HU-24)     | `TARIFA_*`                                                                                                                                                                                                         |
+| Criterio detallado consulta / asesoría (objetivo 4)                                             | Página de tarifas             | Texto en `web/src/paginas/Tarifas.tsx`                                                                                                                                                                             |
+| Razón social, NIT, dirección, plazos de conservación, política de devoluciones, responsabilidad | Política y términos (HU-25)   | Texto final del **abogado**; luego cambiar `VERSION_POLITICA_DATOS`                                                                                                                                                |
+| Plantilla de importación de Siigo y código de producto                                          | Excel de HU-19                | Validar con la directora y ajustar `exportacion-siigo.ts`                                                                                                                                                          |
+| Categorías iniciales                                                                            | HU-07                         | Propuesta del equipo; se editan desde el panel                                                                                                                                                                     |
+| Manual de marca                                                                                 | Colores y tipografía          | Identidad sobria provisional («libro mayor»): verde contable `#1e4d3c`, campo `#16302a`, papel `#f3f3f0`; Source Serif 4 en títulos y Albert Sans en texto. Se cambian en los tokens de `web/src/estilos/base.css` |
+| Fichas reales (T-07)                                                                            | Catálogo                      | Se cargan desde el panel                                                                                                                                                                                           |
+
+## Seguridad
+
+El estado de la auditoría de noviembre de 2026 y lo que falta decidir están en
+[seguridad.md](seguridad.md).
 
 ## Antes del primer despliegue (SG)
 

@@ -1,3 +1,4 @@
+import { LIMITES } from '@ic/shared';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { invalidarCatalogo } from '../src/application/catalogo.js';
 import { sembrarCategorias } from '../src/application/categorias.js';
@@ -56,6 +57,22 @@ describe('HU-09 · búsqueda por palabra clave', () => {
       fecha: e.reloj.ahora().toISOString(),
       resultados: 0,
     });
+  });
+});
+
+describe('registro de búsquedas', () => {
+  it('deja de escribir al agotar el cupo por minuto, sigue respondiendo y se repone', async () => {
+    e.reloj.avanzar(1);
+    const contar = async () => (await e.ctx.busquedas.listarMes(mes())).length;
+    const antes = await contar();
+    const peticiones = LIMITES.registrosBusquedaPorMinuto + 5;
+    for (let i = 0; i < peticiones; i++) {
+      expect((await e.json(`/buscar?q=termino${i}`)).estado).toBe(200);
+    }
+    expect((await contar()) - antes).toBe(LIMITES.registrosBusquedaPorMinuto);
+    e.reloj.avanzar(1);
+    await e.json('/buscar?q=otra busqueda');
+    expect((await contar()) - antes).toBe(LIMITES.registrosBusquedaPorMinuto + 1);
   });
 });
 

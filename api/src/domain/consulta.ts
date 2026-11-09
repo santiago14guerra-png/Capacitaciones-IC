@@ -11,6 +11,7 @@ export interface Consulta {
   asunto: string;
   descripcion: string;
   adjuntoLlave?: string;
+  adjuntoVersion?: string;
   estado: EstadoConsulta;
   clasificacion?: Clasificacion;
   respuestaHtml?: string;
