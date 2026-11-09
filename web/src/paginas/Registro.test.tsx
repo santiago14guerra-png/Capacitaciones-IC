@@ -72,7 +72,7 @@ describe('HU-02 · registro', () => {
   });
 
   it('CA6: con el código activa la cuenta, inicia sesión, guarda el perfil y regresa', async () => {
-    const llamadas = simularApi({ 'PUT /perfil': {}, 'GET /sesion': SESION_CLIENTE });
+    const llamadas = simularApi({ 'PUT /mi/perfil': {}, 'GET /sesion': SESION_CLIENTE });
     const { transporte, enrutador } = renderizar('/registro?volver=/fichas/abc');
     llenarValido();
     autorizar();
@@ -85,7 +85,7 @@ describe('HU-02 · registro', () => {
     await waitFor(() => expect(enrutador.state.location.pathname).toBe('/fichas/abc'));
     expect(transporte.confirmar).toHaveBeenCalledWith('ana@correo.co', '123456');
     expect(transporte.ingresar).toHaveBeenCalledWith('ana@correo.co', 'clave1234');
-    const perfil = llamadas.find((l) => l.metodo === 'PUT' && l.ruta === '/perfil')!;
+    const perfil = llamadas.find((l) => l.metodo === 'PUT' && l.ruta === '/mi/perfil')!;
     expect(perfil.cuerpo).toEqual({
       nombres: 'Ana',
       apellidos: 'Ruiz',

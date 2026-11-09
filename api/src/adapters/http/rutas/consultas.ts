@@ -15,13 +15,13 @@ export const rutasConsultas = (ctx: Contexto) =>
     .post('/consultas/adjunto/subida', async (c) =>
       c.json(await prepararAdjunto(ctx, c.var.actor, await cuerpoJson(c))),
     )
-    .get('/consultas', async (c) => c.json(await misConsultas(ctx, c.var.actor)))
-    .get('/consultas/:id', async (c) =>
+    .get('/mi/consultas', async (c) => c.json(await misConsultas(ctx, c.var.actor)))
+    .get('/mi/consultas/:id', async (c) =>
       c.json(await miConsulta(ctx, c.var.actor, c.req.param('id'))),
     )
     .post('/consultas', async (c) =>
       c.json(await enviarConsulta(ctx, c.var.actor, await cuerpoJson(c)), 201),
     )
-    .get('/consultas/:id/adjunto', async (c) =>
+    .get('/mi/consultas/:id/adjunto', async (c) =>
       c.json(await urlAdjunto(ctx, c.var.actor, c.req.param('id'))),
     );

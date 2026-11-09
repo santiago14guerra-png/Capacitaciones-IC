@@ -33,7 +33,8 @@ npm run check
 
 | Flujo               | Cuándo                                 | Qué hace                                                                                                   |
 | ------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `ci.yml`            | Cada pull request a `develop` o `main` | `npm run check` y `cdk synth`                                                                              |
+| `desplegar-prod.yml` | Cada push a `main`, con `PROD_HABILITADO=true` | Lo mismo y, con aprobación manual del ambiente `produccion`, `cdk deploy IcProd` |
+| `ci.yml`            | Cada pull request a `develop` o `main` | `npm run check`, `cdk synth` y Playwright                                                                              |
 | `desplegar-dev.yml` | Cada push a `develop`                  | Lo mismo y, si pasa, sintetiza en un job sin credenciales y despliega ese resultado con `cdk deploy IcDev` |
 
 El despliegue usa OIDC: GitHub pide credenciales temporales al rol `ic-github-despliegue`, que solo

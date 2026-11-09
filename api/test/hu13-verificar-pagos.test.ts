@@ -23,11 +23,11 @@ afterEach(() => vi.restoreAllMocks());
 
 describe('HU-13 · verificar o rechazar pagos', () => {
   it('solo el personal ve la bandeja', async () => {
-    expect((await e.json('/admin/pagos', { token: CLIENTE })).estado).toBe(403);
+    expect((await e.json('/admin/compras', { token: CLIENTE })).estado).toBe(403);
   });
 
   it('lista compras en verificación con cliente, ficha, valor, referencia y comprobante', async () => {
-    const r = await e.json('/admin/pagos', { token: ADMIN });
+    const r = await e.json('/admin/compras', { token: ADMIN });
     expect(r.datos).toHaveLength(2);
     expect(r.datos[0]).toMatchObject({
       id: 'ana.f1',
@@ -40,14 +40,15 @@ describe('HU-13 · verificar o rechazar pagos', () => {
     });
     expect(r.datos[0]).not.toHaveProperty('datosBancarios');
     expect(
-      (await e.json('/admin/pagos/ana.f1/comprobante', { token: ADMIN })).datos.url,
+      (await e.json('/admin/compras/ana.f1/comprobante', { token: ADMIN })).datos.url,
     ).toBeTruthy();
   });
 
   it('aprobar habilita el acceso de inmediato y registra quién y cuándo', async () => {
     expect((await e.json('/fichas/f1', { token: CLIENTE })).datos.tieneAcceso).toBe(false);
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
-    const r = await e.json('/admin/pagos/ana.f1/decision', {
+    const r = await e.json('/admin/compras/ana.f1', {
+      metodo: 'PATCH',
       token: DIRECTOR,
       cuerpo: { decision: 'APROBAR' },
     });
@@ -68,7 +69,8 @@ describe('HU-13 · verificar o rechazar pagos', () => {
   });
 
   it('impide la doble aprobación', async () => {
-    const r = await e.json('/admin/pagos/ana.f1/decision', {
+    const r = await e.json('/admin/compras/ana.f1', {
+      metodo: 'PATCH',
       token: ADMIN,
       cuerpo: { decision: 'APROBAR' },
     });
@@ -76,12 +78,14 @@ describe('HU-13 · verificar o rechazar pagos', () => {
   });
 
   it('rechazar exige un motivo que luego ve el cliente', async () => {
-    const sin = await e.json('/admin/pagos/beto.f1/decision', {
+    const sin = await e.json('/admin/compras/beto.f1', {
+      metodo: 'PATCH',
       token: ADMIN,
       cuerpo: { decision: 'RECHAZAR', motivo: ' ' },
     });
     expect(sin.estado).toBe(422);
-    await e.json('/admin/pagos/beto.f1/decision', {
+    await e.json('/admin/compras/beto.f1', {
+      metodo: 'PATCH',
       token: ADMIN,
       cuerpo: { decision: 'RECHAZAR', motivo: 'El valor transferido no coincide' },
     });
@@ -94,14 +98,14 @@ describe('HU-13 · verificar o rechazar pagos', () => {
   });
 
   it('tras un rechazo el cliente puede volver a comprar con una referencia nueva', async () => {
-    const r = await e.json('/fichas/f1/compra', { token: OTRO_CLIENTE, cuerpo: {} });
+    const r = await e.json('/compras', { token: OTRO_CLIENTE, cuerpo: { fichaId: 'f1' } });
     expect(r.datos).toMatchObject({ estado: 'PENDIENTE_PAGO', referencia: 'RPN-000003' });
     expect(r.datos.motivoRechazo).toBeUndefined();
   });
 
   it('la bandeja puede consultar el historial por estado', async () => {
-    const aprobadas = await e.json('/admin/pagos?estado=APROBADA', { token: ADMIN });
+    const aprobadas = await e.json('/admin/compras?estado=APROBADA', { token: ADMIN });
     expect(aprobadas.datos.map((c: { id: string }) => c.id)).toEqual(['ana.f1']);
-    expect((await e.json('/admin/pagos', { token: ADMIN })).datos).toEqual([]);
+    expect((await e.json('/admin/compras', { token: ADMIN })).datos).toEqual([]);
   });
 });

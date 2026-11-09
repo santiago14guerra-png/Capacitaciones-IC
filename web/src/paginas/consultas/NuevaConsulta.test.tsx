@@ -5,7 +5,7 @@ import { renderizar, SESION_CLIENTE, simularApi } from '../../prueba/utilidades'
 const api = {
   'GET /sesion': SESION_CLIENTE,
   'GET /categorias': [{ id: 'a', nombre: 'Arrendamientos', orden: 0, activa: true }],
-  'GET /buscar': {
+  'GET /fichas': {
     consulta: 'arriendo',
     terminos: ['arriendo'],
     total: 1,
@@ -34,7 +34,7 @@ describe('HU-15 · enviar consulta', () => {
     expect(
       await screen.findByRole('link', { name: 'Ingresos por arriendo' }, { timeout: 2000 }),
     ).toBeTruthy();
-    expect(llamadas.find((l) => l.ruta === '/buscar')!.url.searchParams.get('sugerencia')).toBe(
+    expect(llamadas.find((l) => l.ruta === '/fichas')!.url.searchParams.get('sugerencia')).toBe(
       '1',
     );
   });

@@ -10,7 +10,7 @@ const item = (c: Consulta) => ({
   sk: 'META',
   gsi1pk: 'CONSULTAS',
   gsi1sk: c.recibidaEn,
-  gsi2pk: `USUARIO#${c.sub}#CONSULTAS`,
+  gsi2pk: `USER#${c.sub}#CONSULTAS`,
   gsi2sk: c.recibidaEn,
   ...c,
 });
@@ -42,8 +42,6 @@ export class RepoConsultasDynamo implements RepoConsultas {
   }
 
   async listarDeUsuario(sub: string) {
-    return (await this.tabla.consultarIndice<Item>('gsi2', `USUARIO#${sub}#CONSULTAS`)).map(
-      limpiar,
-    );
+    return (await this.tabla.consultarIndice<Item>('gsi2', `USER#${sub}#CONSULTAS`)).map(limpiar);
   }
 }

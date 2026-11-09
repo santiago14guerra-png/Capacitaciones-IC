@@ -22,7 +22,7 @@ const resultado = {
 
 describe('HU-09 · búsqueda', () => {
   it('CA3: resalta el término sin importar tildes', async () => {
-    simularApi({ 'GET /buscar': resultado });
+    simularApi({ 'GET /fichas': resultado });
     const { container } = renderizar('/buscar?q=pension');
     await screen.findByText(/1 respuesta para/);
     expect([...container.querySelectorAll('mark')].map((m) => m.textContent)).toEqual([
@@ -32,17 +32,17 @@ describe('HU-09 · búsqueda', () => {
   });
 
   it('CA4: con menos de 3 letras no busca y lo indica', async () => {
-    const llamadas = simularApi({ 'GET /buscar': resultado });
+    const llamadas = simularApi({ 'GET /fichas': resultado });
     renderizar('/buscar?q=pe');
     expect(await screen.findByText('Escriba al menos 3 letras para buscar.')).toBeTruthy();
     fireEvent.change(screen.getByLabelText('Escriba su duda'), { target: { value: 'ab' } });
     fireEvent.click(screen.getByRole('button', { name: 'Buscar' }));
     expect(await screen.findByRole('alert')).toBeTruthy();
-    expect(llamadas.filter((l) => l.ruta === '/buscar')).toHaveLength(0);
+    expect(llamadas.filter((l) => l.ruta === '/fichas')).toHaveLength(0);
   });
 
   it('envía la búsqueda desde la caja', async () => {
-    const llamadas = simularApi({ 'GET /buscar': resultado });
+    const llamadas = simularApi({ 'GET /fichas': resultado });
     const { enrutador } = renderizar('/buscar');
     fireEvent.change(screen.getByLabelText('Escriba su duda'), { target: { value: ' pensión ' } });
     fireEvent.click(screen.getByRole('button', { name: 'Buscar' }));

@@ -30,7 +30,7 @@ export default function EditarPerfil() {
     const d = f.validar(esquemaPerfil);
     if (!d) return;
     try {
-      await api<PerfilDto>('/perfil', { metodo: 'PUT', cuerpo: d });
+      await api<PerfilDto>('/mi/perfil', { metodo: 'PUT', cuerpo: d });
       await recargar();
       setAviso({
         tipo: 'exito',

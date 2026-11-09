@@ -9,7 +9,7 @@ export class CuotasDynamo implements Cuotas {
 
   async consumirSubida(sub: string, dia: string, maximo: number) {
     try {
-      await this.tabla.actualizar(`USUARIO#${sub}`, `CUOTA#SUBIDAS#${dia}`, {
+      await this.tabla.actualizar(`USER#${sub}`, `CUOTA#SUBIDAS#${dia}`, {
         UpdateExpression: 'ADD usadas :uno SET expira = :e',
         ConditionExpression: 'attribute_not_exists(usadas) OR usadas < :m',
         ExpressionAttributeValues: {

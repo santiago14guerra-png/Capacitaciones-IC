@@ -14,7 +14,7 @@ import { BotonAccion } from '../../componentes/BotonAccion';
 export default function MiConsulta() {
   const { id } = useParams();
   const { datos: c, error } = useCarga(
-    (s) => api<ConsultaDto>(`/consultas/${id}`, { senal: s }),
+    (s) => api<ConsultaDto>(`/mi/consultas/${id}`, { senal: s }),
     [id],
   );
   if (!c) return error ? <AvisoError mensaje={error.message} /> : <Cargando />;
@@ -37,7 +37,7 @@ export default function MiConsulta() {
           <BotonAccion
             ocupadoTexto="Abriendo…"
             className="enlace-boton"
-            alPulsar={() => abrirArchivo(`/consultas/${c.id}/adjunto`)}
+            alPulsar={() => abrirArchivo(`/mi/consultas/${c.id}/adjunto`)}
           >
             Ver adjunto
           </BotonAccion>

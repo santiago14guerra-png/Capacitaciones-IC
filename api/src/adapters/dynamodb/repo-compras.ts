@@ -3,13 +3,13 @@ import type { Contadores, RepoCompras } from '../../application/puertos.js';
 import type { Compra } from '../../domain/compra.js';
 import { esCondicionFallida, type Item, type Tabla } from './tabla.js';
 
-const llave = (sub: string, fichaId: string) => ({ pk: `USUARIO#${sub}`, sk: `COMPRA#${fichaId}` });
+const llave = (sub: string, fichaId: string) => ({ pk: `USER#${sub}`, sk: `COMPRA#${fichaId}` });
 const INTERNOS = new Set(['pk', 'sk', 'gsi1pk', 'gsi1sk', 'gsi2pk', 'gsi2sk']);
 const limpiar = (i: Item) =>
   Object.fromEntries(Object.entries(i).filter(([k]) => !INTERNOS.has(k))) as unknown as Compra;
 const item = (c: Compra) => ({
   ...llave(c.sub, c.fichaId),
-  gsi1pk: `COMPRAS#${c.estado}`,
+  gsi1pk: `COMPRA#${c.estado}`,
   gsi1sk: c.actualizadaEn,
   gsi2pk: 'COMPRAS',
   gsi2sk: c.creadaEn,
@@ -52,7 +52,7 @@ export class RepoComprasDynamo implements RepoCompras {
   async listarDeUsuario(sub: string) {
     const items = await this.tabla.consultar<Item>({
       KeyConditionExpression: 'pk = :p AND begins_with(sk, :s)',
-      ExpressionAttributeValues: { ':p': `USUARIO#${sub}`, ':s': 'COMPRA#' },
+      ExpressionAttributeValues: { ':p': `USER#${sub}`, ':s': 'COMPRA#' },
     });
     return items.map(limpiar);
   }
@@ -63,7 +63,7 @@ export class RepoComprasDynamo implements RepoCompras {
       IndexName: 'gsi1',
       KeyConditionExpression: rango ? 'gsi1pk = :p AND gsi1sk BETWEEN :d AND :h' : 'gsi1pk = :p',
       ExpressionAttributeValues: {
-        ':p': `COMPRAS#${estado}`,
+        ':p': `COMPRA#${estado}`,
         ...(rango ? { ':d': desde, ':h': hasta } : {}),
       },
     });

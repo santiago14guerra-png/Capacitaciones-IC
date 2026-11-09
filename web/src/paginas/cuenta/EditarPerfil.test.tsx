@@ -9,7 +9,7 @@ describe('HU-23 · editar mi perfil', () => {
         ...SESION_CLIENTE,
         perfil: { ...SESION_CLIENTE.perfil, versionPoliticaDatos: '0.1-borrador' },
       },
-      'PUT /perfil': {},
+      'PUT /mi/perfil': {},
     });
     renderizar('/cuenta/perfil', { conSesion: true });
     const direccion = (await screen.findByLabelText('Dirección')) as HTMLInputElement;

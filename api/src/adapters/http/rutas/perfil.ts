@@ -5,6 +5,6 @@ import type { Entorno } from '../app.js';
 import { cuerpoJson } from '../cuerpo.js';
 
 export const rutasPerfil = (ctx: Contexto) =>
-  new Hono<Entorno>().put('/perfil', async (c) =>
+  new Hono<Entorno>().put('/mi/perfil', async (c) =>
     c.json(await guardarPerfil(ctx, c.var.actor, await cuerpoJson(c))),
   );

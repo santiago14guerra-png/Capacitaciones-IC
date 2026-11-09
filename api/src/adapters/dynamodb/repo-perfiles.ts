@@ -2,7 +2,7 @@ import type { RepoPerfiles } from '../../application/puertos.js';
 import type { Perfil } from '../../domain/perfil.js';
 import type { Tabla } from './tabla.js';
 
-const llave = (sub: string) => ({ pk: `USUARIO#${sub}`, sk: 'PERFIL' });
+const llave = (sub: string) => ({ pk: `USER#${sub}`, sk: 'PERFIL' });
 
 export class RepoPerfilesDynamo implements RepoPerfiles {
   constructor(private readonly tabla: Tabla) {}

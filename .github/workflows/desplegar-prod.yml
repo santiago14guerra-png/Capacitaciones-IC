@@ -1,0 +1,82 @@
+name: Desplegar a producción
+
+# Cada push a main prueba y, con la aprobación manual del ambiente `produccion` de GitHub,
+# despliega IcProd. No hace nada hasta definir la variable PROD_HABILITADO=true: producción
+# requiere el aval legal (ver docs/estado-mvp.md).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desplegar-prod
+  cancel-in-progress: false
+
+jobs:
+  verificar:
+    uses: ./.github/workflows/ci.yml
+
+  # Aquí corre el código de terceros (scripts de instalación, build y synth), sin permiso OIDC.
+  empaquetar:
+    name: Construir sitio y sintetizar
+    needs: verificar
+    if: ${{ vars.PROD_HABILITADO == 'true' && vars.AWS_ROLE_ARN != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Construir el sitio
+        run: npm run build --workspace web
+      - name: Sintetizar la pila
+        working-directory: infra
+        run: npx cdk synth IcProd --quiet -c conWeb=true
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ensamblado-cdk-prod
+          path: infra/cdk.out
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
+
+  # El ambiente exige aprobación manual y es lo único que el rol OIDC acepta para producción.
+  desplegar:
+    name: Desplegar IcProd
+    needs: empaquetar
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: produccion
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: ensamblado-cdk-prod
+          path: infra/cdk.out
+      - uses: aws-actions/configure-aws-credentials@ff717079ee2060e4bcee96c4779b553acc87447c # v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          role-session-name: github-prod-${{ github.run_id }}
+      - name: Desplegar con CDK
+        working-directory: infra
+        run: npx cdk deploy IcProd --app cdk.out --require-approval never --outputs-file salidas.json
+      - name: Publicar URL
+        working-directory: infra
+        run: |
+          sitio=$(node -p "require('./salidas.json').IcProd.SitioUrl")
+          echo "### Desplegado en producción: $sitio" >> "$GITHUB_STEP_SUMMARY"

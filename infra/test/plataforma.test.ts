@@ -2,6 +2,7 @@ import { App } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { definicionTabla } from '../../api/src/adapters/dynamodb/esquema.js';
+import { CuentaStack } from '../lib/cuenta-stack.js';
 import { GithubOidcStack } from '../lib/github-oidc-stack.js';
 import { PlataformaStack } from '../lib/plataforma-stack.js';
 
@@ -11,6 +12,7 @@ beforeAll(() => {
   const stack = new PlataformaStack(app, 'Prueba', {
     env: { account: '111111111111', region: 'us-east-1' },
     ambiente: 'prueba',
+    capacidad: 5,
   });
   t = Template.fromStack(stack);
 }, 120_000);
@@ -18,7 +20,7 @@ beforeAll(() => {
 describe('T-05 infraestructura', () => {
   it('crea la tabla con la misma llave e índices que usa la API', () => {
     const local = definicionTabla('x');
-    t.hasResourceProperties('AWS::DynamoDB::GlobalTable', {
+    t.hasResourceProperties('AWS::DynamoDB::Table', {
       KeySchema: local.KeySchema,
       GlobalSecondaryIndexes: Match.arrayWith(
         local.GlobalSecondaryIndexes!.map((i) =>
@@ -26,6 +28,17 @@ describe('T-05 infraestructura', () => {
         ),
       ),
     });
+  });
+
+  it('usa capacidad aprovisionada con respaldo continuo', () => {
+    t.hasResourceProperties('AWS::DynamoDB::Table', {
+      ProvisionedThroughput: { ReadCapacityUnits: 5, WriteCapacityUnits: 5 },
+      PointInTimeRecoverySpecification: { PointInTimeRecoveryEnabled: true },
+    });
+  });
+
+  it('avisa por alarmas de errores y de throttling', () => {
+    t.resourceCountIs('AWS::CloudWatch::Alarm', 3);
   });
 
   it('configura Cognito: contraseña mínima, sesión de 8 horas y token de 15 minutos', () => {
@@ -84,7 +97,7 @@ describe('T-05 infraestructura', () => {
   });
 
   it('activa el vencimiento de las cuotas diarias', () => {
-    t.hasResourceProperties('AWS::DynamoDB::GlobalTable', {
+    t.hasResourceProperties('AWS::DynamoDB::Table', {
       TimeToLiveSpecification: { AttributeName: 'expira', Enabled: true },
     });
   });
@@ -133,13 +146,64 @@ describe('T-05 infraestructura', () => {
   });
 });
 
+describe('ambiente productivo', () => {
+  const prod = () =>
+    Template.fromStack(
+      new PlataformaStack(new App(), 'Prod', {
+        env: { account: '111111111111', region: 'us-east-1' },
+        ambiente: 'prod',
+        capacidad: 5,
+        proteccionBorrado: true,
+        dominio: { nombre: 'ejemplo.co', zonaId: 'Z123' },
+        correoAlertas: 'alertas@ejemplo.co',
+      }),
+    );
+
+  it('protege los datos, usa el dominio y envía las alertas al correo', () => {
+    const p = prod();
+    p.hasResourceProperties('AWS::DynamoDB::Table', { DeletionProtectionEnabled: true });
+    p.hasResourceProperties('AWS::Cognito::UserPool', { DeletionProtection: 'ACTIVE' });
+    p.hasResourceProperties('AWS::CertificateManager::Certificate', {
+      DomainName: 'ejemplo.co',
+      SubjectAlternativeNames: ['www.ejemplo.co'],
+    });
+    p.resourceCountIs('AWS::Route53::RecordSet', 2);
+    p.hasResourceProperties('AWS::SNS::Subscription', {
+      Protocol: 'email',
+      Endpoint: 'alertas@ejemplo.co',
+    });
+    p.hasResourceProperties('AWS::Lambda::Function', {
+      Environment: { Variables: Match.objectLike({ SITIO_URL: 'https://ejemplo.co' }) },
+    });
+  });
+});
+
+describe('presupuesto', () => {
+  it('avisa al superar USD 1 y USD 5', () => {
+    const s = new CuentaStack(new App(), 'Cuenta', {
+      env: { account: '111111111111', region: 'us-east-1' },
+      correoAlertas: 'alertas@ejemplo.co',
+    });
+    const presupuesto = Object.values(
+      Template.fromStack(s).findResources('AWS::Budgets::Budget'),
+    )[0]!;
+    expect(presupuesto.Properties.Budget.BudgetLimit).toEqual({ Amount: 5, Unit: 'USD' });
+    expect(
+      presupuesto.Properties.NotificationsWithSubscribers.map(
+        (n: { Notification: { Threshold: number } }) => n.Notification.Threshold,
+      ),
+    ).toEqual([20, 100]);
+  });
+});
+
 describe('T-06 rol OIDC', () => {
-  it('solo confía en la rama de despliegue del repositorio', () => {
+  it('solo confía en develop y en el ambiente protegido de producción', () => {
     const app = new App();
     const s = new GithubOidcStack(app, 'Oidc', {
       env: { account: '111111111111', region: 'us-east-1' },
       repositorio: 'org/repo',
       rama: 'develop',
+      ambienteProduccion: 'produccion',
     });
     Template.fromStack(s).hasResourceProperties('AWS::IAM::Role', {
       AssumeRolePolicyDocument: {
@@ -148,7 +212,10 @@ describe('T-06 rol OIDC', () => {
             Condition: {
               StringEquals: {
                 'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
-                'token.actions.githubusercontent.com:sub': 'repo:org/repo:ref:refs/heads/develop',
+                'token.actions.githubusercontent.com:sub': [
+                  'repo:org/repo:ref:refs/heads/develop',
+                  'repo:org/repo:environment:produccion',
+                ],
               },
             },
           }),

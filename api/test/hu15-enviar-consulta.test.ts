@@ -19,12 +19,12 @@ beforeAll(async () => {
     fichaDePrueba({ id: 'f-arriendo', titulo: 'Ingresos por arriendo de locales' }),
   );
   invalidarCatalogo(e.ctx);
-  await e.json('/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
+  await e.json('/mi/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
 });
 
 describe('HU-15 · enviar consulta', () => {
   it('sugiere fichas relacionadas con el asunto sin registrar la búsqueda', async () => {
-    const r = await e.json('/buscar?q=arriendo de local&sugerencia=1');
+    const r = await e.json('/fichas?q=arriendo de local&sugerencia=1');
     expect(r.datos.elementos[0].id).toBe('f-arriendo');
     expect(await e.ctx.busquedas.listarMes('2026-11')).toEqual([]);
   });
@@ -64,11 +64,15 @@ describe('HU-15 · enviar consulta', () => {
       cuerpo: { ...consulta, adjuntoLlave: s.llave },
     });
     expect(r.datos).toMatchObject({ radicado: 'RAD-000002', tieneAdjunto: true });
-    expect((await e.json(`/consultas/${r.datos.id}/adjunto`, { token: CLIENTE })).estado).toBe(200);
-    expect((await e.json(`/consultas/${r.datos.id}/adjunto`, { token: ADMIN })).estado).toBe(200);
-    expect((await e.json(`/consultas/${r.datos.id}/adjunto`, { token: OTRO_CLIENTE })).estado).toBe(
-      404,
+    expect((await e.json(`/mi/consultas/${r.datos.id}/adjunto`, { token: CLIENTE })).estado).toBe(
+      200,
     );
+    expect((await e.json(`/mi/consultas/${r.datos.id}/adjunto`, { token: ADMIN })).estado).toBe(
+      200,
+    );
+    expect(
+      (await e.json(`/mi/consultas/${r.datos.id}/adjunto`, { token: OTRO_CLIENTE })).estado,
+    ).toBe(404);
     const grande = await e.json('/consultas/adjunto/subida', {
       token: CLIENTE,
       cuerpo: { nombre: 'x.pdf', tipo: 'application/pdf', tamano: 6_000_000 },
@@ -89,7 +93,7 @@ describe('HU-15 · enviar consulta', () => {
     const a = await e.json('/consultas', { token: CLIENTE, cuerpo: otra });
     const b = await e.json('/consultas', { token: CLIENTE, cuerpo: otra });
     expect(b.datos.radicado).toBe(a.datos.radicado);
-    const mias = (await e.json('/consultas', { token: CLIENTE })).datos.filter(
+    const mias = (await e.json('/mi/consultas', { token: CLIENTE })).datos.filter(
       (x: { asunto: string }) => x.asunto === otra.asunto,
     );
     expect(mias).toHaveLength(1);

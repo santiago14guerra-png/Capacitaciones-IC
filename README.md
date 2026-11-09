@@ -4,6 +4,7 @@ Plataforma web (AWS serverless) para publicar, buscar y vender respuestas tribut
 
 - [Historias de usuario, tallas, responsables y estado por sprint](docs/historias-de-usuario.md)
 - [Estado del MVP y datos pendientes de la empresa](docs/estado-mvp.md)
+- [Comparación con la especificación de la entrega 2](docs/especificacion-entrega2.md)
 
 ## Estructura
 
@@ -13,6 +14,7 @@ Plataforma web (AWS serverless) para publicar, buscar y vender respuestas tribut
 | `api/`    | API Hono con arquitectura hexagonal ([docs/arquitectura.md](docs/arquitectura.md)) |
 | `web/`    | Sitio React + Vite                                                                 |
 | `infra/`  | AWS CDK ([infra/README.md](infra/README.md))                                       |
+| `e2e/`    | Pruebas de extremo a extremo con Playwright                                        |
 
 ## Desarrollo local
 
@@ -23,6 +25,7 @@ y tokens de desarrollo.
 npm ci
 npm run dev        # API en :3001 y sitio en http://localhost:5173
 npm run check      # lint, tipos, pruebas y build
+npm run e2e        # flujos críticos en un navegador real
 ```
 
 Cuentas locales (clave `Clave1234`): `administrador@ic.local`, `director@ic.local`, `cliente@ic.local`.

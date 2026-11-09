@@ -21,8 +21,13 @@ function CargaComprobante({ compra, alSubir }: { compra: CompraDto; alSubir(c: C
     if (!archivo) return;
     setError(null);
     try {
-      const llave = await subirArchivo(`/compras/${compra.id}/comprobante/subida`, archivo);
-      alSubir(await api<CompraDto>(`/compras/${compra.id}/comprobante`, { cuerpo: { llave } }));
+      const llave = await subirArchivo(`/compras/${compra.id}/comprobante`, archivo);
+      alSubir(
+        await api<CompraDto>(`/compras/${compra.id}/comprobante`, {
+          metodo: 'PUT',
+          cuerpo: { llave },
+        }),
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No se pudo subir el comprobante');
     }

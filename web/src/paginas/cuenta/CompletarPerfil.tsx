@@ -29,7 +29,7 @@ export default function CompletarPerfil() {
     const d = f.validar(esquemaGuardarPerfil);
     if (!d) return;
     try {
-      await api('/perfil', { metodo: 'PUT', cuerpo: d });
+      await api('/mi/perfil', { metodo: 'PUT', cuerpo: d });
       await recargar();
       navegar(rutaSegura(params.get('volver')), { replace: true });
     } catch (err) {

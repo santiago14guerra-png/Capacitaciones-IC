@@ -8,14 +8,14 @@ const { autorizaDatos: _, ...sinAutorizacion } = DATOS_PERFIL;
 describe('HU-23 · editar mi perfil y datos de facturación', () => {
   it('crear el perfil sigue exigiendo la autorización', async () => {
     expect(
-      (await e.json('/perfil', { metodo: 'PUT', token: OTRO_CLIENTE, cuerpo: sinAutorizacion }))
+      (await e.json('/mi/perfil', { metodo: 'PUT', token: OTRO_CLIENTE, cuerpo: sinAutorizacion }))
         .estado,
     ).toBe(422);
   });
 
   it('actualiza dirección, celular y datos de facturación sin volver a autorizar', async () => {
-    await e.json('/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
-    const r = await e.json('/perfil', {
+    await e.json('/mi/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
+    const r = await e.json('/mi/perfil', {
       metodo: 'PUT',
       token: CLIENTE,
       cuerpo: {
@@ -38,7 +38,7 @@ describe('HU-23 · editar mi perfil y datos de facturación', () => {
   });
 
   it('valida igual que en el registro', async () => {
-    const r = await e.json('/perfil', {
+    const r = await e.json('/mi/perfil', {
       metodo: 'PUT',
       token: CLIENTE,
       cuerpo: { ...sinAutorizacion, celular: '12' },

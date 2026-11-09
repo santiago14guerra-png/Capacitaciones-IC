@@ -16,7 +16,7 @@ export function rutasAdmin(ctx: Contexto) {
   admin.get('/yo', (c) => c.json({ sub: c.var.actor!.sub, grupos: c.var.actor!.grupos }));
   admin.route('/categorias', rutasCategoriasAdmin(ctx));
   admin.route('/fichas', rutasFichasAdmin(ctx));
-  admin.route('/pagos', rutasPagosAdmin(ctx));
+  admin.route('/compras', rutasPagosAdmin(ctx));
   admin.route('/consultas', rutasConsultasAdmin(ctx));
   admin.get('/exportaciones/siigo', async (c) => {
     const { nombre, contenido } = await exportarSiigo(ctx, c.req.query());

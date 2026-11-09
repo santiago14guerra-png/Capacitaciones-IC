@@ -9,11 +9,11 @@ const ID = 'ana.f1';
 beforeAll(async () => {
   await sembrarCategorias(e.ctx);
   await e.ctx.fichas.guardar(fichaDePrueba({ id: 'f1', precio: 35000 }));
-  await e.json('/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
-  await e.json('/fichas/f1/compra', { token: CLIENTE, cuerpo: {} });
+  await e.json('/mi/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
+  await e.json('/compras', { token: CLIENTE, cuerpo: { fichaId: 'f1' } });
 });
 const pedirSubida = (cuerpo: object, token = CLIENTE) =>
-  e.json(`/compras/${ID}/comprobante/subida`, { token, cuerpo });
+  e.json(`/compras/${ID}/comprobante`, { token, cuerpo });
 
 describe('HU-12 · cargar comprobante', () => {
   it('CA1: acepta solo JPG, PNG o PDF de máximo 5 MB', async () => {
@@ -47,6 +47,7 @@ describe('HU-12 · cargar comprobante', () => {
     expect(s.llave).toMatch(/^comprobantes\/ana\/f1\/.+\.png$/);
     expect((await subir(e, s, 2000)).status).toBe(204);
     const r = await e.json(`/compras/${ID}/comprobante`, {
+      metodo: 'PUT',
       token: CLIENTE,
       cuerpo: { llave: s.llave },
     });
@@ -56,11 +57,13 @@ describe('HU-12 · cargar comprobante', () => {
 
   it('no acepta una llave ajena ni un archivo que no llegó', async () => {
     const ajena = await e.json(`/compras/${ID}/comprobante`, {
+      metodo: 'PUT',
       token: CLIENTE,
       cuerpo: { llave: 'comprobantes/beto/f1/x.png' },
     });
     expect(ajena.estado).toBe(422);
     const noLlego = await e.json(`/compras/${ID}/comprobante`, {
+      metodo: 'PUT',
       token: CLIENTE,
       cuerpo: { llave: 'comprobantes/ana/f1/no-existe.png' },
     });
@@ -81,23 +84,25 @@ describe('integridad del comprobante', () => {
   const esperado = 'ana.f2';
   it('reutilizar la URL no cambia lo que descarga quien revisa el pago', async () => {
     await e.ctx.fichas.guardar(fichaDePrueba({ id: 'f2', precio: 35000 }));
-    const compra = (await e.json('/fichas/f2/compra', { token: CLIENTE, cuerpo: {} })).datos;
+    const compra = (await e.json('/compras', { token: CLIENTE, cuerpo: { fichaId: 'f2' } })).datos;
     expect(compra.id).toBe(esperado);
     const s = (
-      await e.json(`/compras/${compra.id}/comprobante/subida`, {
+      await e.json(`/compras/${compra.id}/comprobante`, {
         token: CLIENTE,
         cuerpo: { nombre: 'c.pdf', tipo: 'application/pdf', tamano: 100 },
       })
     ).datos;
     await subir(e, s, 100);
     await e.json(`/compras/${compra.id}/comprobante`, {
+      metodo: 'PUT',
       token: CLIENTE,
       cuerpo: { llave: s.llave },
     });
 
     expect((await subir(e, s, 300)).status).toBe(204);
 
-    const { url } = (await e.json(`/admin/pagos/${compra.id}/comprobante`, { token: ADMIN })).datos;
+    const { url } = (await e.json(`/admin/compras/${compra.id}/comprobante`, { token: ADMIN }))
+      .datos;
     const descarga = await e.crudo(url);
     expect((await descarga.arrayBuffer()).byteLength).toBe(100);
   });

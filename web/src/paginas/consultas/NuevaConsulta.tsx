@@ -24,7 +24,7 @@ function useSugerencias(asunto: string) {
     if (q.length < LIMITES.terminoMin) return setSugerencias([]);
     const control = new AbortController();
     const t = setTimeout(() => {
-      api<ResultadoBusquedaDto>(`/buscar?q=${encodeURIComponent(q)}&sugerencia=1`, {
+      api<ResultadoBusquedaDto>(`/fichas?q=${encodeURIComponent(q)}&sugerencia=1`, {
         senal: control.signal,
       })
         .then((r) => setSugerencias(r.elementos.slice(0, 3)))

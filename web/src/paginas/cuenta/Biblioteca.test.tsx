@@ -19,7 +19,7 @@ describe('HU-14 · mi biblioteca', () => {
   it('lista fichas aprobadas con fecha, pendientes con estado y despublicadas «En revisión»', async () => {
     simularApi({
       'GET /sesion': SESION_CLIENTE,
-      'GET /compras': [
+      'GET /mi/biblioteca': [
         c('p', 'EN_VERIFICACION'),
         c('a', 'APROBADA', { aprobadaEn: '2026-10-05T15:00:00Z', fichaEnRevision: true }),
       ],

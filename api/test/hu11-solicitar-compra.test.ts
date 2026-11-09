@@ -14,7 +14,7 @@ beforeAll(async () => {
   invalidarCatalogo(e.ctx);
 });
 const comprar = (id: string, token = CLIENTE) =>
-  e.json(`/fichas/${id}/compra`, { token, cuerpo: {} });
+  e.json('/compras', { token, cuerpo: { fichaId: id } });
 
 describe('HU-11 · solicitar compra', () => {
   it('exige sesión y datos de facturación', async () => {
@@ -25,7 +25,7 @@ describe('HU-11 · solicitar compra', () => {
   });
 
   it('crea la compra con referencia única, datos bancarios y estado «Pendiente de pago»', async () => {
-    await e.json('/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
+    await e.json('/mi/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
     const r = await comprar('f1');
     expect(r.estado).toBe(201);
     expect(r.datos).toMatchObject({
@@ -49,7 +49,7 @@ describe('HU-11 · solicitar compra', () => {
   });
 
   it('las referencias son consecutivas aun con solicitudes simultáneas', async () => {
-    await e.json('/perfil', { metodo: 'PUT', token: OTRO_CLIENTE, cuerpo: DATOS_PERFIL });
+    await e.json('/mi/perfil', { metodo: 'PUT', token: OTRO_CLIENTE, cuerpo: DATOS_PERFIL });
     const [a, b] = await Promise.all([comprar('f2'), comprar('f2', OTRO_CLIENTE)]);
     expect(new Set([a.datos.referencia, b.datos.referencia])).toEqual(
       new Set(['RPN-000002', 'RPN-000003']),

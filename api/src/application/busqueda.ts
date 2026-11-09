@@ -23,7 +23,7 @@ const indiceDe = (fichas: FichaMeta[]) => {
 export async function buscarFichas(
   ctx: Contexto,
   consultaCruda: string,
-  opciones: { registrar: boolean },
+  opciones: { registrar: boolean; categorias?: string[] },
 ): Promise<ResultadoBusquedaDto> {
   const consulta = consultaCruda.trim().slice(0, 200);
   if (consulta.length < LIMITES.terminoMin) {
@@ -33,7 +33,12 @@ export async function buscarFichas(
   }
   const terminos = terminosBusqueda(consulta);
   const [fichas, categorias] = await Promise.all([fichasPublicadas(ctx), nombresCategorias(ctx)]);
-  const visibles = fichas.filter((f) => categorias.get(f.categoriaId)?.activa);
+  const filtro = opciones.categorias ?? [];
+  const visibles = fichas.filter(
+    (f) =>
+      categorias.get(f.categoriaId)?.activa &&
+      (filtro.length === 0 || filtro.includes(f.categoriaId)),
+  );
   const encontradas = buscar(indiceDe(visibles), terminos, consulta);
   if (opciones.registrar && ctx.cupoBusquedas.tomar()) {
     // HU-09 CA5: término, fecha y número de resultados, sin datos de quien busca.

@@ -7,7 +7,7 @@ const e = prepararEntorno();
 let id = '';
 beforeAll(async () => {
   await sembrarCategorias(e.ctx);
-  await e.json('/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
+  await e.json('/mi/perfil', { metodo: 'PUT', token: CLIENTE, cuerpo: DATOS_PERFIL });
   id = (
     await e.json('/consultas', {
       token: CLIENTE,
@@ -16,19 +16,19 @@ beforeAll(async () => {
   ).datos.id;
 });
 const gestionar = (cuerpo: object) =>
-  e.json(`/admin/consultas/${id}`, { metodo: 'PUT', token: DIRECTOR, cuerpo });
+  e.json(`/admin/consultas/${id}`, { metodo: 'PATCH', token: DIRECTOR, cuerpo });
 
 describe('HU-17 · seguimiento de mis consultas', () => {
   it('el cliente ve sus consultas con radicado, estado y fecha; nadie más las ve', async () => {
-    const r = await e.json('/consultas', { token: CLIENTE });
+    const r = await e.json('/mi/consultas', { token: CLIENTE });
     expect(r.datos).toHaveLength(1);
     expect(r.datos[0]).toMatchObject({
       radicado: 'RAD-000001',
       estado: 'RECIBIDA',
       recibidaEn: expect.any(String),
     });
-    expect((await e.json('/consultas', { token: OTRO_CLIENTE })).datos).toEqual([]);
-    expect((await e.json(`/consultas/${id}`, { token: OTRO_CLIENTE })).estado).toBe(404);
+    expect((await e.json('/mi/consultas', { token: OTRO_CLIENTE })).datos).toEqual([]);
+    expect((await e.json(`/mi/consultas/${id}`, { token: OTRO_CLIENTE })).estado).toBe(404);
   });
 
   it('no ve un borrador de respuesta mientras está en análisis', async () => {
@@ -37,14 +37,14 @@ describe('HU-17 · seguimiento de mis consultas', () => {
       clasificacion: 'CONSULTA_RAPIDA',
       respuestaHtml: '<p>borrador</p>',
     });
-    const r = await e.json(`/consultas/${id}`, { token: CLIENTE });
+    const r = await e.json(`/mi/consultas/${id}`, { token: CLIENTE });
     expect(r.datos.estado).toBe('EN_ANALISIS');
     expect(r.datos.respuestaHtml).toBeUndefined();
   });
 
   it('ve la respuesta dentro de la plataforma cuando está respondida', async () => {
     await gestionar({ estado: 'RESPONDIDA', respuestaHtml: '<p>Así se declara</p>' });
-    expect((await e.json(`/consultas/${id}`, { token: CLIENTE })).datos.respuestaHtml).toBe(
+    expect((await e.json(`/mi/consultas/${id}`, { token: CLIENTE })).datos.respuestaHtml).toBe(
       '<p>Así se declara</p>',
     );
   });
@@ -55,7 +55,7 @@ describe('HU-17 · seguimiento de mis consultas', () => {
       clasificacion: 'ASESORIA',
       condicionesAsesoria: 'Condiciones X',
     });
-    expect((await e.json(`/consultas/${id}`, { token: CLIENTE })).datos).toMatchObject({
+    expect((await e.json(`/mi/consultas/${id}`, { token: CLIENTE })).datos).toMatchObject({
       estado: 'ESCALADA',
       condicionesAsesoria: 'Condiciones X',
     });

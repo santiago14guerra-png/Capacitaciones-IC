@@ -20,7 +20,7 @@ describe('doble clic: cada acción se hace una sola vez', () => {
   it('aprobar un pago', async () => {
     const llamadas = simularApi({
       'GET /sesion': SESION_ADMIN,
-      'GET /admin/pagos': [
+      'GET /admin/compras': [
         {
           id: 'ana.f1',
           referencia: 'RPN-1',
@@ -35,15 +35,15 @@ describe('doble clic: cada acción se hace una sola vez', () => {
           clienteCorreo: 'a@b.co',
         },
       ],
-      'POST /admin/pagos/ana.f1/decision': lenta({}),
+      'PATCH /admin/compras/ana.f1': lenta({}),
     });
     renderizar('/panel/pagos', { conSesion: true });
     const aprobar = await screen.findByRole('button', { name: 'Aprobar' });
     dobleClic(aprobar);
     expect(aprobar.getAttribute('aria-busy')).toBe('true');
-    await waitFor(() => expect(llamadas.filter((l) => l.metodo === 'POST')).toHaveLength(1));
+    await waitFor(() => expect(llamadas.filter((l) => l.metodo === 'PATCH')).toHaveLength(1));
     await new Promise((r) => setTimeout(r, 80));
-    expect(llamadas.filter((l) => l.metodo === 'POST')).toHaveLength(1);
+    expect(llamadas.filter((l) => l.metodo === 'PATCH')).toHaveLength(1);
   });
 
   it('comprar una ficha', async () => {
@@ -65,7 +65,7 @@ describe('doble clic: cada acción se hace una sola vez', () => {
         relacionadas: [],
         tieneAcceso: false,
       },
-      'POST /fichas/f1/compra': lenta({ id: 'ana.f1' }),
+      'POST /compras': lenta({ id: 'ana.f1' }),
       'GET /compras/ana.f1': {},
     });
     renderizar('/fichas/f1', { conSesion: true });
