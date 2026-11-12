@@ -21,10 +21,13 @@ export function useRevelar(raiz: () => HTMLElement | null) {
       },
       { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
     );
+    // El registro vive en cada ejecución del efecto: si React lo desmonta y lo vuelve a montar
+    // (modo estricto o cambio de ruta), el nuevo observador vuelve a vigilar todo lo pendiente.
+    const vigilados = new WeakSet<Element>();
     const observar = () => {
       contenedor.querySelectorAll<HTMLElement>('.revelar:not(.revelado)').forEach((el) => {
-        if (el.dataset.observado) return;
-        el.dataset.observado = '1';
+        if (vigilados.has(el)) return;
+        vigilados.add(el);
         const hermanos = [...(el.parentElement?.children ?? [])].filter((h) =>
           h.classList.contains('revelar'),
         );
