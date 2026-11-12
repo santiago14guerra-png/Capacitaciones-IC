@@ -1,17 +1,19 @@
 /*
- * Identidad visual sobria provisional: «libro mayor». Papel de piedra, tinta verde negra y un
- * solo verde contable como acento. Se reemplaza cuando la empresa entregue su manual de marca
- * (Acta 002): basta con cambiar estos tokens.
+ * Identidad visual: papel de piedra con el verde institucional de Capacitaciones IC (#28871f),
+ * definido por la empresa en la demostración final (Acta 003). Basta con cambiar estos tokens.
  * Público mayoritariamente adulto: letra grande, alto contraste y áreas de toque amplias.
  */
 :root {
   /* Marca */
-  --c-campo: #16302a; /* campos oscuros: portada y pie */
-  --c-campo-texto: #f3f4ef;
-  --c-campo-suave: #b9c4bd;
-  --c-primario: #1e4d3c; /* verde contable: acción principal y enlaces */
-  --c-primario-hover: #143a2c;
-  --c-acento: #1e4d3c;
+  /* Verde institucional #28871f (Acta 003). Con texto blanco da 4,6:1 (AA). */
+  --c-campo: #28871f; /* campos de color: portada y pie */
+  --c-campo-texto: #ffffff;
+  --c-campo-suave: #ffffff;
+  --c-primario: #28871f; /* acción principal: botones, bordes y marcas */
+  --c-primario-hover: #1f6c18;
+  --c-acento: #28871f;
+  /* El mismo verde, más oscuro, para texto pequeño sobre fondo claro (5,9:1). */
+  --c-enlace: #206c19;
   /* Neutros */
   --c-fondo: #f3f3f0;
   --c-superficie: #ffffff;
@@ -84,7 +86,7 @@ p {
   margin: 0 0 1em;
 }
 a {
-  color: var(--c-primario);
+  color: var(--c-enlace);
   text-underline-offset: 3px;
 }
 a:hover {
@@ -215,7 +217,7 @@ main {
   padding: 0.4rem 0.2rem;
 }
 .nav a:hover {
-  color: var(--c-primario);
+  color: var(--c-enlace);
 }
 .nav a.boton,
 .nav a.boton:hover {
@@ -271,7 +273,7 @@ main {
 }
 .boton.secundario {
   background: transparent;
-  color: var(--c-primario);
+  color: var(--c-enlace);
 }
 .boton.secundario:hover {
   background: var(--c-superficie-2);
@@ -289,7 +291,7 @@ main {
   border: 0;
   padding: 0;
   font: inherit;
-  color: var(--c-primario);
+  color: var(--c-enlace);
   text-decoration: underline;
   cursor: pointer;
 }
@@ -397,7 +399,7 @@ input[type='radio'] {
   padding: 0.1rem 0.6rem;
   border-radius: var(--radio);
   background: var(--c-superficie-2);
-  color: var(--c-primario);
+  color: var(--c-enlace);
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -1042,7 +1044,7 @@ a.tarjeta:active {
   bottom: -12%;
   height: 92%;
   width: auto;
-  color: #1d3c34;
+  color: #237a1b; /* el verde institucional, un tono más oscuro */
   z-index: -1;
   pointer-events: none;
   animation: deslizar 1.2s var(--curva) both;
